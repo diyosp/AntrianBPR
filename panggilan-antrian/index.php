@@ -155,21 +155,14 @@ include "../header.php";
             "className": 'text-center',
             "render": function(data, type, row) {
               // jika tidak ada data "status"
-              if (data["status"] === "") {
-                // sembunyikan button panggil
-                var btn = "-";
-              }
-              // jika data "status = 0"
-              else if (data["status"] === "0") {
-                // tampilkan button panggil
-                var btn = "<button class=\"btn btn-success btn-sm rounded-circle\"><i class=\"bi-mic-fill\"></i></button>";
-              }
-              // jika data "status = 1"
-              else if (data["status"] === "1") {
-                // tampilkan button ulangi panggilan
-                var btn = "<button class=\"btn btn-secondary btn-sm rounded-circle\"><i class=\"bi-mic-fill\"></i></button>";
-              };
-              return btn;
+                    var btn = "-";
+                    if (data["status"] === "0") {
+                      btn = "<button class=\"btn btn-success btn-sm rounded-circle btn-panggil\" data-action='start'><i class=\"bi-mic-fill\"></i></button>";
+                    } else if (data["status"] === "1") {
+                      btn = "<button class=\"btn btn-secondary btn-sm rounded-circle btn-panggil\" data-action='start'><i class=\"bi-mic-fill\"></i></button> ";
+                      btn += "<button class=\"btn btn-danger btn-sm rounded-circle btn-selesai ms-1\" data-action='finish' title='Selesai'><i class=\"bi-check-lg\"></i></button>";
+                    }
+                    return btn;
             }
           },
         ],
@@ -183,35 +176,32 @@ include "../header.php";
       $('#tabel-antrian tbody').on('click', 'button', function() {
         // ambil data dari datatables 
         var data = table.row($(this).parents('tr')).data();
-        // buat variabel untuk menampilkan data "id"
         var id = data["id"];
-        // buat variabel untuk menampilkan audio bell antrian
+        var action = $(this).data('action');
         var bell = document.getElementById('tingtung');
 
-        // mainkan suara bell antrian
-        bell.pause();
-        bell.currentTime = 0;
-        bell.play();
-
-        // set delay antara suara bell dengan suara nomor antrian
-        durasi_bell = bell.duration * 770;
-
-        // mainkan suara nomor antrian
-        setTimeout(function() {
-          responsiveVoice.speak("Nomor Antrian, " + data["no_antrian"] + ", silahkan ke castomer service", "Indonesian Female", {
-            rate: 0.9,
-            pitch: 1,
-            volume: 10
-          });
-        }, durasi_bell);
+        if (action === 'start') {
+          bell.pause();
+          bell.currentTime = 0;
+          bell.play();
+          durasi_bell = bell.duration * 770;
+          setTimeout(function() {
+            responsiveVoice.speak("Nomor Antrian, " + data["no_antrian"] + ", silahkan ke castomer service", "Indonesian Female", {
+              rate: 0.9,
+              pitch: 1,
+              volume: 10
+            });
+          }, durasi_bell);
+        }
 
         // proses update data
         $.ajax({
-          type: "POST", // mengirim data dengan method POST
-          url: "update.php", // url file proses update data
+          type: "POST",
+          url: "update.php",
           data: {
-            id: id
-          } // tentukan data yang dikirim
+            id: id,
+            action: action
+          }
         });
       });
 

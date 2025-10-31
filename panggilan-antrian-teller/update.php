@@ -17,28 +17,69 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
 
   // mengecek data post dari ajax
   if (isset($_POST['id_teller'])) {
-    // ambil data hasil post dari ajax
-    $id = mysqli_real_escape_string($mysqli, $_POST['id_teller']);
-    // tentukan nilai status
-    $status = "1";
-    // ambil tanggal dan waktu update data
-    $updated_date = gmdate("Y-m-d H:i:s", time() + 60 * 60 * 7);
+  $id = mysqli_real_escape_string($mysqli, $_POST['id_teller']);
+  $action = isset($_POST['action']) ? $_POST['action'] : '';
+  $updated_date = gmdate("Y-m-d H:i:s", time() + 60 * 60 * 7);
+  $result = ["success" => false, "message" => "Unknown error."];
 
-    // sql statement untuk memastikan bahwa ID yang ingin diperbarui milik cabang pengguna yang login
-    $check_query = mysqli_query($mysqli, "SELECT id_teller FROM tbl_antrian_teller 
-                                              WHERE id_teller='$id' AND cabang_id='$cabang_id'")
+    // Ambil data teller saat ini
+    $check_query = mysqli_query($mysqli, "SELECT id_teller, status_teller, waktu_mulai, waktu_selesai FROM tbl_antrian_teller WHERE id_teller='$id' AND cabang_id='$cabang_id'")
       or die('Ada kesalahan pada query validasi cabang : ' . mysqli_error($mysqli));
 
-    // cek apakah data ditemukan
     if (mysqli_num_rows($check_query) > 0) {
-      // sql statement untuk update data di tabel "tbl_antrian_teller" berdasarkan "id_teller" dan "cabang_id"
-      $update = mysqli_query($mysqli, "UPDATE tbl_antrian_teller
-                                             SET status_teller='$status', updated_date_teller='$updated_date'
-                                             WHERE id_teller='$id' AND cabang_id='$cabang_id'")
-        or die('Ada kesalahan pada query update : ' . mysqli_error($mysqli));
+      $row = mysqli_fetch_assoc($check_query);
+      $status_teller = $row['status_teller'];
+      $waktu_mulai = $row['waktu_mulai'];
+      $waktu_selesai = $row['waktu_selesai'];
+
+  if ($action === 'start') {
+        // Jika status_teller = 0 (belum dipanggil), teller menekan bell pertama kali
+        if ($status_teller == '0') {
+          if (empty($waktu_mulai)) {
+            $update = mysqli_query($mysqli, "UPDATE tbl_antrian_teller SET status_teller='1', updated_date_teller='$updated_date', waktu_mulai='$updated_date' WHERE id_teller='$id' AND cabang_id='$cabang_id'");
+          } else {
+            $update = mysqli_query($mysqli, "UPDATE tbl_antrian_teller SET status_teller='1', updated_date_teller='$updated_date' WHERE id_teller='$id' AND cabang_id='$cabang_id'");
+          }
+          if ($update) {
+            $result = ["success" => true, "message" => "Teller dipanggil."];
+          } else {
+            $result = ["success" => false, "message" => "Gagal update panggil: " . mysqli_error($mysqli)];
+          }
+        }
+        // Jika status_teller = 1, hanya ulangi panggilan, tidak update waktu/durasi
+        else if ($status_teller == '1') {
+          $update = mysqli_query($mysqli, "UPDATE tbl_antrian_teller SET updated_date_teller='$updated_date' WHERE id_teller='$id' AND cabang_id='$cabang_id'");
+          if ($update) {
+            $result = ["success" => true, "message" => "Panggilan diulang."];
+          } else {
+            $result = ["success" => false, "message" => "Gagal update ulang: " . mysqli_error($mysqli)];
+          }
+        }
+      } else if ($action === 'finish') {
+        // Jika status_teller = 1 (sudah dipanggil), teller menekan selesai
+        if ($status_teller == '1' && empty($waktu_selesai)) {
+          $waktu_selesai = $updated_date;
+          $mulai = strtotime($waktu_mulai);
+          $selesai = strtotime($waktu_selesai);
+          $durasi = $selesai - $mulai;
+          $update = mysqli_query($mysqli, "UPDATE tbl_antrian_teller SET status_teller='2', updated_date_teller='$updated_date', waktu_selesai='$waktu_selesai', durasi='$durasi' WHERE id_teller='$id' AND cabang_id='$cabang_id'");
+          if ($update) {
+            $result = ["success" => true, "message" => "Teller selesai."];
+          } else {
+            $result = ["success" => false, "message" => "Gagal update selesai: " . mysqli_error($mysqli)];
+          }
+        } else {
+          $result = ["success" => false, "message" => "Tidak dapat menyelesaikan: status bukan 1 atau sudah selesai."];
+        }
+      }
+  // Jika sudah selesai, atau sudah pernah diupdate, jangan update durasi lagi
+      // Tidak melakukan update apapun jika action tidak sesuai
     } else {
-      // jika data tidak ditemukan, tampilkan pesan error
       die('Data tidak ditemukan atau Anda tidak memiliki akses untuk memperbarui data ini.');
     }
+    // Output JSON response
+    header('Content-Type: application/json');
+    echo json_encode($result);
+    exit;
   }
 }

@@ -23,7 +23,7 @@ $tahun = isset($_GET['tahun']) ? $_GET['tahun'] : null;
 $filter_cabang = isset($_GET['cabang_id']) ? $_GET['cabang_id'] : ($role_id != 1 ? $cabang_id : null);
 
 // Query dasar untuk mendapatkan data antrian
-$query = "SELECT * FROM tbl_antrian WHERE status = '1'";
+$query = "SELECT * FROM tbl_antrian WHERE waktu_mulai IS NOT NULL AND waktu_selesai IS NOT NULL";
 
 // Tambahkan filter cabang jika role_id bukan 1 atau jika superadmin menggunakan filter cabang
 if (!empty($filter_cabang)) {
@@ -99,20 +99,21 @@ while ($row = $result->fetch_assoc()) {
     $sheet->setCellValue("B{$rowIndex}", $row['cabang_id']);
     $sheet->setCellValue("C{$rowIndex}", date('d/m/Y', strtotime($row['tanggal'])));
     $sheet->setCellValue("D{$rowIndex}", $row['no_antrian']);
-    $sheet->setCellValue("E{$rowIndex}", ($row['status'] == '1' ? 'Selesai' : 'Menunggu'));
+    $sheet->setCellValue("E{$rowIndex}", ($row['status'] == '2' ? 'Selesai' : 'Menunggu'));
 
     // Hitung durasi
-    if ($previous_date) {
-        $current_date = strtotime($row['updated_date']);
-        $duration = $current_date - $previous_date;
-        $formatted_duration = sprintf("%02d:%02d:%02d", floor($duration / 3600), floor(($duration % 3600) / 60), $duration % 60);
+    if (!empty($row['durasi'])) {
+        $d = (int)$row['durasi'];
+        $formatted_duration = sprintf("%02d:%02d:%02d", floor($d / 3600), floor(($d % 3600) / 60), $d % 60);
+    } else if (!empty($row['waktu_mulai']) && !empty($row['waktu_selesai'])) {
+        $mulai = strtotime($row['waktu_mulai']);
+        $selesai = strtotime($row['waktu_selesai']);
+        $d = $selesai - $mulai;
+        $formatted_duration = sprintf("%02d:%02d:%02d", floor($d / 3600), floor(($d % 3600) / 60), $d % 60);
     } else {
         $formatted_duration = "-";
     }
-
     $sheet->setCellValue("F{$rowIndex}", $formatted_duration);
-
-    $previous_date = strtotime($row['updated_date']);
     $rowIndex++;
     $nomor++;
 }

@@ -155,21 +155,15 @@ include "../header.php";
             "width": '100px',
             "className": 'text-center',
             "render": function(data, type, row) {
-              // jika tidak ada data "status"
-              if (data["status_teller"] === "") {
-                // sembunyikan button panggil
-                var btn = "-";
+              var btn = "-";
+              if (data["status_teller"] === "0") {
+                // Belum dipanggil: tampilkan tombol Panggil (start)
+                btn = `<button class='btn btn-success btn-sm rounded-circle btn-panggil' data-action='start' title='Panggil'><i class='bi-mic-fill'></i></button>`;
+              } else if (data["status_teller"] === "1") {
+                // Sudah dipanggil: tampilkan tombol Ulangi (panggil ulang) dan Selesai (finish)
+                btn = `<button class='btn btn-secondary btn-sm rounded-circle btn-panggil' data-action='start' title='Ulangi'><i class='bi-mic-fill'></i></button> ` +
+                      `<button class='btn btn-danger btn-sm rounded-circle btn-selesai ms-1' data-action='finish' title='Selesai'><i class='bi-check-lg'></i></button>`;
               }
-              // jika data "status = 0"
-              else if (data["status_teller"] === "0") {
-                // tampilkan button panggil
-                var btn = "<button class=\"btn btn-success btn-sm rounded-circle\"><i class=\"bi-mic-fill\"></i></button>";
-              }
-              // jika data "status = 1"
-              else if (data["status_teller"] === "1") {
-                // tampilkan button ulangi panggilan
-                var btn = "<button class=\"btn btn-secondary btn-sm rounded-circle\"><i class=\"bi-mic-fill\"></i></button>";
-              };
               return btn;
             }
           },
@@ -182,37 +176,45 @@ include "../header.php";
 
       // panggilan antrian dan update data
       $('#tabel-antrian-teller tbody').on('click', 'button', function() {
-        // ambil data dari datatables 
         var data = table.row($(this).parents('tr')).data();
-        // buat variabel untuk menampilkan data "id"
         var id = data["id_teller"];
-        // buat variabel untuk menampilkan audio bell antrian
+        var action = $(this).data('action');
         var bell = document.getElementById('tingtung');
 
-        // mainkan suara bell antrian
-        bell.pause();
-        bell.currentTime = 0;
-        bell.play();
-
-        // set delay antara suara bell dengan suara nomor antrian
-        durasi_bell = bell.duration * 770;
-
-        // mainkan suara nomor antrian
-        setTimeout(function() {
-          responsiveVoice.speak("Nomor Antrian, " + data["no_antrian_teller"] + ", silahkan ke teller", "Indonesian Female", {
-            rate: 0.9,
-            pitch: 1,
-            volume: 10
-          });
-        }, durasi_bell);
+        // Untuk tombol panggil/ulangi (start): mainkan bell dan suara
+        if (action === 'start') {
+          bell.pause();
+          bell.currentTime = 0;
+          bell.play();
+          durasi_bell = bell.duration * 770;
+          setTimeout(function() {
+            responsiveVoice.speak("Nomor Antrian, " + data["no_antrian_teller"] + ", silahkan ke teller", "Indonesian Female", {
+              rate: 0.9,
+              pitch: 1,
+              volume: 10
+            });
+          }, durasi_bell);
+        }
 
         // proses update data
         $.ajax({
-          type: "POST", // mengirim data dengan method POST
-          url: "update.php", // url file proses update data
+          type: "POST",
+          url: "update.php",
           data: {
-            id_teller: id
-          } // tentukan data yang dikirim
+            id_teller: id,
+            action: action
+          },
+          success: function(response) {
+            // Log response for debugging
+            console.log('AJAX success:', response);
+            // Optionally show a message to the user
+            // alert('Update berhasil: ' + response);
+          },
+          error: function(xhr, status, error) {
+            console.error('AJAX error:', status, error, xhr.responseText);
+            // Optionally show a message to the user
+            // alert('Update gagal: ' + error);
+          }
         });
       });
 
