@@ -116,6 +116,8 @@ $html = '
                 <th>Cabang ID</th>
                 <th>Tanggal</th>
                 <th>No Antrian</th>
+                <th>Waktu Mulai</th>
+                <th>Waktu Selesai</th>
                 <th>Status</th>
                 <th>Durasi</th>
             </tr>
@@ -133,6 +135,10 @@ if ($result->num_rows > 0) {
         $html .= "<td>{$row['cabang_id']}</td>";
         $html .= "<td>" . date('d/m/Y', strtotime($row['tanggal'])) . "</td>";
         $html .= "<td>{$row['no_antrian']}</td>";
+        // Waktu Mulai
+        $html .= "<td>" . (!empty($row['waktu_mulai']) ? date('H:i:s', strtotime($row['waktu_mulai'])) : '-') . "</td>";
+        // Waktu Selesai
+        $html .= "<td>" . (!empty($row['waktu_selesai']) ? date('H:i:s', strtotime($row['waktu_selesai'])) : '-') . "</td>";
         $html .= "<td>" . ($row['status'] == '2' ? 'Selesai' : 'Menunggu') . "</td>";
         // Hitung durasi
         if (!empty($row['durasi'])) {
@@ -151,7 +157,7 @@ if ($result->num_rows > 0) {
         $nomor++;
     }
 } else {
-    $html .= '<tr><td colspan="6" style="text-align: center;">Tidak ada data tersedia</td></tr>';
+    $html .= '<tr><td colspan="8" style="text-align: center;">Tidak ada data tersedia</td></tr>';
 }
 
 $html .= '

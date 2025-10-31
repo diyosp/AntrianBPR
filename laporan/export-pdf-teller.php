@@ -133,6 +133,8 @@ if ($cabang_id == 312) {
 }
 
 $html .= '
+                <th>Waktu Mulai</th>
+                <th>Waktu Selesai</th>
                 <th>Status</th>
                 <th>Durasi</th>
             </tr>
@@ -153,6 +155,10 @@ if ($result->num_rows > 0) {
         if ($cabang_id == 312) {
             $html .= "<td>" . ($row['bagian'] ?: '-') . "</td>";
         }
+        // Waktu Mulai
+        $html .= "<td>" . (!empty($row['waktu_mulai']) ? date('H:i:s', strtotime($row['waktu_mulai'])) : '-') . "</td>";
+        // Waktu Selesai
+        $html .= "<td>" . (!empty($row['waktu_selesai']) ? date('H:i:s', strtotime($row['waktu_selesai'])) : '-') . "</td>";
         $html .= "<td>" . ($row['status_teller'] == '2' ? 'Selesai' : 'Menunggu') . "</td>";
         // Hitung durasi
         if (!empty($row['durasi'])) {
@@ -171,7 +177,9 @@ if ($result->num_rows > 0) {
         $nomor++;
     }
 } else {
-    $html .= '<tr><td colspan="7" style="text-align: center;">Tidak ada data tersedia</td></tr>';
+    // Jumlah kolom tergantung cabang_id
+    $colspan = ($cabang_id == 312) ? 9 : 8;
+    $html .= "<tr><td colspan=\"{$colspan}\" style=\"text-align: center;\">Tidak ada data tersedia</td></tr>";
 }
 
 $html .= '

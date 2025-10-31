@@ -185,6 +185,8 @@ $result = $stmt->get_result();
                     <?php if ($cabang_id == 312): ?>
                         <th>Bagian</th>
                     <?php endif; ?>
+                    <th>Waktu Mulai</th>
+                    <th>Waktu Selesai</th>
                     <th>Status</th>
                     <th>Durasi</th>
                 </tr>
@@ -206,6 +208,11 @@ $result = $stmt->get_result();
                             echo "<td>" . ($row['bagian'] ?: '-') . "</td>";
                         }
 
+                        // Waktu Mulai
+                        echo "<td>" . (!empty($row['waktu_mulai']) ? date('H:i:s', strtotime($row['waktu_mulai'])) : '-') . "</td>";
+                        // Waktu Selesai
+                        echo "<td>" . (!empty($row['waktu_selesai']) ? date('H:i:s', strtotime($row['waktu_selesai'])) : '-') . "</td>";
+
                         echo "<td>" . ($row['status_teller'] == '2' ? 'Selesai' : 'Menunggu') . "</td>";
 
                         // Hitung durasi dari waktu_mulai dan waktu_selesai jika tersedia
@@ -221,7 +228,9 @@ $result = $stmt->get_result();
                         $nomor++;
                     }
                 } else {
-                    echo "<tr><td colspan='7' class='text-center'>Tidak ada data tersedia</td></tr>";
+                    // Jumlah kolom tergantung cabang_id
+                    $colspan = ($cabang_id == 312) ? 9 : 8;
+                    echo "<tr><td colspan='{$colspan}' class='text-center'>Tidak ada data tersedia</td></tr>";
                 }
                 ?>
             </tbody>
