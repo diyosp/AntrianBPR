@@ -117,9 +117,6 @@ include "header.php";
       </div>
     </div>
   </main>
-
-  <!-- Footer -->
-  <?php include "footer.php"; ?>
 </body>
 
 </html>
