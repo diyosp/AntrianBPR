@@ -12,9 +12,9 @@ include "header.php";
 
 <body class="d-flex flex-column h-100">
   <main class="flex-shrink-0">
-    <div class="container pt-5">
+    <div class="container pt-4">
       <!-- tampilkan pesan selamat datang -->
-      <div class="alert alert-light d-flex align-items-center mb-5" role="alert">
+      <div class="alert alert-light d-flex align-items-center mb-4" role="alert">
         <i class="bi-info-circle text-success me-3 fs-3"></i>
         <div class="d-flex justify-content-between align-items-center w-100">
           <span>
@@ -23,102 +23,97 @@ include "header.php";
           <a href="logout.php" class="btn btn-danger">Logout</a>
         </div>
       </div>
-
-  <div class="row gx-5">
-        <!-- Tampilan Antrian TV (new card, leftmost) -->
-        <div class="col-lg-6 mb-4">
-          <div class="card border-0 shadow-sm">
-            <div class="card-body p-5">
-              <div class="feature-icon-1 bg-success bg-gradient mb-4">
-                <i class="bi-tv"></i>
+      <div class="row g-3 justify-content-start">
+           <!-- Tampilan Antrian TV -->
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body p-4 d-flex flex-column align-items-center">
+                <div class="feature-icon-1 bg-success bg-gradient mb-3">
+                  <i class="bi-tv"></i>
+                </div>
+                <h5 class="mb-2">Tampilan Antrian TV</h5>
+                <p class="mb-3 text-center small">Layar TV untuk menampilkan nomor antrian secara real-time.</p>
+                <a href="tampilan-tv/index.php" class="btn btn-success rounded-pill px-4 py-2 mt-auto" target="_blank">
+                  Buka TV <i class="bi-chevron-right ms-2"></i>
+                </a>
               </div>
-              <h3>Tampilan Antrian TV</h3>
-              <p class="mb-4">Tampilan layar antrian untuk ditampilkan di TV/monitor.</p>
-              <a href="tampilan-tv/index.php" class="btn btn-success rounded-pill px-4 py-2">
-                Buka Tampilan <i class="bi-chevron-right ms-2"></i>
-              </a>
             </div>
           </div>
-        </div>
-        <!-- link halaman Antrian Nasabah -->
-        <div class="col-lg-6 mb-4">
-          <div class="card border-0 shadow-sm">
-            <div class="card-body p-5">
-              <div class="feature-icon-1 bg-success bg-gradient mb-4">
+        
+        <!-- Antrian Nasabah -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4 d-flex flex-column align-items-center">
+              <div class="feature-icon-1 bg-success bg-gradient mb-3">
                 <i class="bi-people"></i>
               </div>
-              <h3>Antrian Nasabah</h3>
-              <p class="mb-4">Mengelola nomor antrian untuk Customer Service dan Teller.</p>
-              <a href="nomor-gabungan/index.php" class="btn btn-success rounded-pill px-4 py-2">
+              <h5 class="mb-2">Antrian Nasabah</h5>
+              <p class="mb-3 text-center small">Nomor antrian untuk Customer Service dan Teller.</p>
+              <a href="nomor-gabungan/index.php" class="btn btn-success rounded-pill px-4 py-2 mt-auto">
                 Masuk <i class="bi-chevron-right ms-2"></i>
               </a>
             </div>
           </div>
         </div>
-
-        <!-- link halaman Panggilan (role_id 1, 4, 5) -->
+        <!-- Panggilan (role_id 1,2,3,4,5) -->
         <?php if (in_array($_SESSION['role_id'], [1, 2, 3, 4, 5])): ?>
-          <div class="col-lg-6 mb-4">
-            <div class="card border-0 shadow-sm">
-              <div class="card-body p-5">
-                <div class="feature-icon-1 bg-success bg-gradient mb-4">
-                  <i class="bi-person-badge"></i>
-                </div>
-                <h3>Panggilan</h3>
-                <p class="mb-4">Kelola panggilan antrian nasabah.</p>
-                <a href="/admin" class="btn btn-success rounded-pill px-4 py-2">
-                  Masuk <i class="bi-chevron-right ms-2"></i>
-                </a>
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4 d-flex flex-column align-items-center">
+              <div class="feature-icon-1 bg-success bg-gradient mb-3">
+                <i class="bi-person-badge"></i>
               </div>
+              <h5 class="mb-2">Panggilan</h5>
+              <p class="mb-3 text-center small">Kelola panggilan antrian nasabah.</p>
+              <a href="/admin" class="btn btn-success rounded-pill px-4 py-2 mt-auto">
+                Masuk <i class="bi-chevron-right ms-2"></i>
+              </a>
             </div>
           </div>
+        </div>
         <?php endif; ?>
-
-        <!-- link halaman Laporan (role_id 1, 2, 3) -->
+        <!-- Laporan (role_id 1,2,3) -->
         <?php if (in_array($_SESSION['role_id'], [1, 2, 3])): ?>
-          <div class="col-lg-6 mb-4">
-            <div class="card border-0 shadow-sm">
-              <div class="card-body p-5">
-                <div class="feature-icon-1 bg-success bg-gradient mb-4">
-                  <i class="bi-file-text"></i>
-                </div>
-                <h3>Laporan</h3>
-                <p class="mb-4">Lihat laporan aktivitas dan data nasabah.</p>
-                <!-- Tombol untuk Customer Service -->
-                <a href="laporan/laporan-cs.php" class="btn btn-success rounded-pill px-4 py-2 me-2">
-                  Customer Service <i class="bi-chevron-right ms-2"></i>
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="card border-0 shadow-sm h-100">
+            <div class="card-body p-4 d-flex flex-column align-items-center">
+              <div class="feature-icon-1 bg-success bg-gradient mb-3">
+                <i class="bi-file-text"></i>
+              </div>
+              <h5 class="mb-2">Laporan</h5>
+              <p class="mb-3 text-center small">Lihat laporan aktivitas dan data nasabah.</p>
+              <div class="d-flex flex-wrap gap-2 justify-content-center mt-auto">
+                <a href="laporan/laporan-cs.php" class="btn btn-success rounded-pill px-3 py-2">
+                  CS <i class="bi-chevron-right ms-2"></i>
                 </a>
-                <!-- Tombol untuk Teller -->
-                <a href="laporan/laporan-teller.php" class="btn btn-success rounded-pill px-4 py-2 me-2">
+                <a href="laporan/laporan-teller.php" class="btn btn-success rounded-pill px-3 py-2">
                   Teller <i class="bi-chevron-right ms-2"></i>
                 </a>
-                <!-- Tombol untuk Admin Kredit -->
-                <a href="laporan/laporan-kredit.php" class="btn btn-success rounded-pill px-4 py-2">
-                  Admin Kredit <i class="bi-chevron-right ms-2"></i>
+                <a href="laporan/laporan-kredit.php" class="btn btn-success rounded-pill px-3 py-2">
+                  Kredit <i class="bi-chevron-right ms-2"></i>
                 </a>
               </div>
             </div>
           </div>
+        </div>
         <?php endif; ?>
-
-
-        <!-- link halaman Tambah User (role_id 1) -->
+        <!-- Tambah User (role_id 1) -->
         <?php if ($_SESSION['role_id'] == 1): ?>
-          <div class="col-lg-6 mb-4">
-            <div class="card border-0 shadow-sm">
-              <div class="card-body p-5">
-                <div class="feature-icon-1 bg-success bg-gradient mb-4">
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100">
+              <div class="card-body p-4 d-flex flex-column align-items-center">
+                <div class="feature-icon-1 bg-success bg-gradient mb-3">
                   <i class="bi-person-plus"></i>
                 </div>
-                <h3>Tambah User</h3>
-                <p class="mb-4">Menambah pengguna baru untuk aplikasi.</p>
-                <a href="tambah-user/index.php" class="btn btn-success rounded-pill px-4 py-2">
+                <h5 class="mb-2">Tambah User</h5>
+                <p class="mb-3 text-center small">Tambah pengguna baru aplikasi.</p>
+                <a href="tambah-user/index.php" class="btn btn-success rounded-pill px-4 py-2 mt-auto">
                   Masuk <i class="bi-chevron-right ms-2"></i>
                 </a>
               </div>
             </div>
           </div>
-        <?php endif; ?>
+        <?php endif; ?>  
       </div>
     </div>
   </main>
