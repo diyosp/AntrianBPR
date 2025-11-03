@@ -3,7 +3,7 @@
 $host     = "localhost";              // server database, default “localhost” atau “127.0.0.1”
 $username = "root";                   // username database, default “root”
 $password = "";                       // password database, default kosong
-$database = "db_antrian";             // memilih database yang akan digunakan
+$database = "bprsukab_antrix";             // memilih database yang akan digunakan
 
 // buat koneksi database
 $mysqli = mysqli_connect($host, $username, $password, $database);

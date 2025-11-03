@@ -19,7 +19,7 @@ $tahun = isset($_GET['tahun']) ? $_GET['tahun'] : null;
 $filter_cabang = isset($_GET['cabang_id']) ? $_GET['cabang_id'] : ($role_id != 1 ? $cabang_id : null);
 
 // Query dasar untuk mendapatkan data antrian
-$query = "SELECT * FROM tbl_antrian WHERE status = '1'";
+$query = "SELECT * FROM tbl_antrian WHERE waktu_mulai IS NOT NULL AND waktu_selesai IS NOT NULL";
 
 // Tambahkan filter cabang jika role_id bukan 1 atau jika superadmin menggunakan filter cabang
 if (!empty($filter_cabang)) {
@@ -132,6 +132,8 @@ $result = $stmt->get_result();
                 <th>Cabang ID</th>
                 <th>Tanggal</th>
                 <th>No Antrian</th>
+                <th>Waktu Mulai</th>
+                <th>Waktu Selesai</th>
                 <th>Status</th>
                 <th>Durasi</th>
             </tr>
@@ -148,22 +150,28 @@ $result = $stmt->get_result();
                     echo "<td>{$row['cabang_id']}</td>";
                     echo "<td>" . date('d/m/Y', strtotime($row['tanggal'])) . "</td>";
                     echo "<td>{$row['no_antrian']}</td>";
-                    echo "<td>" . ($row['status'] == '1' ? 'Selesai' : 'Menunggu') . "</td>";
+                    // Waktu Mulai
+                    echo "<td>" . (!empty($row['waktu_mulai']) ? date('H:i:s', strtotime($row['waktu_mulai'])) : '-') . "</td>";
+                    // Waktu Selesai
+                    echo "<td>" . (!empty($row['waktu_selesai']) ? date('H:i:s', strtotime($row['waktu_selesai'])) : '-') . "</td>";
+                    echo "<td>" . ($row['status'] == '2' ? 'Selesai' : 'Menunggu') . "</td>";
 
-                    if ($previous_date) {
-                        $current_date = strtotime($row['updated_date']);
-                        $duration = $current_date - $previous_date;
-                        $formatted_duration = sprintf("%02d:%02d:%02d", floor($duration / 3600), floor(($duration % 3600) / 60), $duration % 60);
+                    if (!empty($row['durasi'])) {
+                        $d = (int)$row['durasi'];
+                        $formatted_duration = sprintf("%02d:%02d:%02d", floor($d / 3600), floor(($d % 3600) / 60), $d % 60);
+                    } else if (!empty($row['waktu_mulai']) && !empty($row['waktu_selesai'])) {
+                        $mulai = strtotime($row['waktu_mulai']);
+                        $selesai = strtotime($row['waktu_selesai']);
+                        $d = $selesai - $mulai;
+                        $formatted_duration = sprintf("%02d:%02d:%02d", floor($d / 3600), floor(($d % 3600) / 60), $d % 60);
                     } else {
                         $formatted_duration = "-";
                     }
-
                     echo "<td>{$formatted_duration}</td>";
-                    $previous_date = strtotime($row['updated_date']);
                     $nomor++;
                 }
             } else {
-                echo "<tr><td colspan='6' class='text-center'>Tidak ada data tersedia</td></tr>";
+                echo "<tr><td colspan='8' class='text-center'>Tidak ada data tersedia</td></tr>";
             }
             ?>
         </tbody>
