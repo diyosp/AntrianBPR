@@ -153,6 +153,8 @@ require_once "../config/database.php";
         </tbody>
       </table>
     </div>
-  </main> 
+  </main>
+  <!-- Footer and Bootstrap JS -->
+  <?php include "../footer.php"; ?>
 </body>
 </html>

@@ -88,6 +88,9 @@ include "../header.php";
                     <button id="muteBtn" type="button" class="btn btn-light btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center ctrl-btn" aria-label="Bisu/Suara" title="Bisu/Suara">
                       <i class="bi-volume-mute fs-5"></i>
                     </button>
+                    <button id="fitBtn" type="button" class="btn btn-light btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center ctrl-btn" aria-label="Mode Tampilan" title="Mode Tampilan">
+                      <i class="bi-aspect-ratio fs-5"></i>
+                    </button>
                     <button id="fsBtn" type="button" class="btn btn-light btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center ctrl-btn" aria-label="Layar Penuh" title="Layar Penuh">
                       <i class="bi-arrows-fullscreen fs-5"></i>
                     </button>
@@ -97,7 +100,7 @@ include "../header.php";
                 <div class="text-center p-4">
                   <i class="bi-tv display-1 d-block mb-2"></i>
                   <div class="h4 mb-1">Video Placeholder</div>
-                  <div class="text-muted">Letakkan file video di folder <code>assets/video</code> atau <code>video</code>.</div>
+                  <div class="text-muted"><code>assets/video/company.mp4</code>.</div>
                 </div>
               <?php endif; ?>
             </div>
@@ -138,6 +141,8 @@ include "../header.php";
   #tvControls .ctrl-btn:hover { opacity: 1; }
   #tvControls.hide { opacity: 0; pointer-events: none; }
   #videoWrapper.controls-hidden { cursor: none; }
+  /* subtle cursor transition (best-effort: cursor can't fade, so we toggle classes) */
+  #videoWrapper { transition: background-color .2s ease; }
     @media (min-width: 992px) {
       .queue-card .display-1 { font-size: 6rem; }
     }
@@ -186,6 +191,7 @@ include "../header.php";
       const fsBtn = document.getElementById('fsBtn');
       const wrapper = document.getElementById('videoWrapper');
       const controls = document.getElementById('tvControls');
+      const fitBtn = document.getElementById('fitBtn');
       const fsRoot = document.querySelector('.tv-root') || document.documentElement;
       if (!v) return;
 
@@ -271,6 +277,7 @@ include "../header.php";
 
       // Auto-hide controls after inactivity when playing
       let hideTimer;
+      let stopTimer;
       const hideControls = () => {
         if (!controls || !wrapper) return;
         if (!v.paused && !v.ended) {
@@ -288,9 +295,50 @@ include "../header.php";
         clearTimeout(hideTimer);
         if (!v.paused && !v.ended) hideTimer = setTimeout(hideControls, 3000);
       };
+
+      // Show controls only after mouse stops moving (delay until user stops)
+      const onMouseMove = () => {
+        if (!wrapper) return;
+        // while moving, keep controls hidden; wait for stop
+        showControls();
+        wrapper.classList.remove('controls-hidden');
+        clearTimeout(stopTimer);
+        stopTimer = setTimeout(() => {
+          // show controls when user stops moving, then schedule auto-hide
+          showControls();
+          scheduleHide();
+        }, 350);
+      };
+
       if (wrapper) {
-        ['mousemove','touchstart','touchmove'].forEach(evt => wrapper.addEventListener(evt, () => { showControls(); scheduleHide(); }));
+        wrapper.addEventListener('mousemove', onMouseMove);
+        // touch should show controls immediately
+        wrapper.addEventListener('touchstart', () => { showControls(); scheduleHide(); });
+        wrapper.addEventListener('touchmove', () => { showControls(); scheduleHide(); });
       }
+
+      // Fit button: cycle through contain, cover, fill; persist in localStorage
+      const fitModes = ['contain','cover','fill'];
+      const setFitMode = (mode) => {
+        if (!v) return;
+        v.style.objectFit = mode;
+        localStorage.setItem('tvVideoFit', mode);
+        if (!fitBtn) return;
+        const icon = mode === 'contain' ? 'bi-aspect-ratio' : (mode === 'cover' ? 'bi-arrows-expand' : 'bi-arrows-fullscreen');
+        fitBtn.innerHTML = `<i class="${icon} fs-5"></i>`;
+        fitBtn.title = `Mode tampilan: ${mode}`;
+      };
+      const initFit = () => {
+        const saved = localStorage.getItem('tvVideoFit') || 'contain';
+        setFitMode(saved);
+        if (fitBtn) fitBtn.addEventListener('click', () => {
+          const cur = v.style.objectFit || 'contain';
+          const idx = fitModes.indexOf(cur);
+          const next = fitModes[(idx + 1) % fitModes.length];
+          setFitMode(next);
+        });
+      };
+      initFit();
 
       // Initial sync and hide schedule
       syncControls();

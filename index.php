@@ -25,6 +25,21 @@ include "header.php";
       </div>
 
   <div class="row gx-5">
+        <!-- Tampilan Antrian TV (new card, leftmost) -->
+        <div class="col-lg-6 mb-4">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-5">
+              <div class="feature-icon-1 bg-success bg-gradient mb-4">
+                <i class="bi-tv"></i>
+              </div>
+              <h3>Tampilan Antrian TV</h3>
+              <p class="mb-4">Tampilan layar antrian untuk ditampilkan di TV/monitor.</p>
+              <a href="tampilan-tv/index.php" class="btn btn-success rounded-pill px-4 py-2">
+                Buka Tampilan <i class="bi-chevron-right ms-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
         <!-- link halaman Antrian Nasabah -->
         <div class="col-lg-6 mb-4">
           <div class="card border-0 shadow-sm">
