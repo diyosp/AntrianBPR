@@ -8,7 +8,9 @@
   <meta name="author" content="Indra Styawantoro">
 
   <!-- Title -->
-  <title>BPR Sukabumi</title>
+  <title><?php echo isset($pageTitle) && $pageTitle
+    ? htmlspecialchars($pageTitle) . ' - BPR Sukabumi'
+    : 'BPR Sukabumi'; ?></title>
 
   <!-- Favicon icon -->
   <link rel="shortcut icon" href="" type="image/x-icon">

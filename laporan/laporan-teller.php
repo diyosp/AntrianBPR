@@ -92,17 +92,42 @@ $result = $stmt->get_result();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Laporan Teller</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 </head>
 
 <body>
-    <div class="container mt-4">
-        <h2>Laporan Teller</h2>
+    <div class="container pt-5">
+        <div class="d-flex align-items-center mb-4">
+            <i class="bi-file-earmark-text text-success me-3 fs-3"></i>
+            <h1 class="h5 pt-2">Laporan Teller</h1>
+        </div>
 
         <!-- Form Filter -->
+        <?php
+            $isSuperAdmin = ($role_id == 1);
+            $hasBagian = ($cabang_id == 312);
+            if ($isSuperAdmin && $hasBagian) {
+                $colCabang = 'col-md-2';
+                $colTglAwal = 'col-md-2';
+                $colTglAkhir = 'col-md-2';
+                $colBulan = 'col-md-2';
+                $colTahun = 'col-md-1';
+                $colBagian = 'col-md-1';
+                $colActions = 'col-md-2';
+            } else {
+                $colCabang = 'col-md-2';
+                $colTglAwal = 'col-md-2';
+                $colTglAkhir = 'col-md-2';
+                $colBulan = 'col-md-2';
+                $colTahun = 'col-md-2';
+                $colBagian = 'col-md-2';
+                $colActions = 'col-md-2';
+            }
+        ?>
         <form method="GET" class="row mb-4">
             <?php if ($role_id == 1): // Filter cabang hanya untuk super_admin 
             ?>
-                <div class="col-md-3">
+                <div class="<?= $colCabang ?>">
                     <label for="cabang_id" class="form-label">Cabang</label>
                     <select id="cabang_id" name="cabang_id" class="form-select">
                         <option value="">Semua Cabang</option>
@@ -117,15 +142,15 @@ $result = $stmt->get_result();
                 </div>
             <?php endif; ?>
 
-            <div class="col-md-3">
+            <div class="<?= $colTglAwal ?>">
                 <label for="tanggal_awal" class="form-label">Tanggal Awal</label>
                 <input type="date" id="tanggal_awal" name="tanggal_awal" class="form-control" value="<?= $tanggal_awal ?>">
             </div>
-            <div class="col-md-3">
+            <div class="<?= $colTglAkhir ?>">
                 <label for="tanggal_akhir" class="form-label">Tanggal Akhir</label>
                 <input type="date" id="tanggal_akhir" name="tanggal_akhir" class="form-control" value="<?= $tanggal_akhir ?>">
             </div>
-            <div class="col-md-2">
+            <div class="<?= $colBulan ?>">
                 <label for="bulan" class="form-label">Bulan</label>
                 <select id="bulan" name="bulan" class="form-select">
                     <option value="">Semua Bulan</option>
@@ -137,7 +162,7 @@ $result = $stmt->get_result();
                     ?>
                 </select>
             </div>
-            <div class="col-md-2">
+            <div class="<?= $colTahun ?>">
                 <label for="tahun" class="form-label">Tahun</label>
                 <select id="tahun" name="tahun" class="form-select">
                     <option value="">Semua Tahun</option>
@@ -153,7 +178,7 @@ $result = $stmt->get_result();
 
             <?php if ($cabang_id == 312): // Filter bagian hanya untuk cabang 312 
             ?>
-                <div class="col-md-2">
+                <div class="<?= $colBagian ?>">
                     <label for="bagian" class="form-label">Bagian</label>
                     <select id="bagian" name="bagian" class="form-select">
                         <option value="">Semua Bagian</option>
@@ -163,16 +188,22 @@ $result = $stmt->get_result();
                 </div>
             <?php endif; ?>
 
-            <div class="col-md-2 d-flex align-items-end">
-                <button type="submit" class="btn btn-primary">Filter</button>
+            <div class="<?= $colActions ?> d-flex align-items-end justify-content-end">
+                <div class="btn-group w-100">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                        <span class="visually-hidden">Toggle Dropdown</span>
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><a class="dropdown-item" href="export-pdf-teller.php?<?= http_build_query($_GET) ?>">Download PDF</a></li>
+                        <li><a class="dropdown-item" href="export-excel-teller.php?<?= http_build_query($_GET) ?>">Download Excel</a></li>
+                        <li><hr class="dropdown-divider"></li>
+                        <li><a class="dropdown-item" href="print-teller.php?<?= http_build_query($_GET) ?>" target="_blank">Print</a></li>
+                    </ul>
+                </div>
             </div>
         </form>
-        <!-- Tombol Export PDF dan Print -->
-        <div class="mb-4">
-            <a href="export-pdf-teller.php?<?= http_build_query($_GET) ?>" class="btn btn-danger">Download PDF</a>
-            <a href="export-excel-teller.php?<?= http_build_query($_GET) ?>" class="btn btn-warning">Download Excel</a>
-            <a href="print-teller.php?<?= http_build_query($_GET) ?>" target="_blank" class="btn btn-success">Print</a>
-        </div>
+        <!-- Actions moved into split dropdown next to Filter -->
 
         <!-- Tabel Laporan -->
         <table class="table table-bordered table-striped">

@@ -65,7 +65,7 @@ $spreadsheet = new Spreadsheet();
 $sheet = $spreadsheet->getActiveSheet();
 $sheet->setCellValue('A1', 'No');
 $sheet->setCellValue('B1', 'Cabang ID');
-$sheet->setCellValue('C1', 'Tanggal');
+    $sheet->setCellValue('C1', 'Tanggal');
 $sheet->setCellValue('D1', 'No Antrian');
 $sheet->setCellValue('E1', 'Waktu Mulai');
 $sheet->setCellValue('F1', 'Waktu Selesai');
@@ -76,12 +76,25 @@ $nomor = 1;
 while ($row = $result->fetch_assoc()) {
     $sheet->setCellValue('A' . $rowNum, $nomor++);
     $sheet->setCellValue('B' . $rowNum, $row['cabang_id']);
-    $sheet->setCellValue('C' . $rowNum, $row['tanggal_kredit']);
+    // Format tanggal dd/mm/yy
+    $sheet->setCellValue('C' . $rowNum, !empty($row['tanggal_kredit']) ? date('d/m/y', strtotime($row['tanggal_kredit'])) : '-');
     $sheet->setCellValue('D' . $rowNum, $row['no_antrian_kredit']);
     $sheet->setCellValue('E' . $rowNum, $row['waktu_mulai']);
     $sheet->setCellValue('F' . $rowNum, $row['waktu_selesai']);
     $sheet->setCellValue('G' . $rowNum, $row['status_kredit'] == '2' ? 'Selesai' : 'Menunggu');
-    $sheet->setCellValue('H' . $rowNum, $row['durasi']);
+    // Format durasi ke HH:MM:SS (konsisten dengan PDF/halaman web)
+    if (!empty($row['durasi'])) {
+        $d = (int)$row['durasi'];
+        $formatted_duration = sprintf("%02d:%02d:%02d", floor($d / 3600), floor(($d % 3600) / 60), $d % 60);
+    } elseif (!empty($row['waktu_mulai']) && !empty($row['waktu_selesai'])) {
+        $mulai = strtotime($row['waktu_mulai']);
+        $selesai = strtotime($row['waktu_selesai']);
+        $d = max(0, $selesai - $mulai);
+        $formatted_duration = sprintf("%02d:%02d:%02d", floor($d / 3600), floor(($d % 3600) / 60), $d % 60);
+    } else {
+        $formatted_duration = "-";
+    }
+    $sheet->setCellValue('H' . $rowNum, $formatted_duration);
     $rowNum++;
 }
 $writer = new Xlsx($spreadsheet);

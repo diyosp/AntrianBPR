@@ -62,12 +62,29 @@ while ($row = $result->fetch_assoc()) {
     $html .= '<tr>';
     $html .= '<td>' . $nomor++ . '</td>';
     $html .= '<td>' . htmlspecialchars($row['cabang_id']) . '</td>';
-    $html .= '<td>' . htmlspecialchars($row['tanggal_kredit']) . '</td>';
+    // Tanggal dd/mm/yy
+    $tgl_fmt = !empty($row['tanggal_kredit']) ? date('d/m/y', strtotime($row['tanggal_kredit'])) : '-';
+    $html .= '<td>' . $tgl_fmt . '</td>';
     $html .= '<td>' . htmlspecialchars($row['no_antrian_kredit']) . '</td>';
-    $html .= '<td>' . htmlspecialchars($row['waktu_mulai']) . '</td>';
-    $html .= '<td>' . htmlspecialchars($row['waktu_selesai']) . '</td>';
+    // Format waktu ke H:i:s jika tersedia
+    $wm = !empty($row['waktu_mulai']) ? date('H:i:s', strtotime($row['waktu_mulai'])) : '-';
+    $ws = !empty($row['waktu_selesai']) ? date('H:i:s', strtotime($row['waktu_selesai'])) : '-';
+    $html .= '<td>' . $wm . '</td>';
+    $html .= '<td>' . $ws . '</td>';
     $html .= '<td>' . ($row['status_kredit'] == '2' ? 'Selesai' : 'Menunggu') . '</td>';
-    $html .= '<td>' . htmlspecialchars($row['durasi']) . '</td>';
+    // Format durasi ke HH:MM:SS (atau hitung jika perlu)
+    if (!empty($row['durasi'])) {
+        $d = (int)$row['durasi'];
+        $formatted_duration = sprintf('%02d:%02d:%02d', floor($d / 3600), floor(($d % 3600) / 60), $d % 60);
+    } elseif (!empty($row['waktu_mulai']) && !empty($row['waktu_selesai'])) {
+        $mulai = strtotime($row['waktu_mulai']);
+        $selesai = strtotime($row['waktu_selesai']);
+        $d = max(0, $selesai - $mulai);
+        $formatted_duration = sprintf('%02d:%02d:%02d', floor($d / 3600), floor(($d % 3600) / 60), $d % 60);
+    } else {
+        $formatted_duration = '-';
+    }
+    $html .= '<td>' . $formatted_duration . '</td>';
     $html .= '</tr>';
 }
 $html .= '</tbody></table></body></html>';

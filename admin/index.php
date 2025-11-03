@@ -62,6 +62,22 @@ $cabang_id = $_SESSION['cabang_id'] ?? null; // Gunakan null jika session tidak 
             </div>
           </div>
         </div>
+        <div class="row gx-5">
+        <!-- link halaman nomor antrian -->
+        <div class="col-lg-6 mb-4">
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-5">
+              <div class="feature-icon-1 bg-success bg-gradient mb-4">
+                <i class="bi-credit-card"></i>
+              </div>
+              <h3>Admin Kredit</h3>
+              <p class="mb-4">Panggil Nasabah Loket Admin Kredit</p>
+              <a href="../panggilan-antrian-kredit" class="btn btn-success rounded-pill px-4 py-2">
+                Tampilkan <i class="bi-chevron-right ms-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   </main>
