@@ -18,32 +18,29 @@ include "../header.php";
   <div class="col-12 col-lg-5 d-grid h-100 left-col">
           <!-- CS Queue -->
           <div class="card border-0 shadow-sm queue-card">
-            <div class="card-body p-4">
+            <div class="card-body p-4" style="background-color: #11224E;">
               <div class="d-flex align-items-center justify-content-between mb-2">
-                <h5 class="mb-0">Antrian Customer Service</h5>
-                <i class="bi-people text-success fs-4"></i>
+                <h5 class="mb-0" style="color: #fff;">Antrian Customer Service</h5>
               </div>
-              <div class="display-1 fw-bold text-center" id="queue-cs">-</div>
+              <div class="display-1 fw-bold text-center" id="queue-cs" style="color: #fff;">-</div>
             </div>
           </div>
           <!-- Teller Queue -->
           <div class="card border-0 shadow-sm queue-card">
-            <div class="card-body p-4">
+            <div class="card-body p-4" style="background-color: #11224E;">
               <div class="d-flex align-items-center justify-content-between mb-2">
-                <h5 class="mb-0">Antrian Teller</h5>
-                <i class="bi-mic text-success fs-4"></i>
+                <h5 class="mb-0" style="color: #fff;">Antrian Teller</h5>
               </div>
-              <div class="display-1 fw-bold text-center" id="queue-teller">-</div>
+              <div class="display-1 fw-bold text-center" id="queue-teller" style="color: #fff;">-</div>
             </div>
           </div>
           <!-- Kredit Queue -->
           <div class="card border-0 shadow-sm queue-card">
-            <div class="card-body p-4">
+            <div class="card-body p-4" style="background-color: #11224E;">
               <div class="d-flex align-items-center justify-content-between mb-2">
-                <h5 class="mb-0">Antrian Admin Kredit</h5>
-                <i class="bi-credit-card text-success fs-4"></i>
+                <h5 class="mb-0" style="color: #fff;">Antrian Admin Kredit</h5>
               </div>
-              <div class="display-1 fw-bold text-center" id="queue-kredit">-</div>
+              <div class="display-1 fw-bold text-center" id="queue-kredit" style="color: #fff;">-</div>
             </div>
           </div>
         </div>
@@ -107,15 +104,27 @@ include "../header.php";
           </div>
           <!-- Company Info -->
           <div class="card border-0 shadow-sm">
-            <div class="card-body p-4 d-flex justify-content-between align-items-center flex-wrap gap-2">
-              <div>
-                <div class="fw-semibold">BPR Sukabumi</div>
-                <div class="small text-muted">Layanan cepat, aman, dan terpercaya.</div>
+            <div class="card-body p-3 d-flex flex-column gap-2" style="background-color: #F87B1B;">
+              <div class="d-flex justify-content-between align-items-center w-100">
+                <div>
+                  <div class="fw-semibold" style="color: #fff; font-size: 1.50rem;">BPR Perumda Sukabumi</div>
+                  <div class="small text"  style="color: #fff; font-size: 1.00rem;">Layanan cepat, aman, dan terpercaya.</div>
+                </div>
+                <div class="text-end">
+                  <div class="small text" style="color: #fff; font-size: 1.50rem;">Tanggal & Waktu</div>
+                  <div class="fw-semibold" id="clock"  style="color: #fff; font-size: 1.00rem;">-</div>
+                </div>
               </div>
-              <div class="text-end">
-                <div class="small text-muted">Tanggal & Waktu</div>
-                <div class="fw-semibold" id="clock">-</div>
-              </div>
+
+              <!-- Product marquee (running text)
+              <div class="product-marquee" aria-hidden="false" style="width:100%; overflow:hidden;">
+                <div class="track" style="white-space:nowrap; display:inline-block;">
+                  <span style="color:#fff; margin-right:2rem; font-weight:600;">Tabungan — Bunga kompetitif</span>
+                  <span style="color:#fff; margin-right:2rem; font-weight:600;">Deposito — Jangka pendek &amp; panjang</span>
+                  <span style="color:#fff; margin-right:2rem; font-weight:600;">Kredit — Pembiayaan cepat</span>
+                  <span style="color:#fff; margin-right:2rem; font-weight:600;">Tabungan — Bunga kompetitif</span>
+                </div>
+              </div> -->
             </div>
           </div>
         </div>
@@ -130,12 +139,13 @@ include "../header.php";
     .tv-row { height: 100%; }
     .left-col { grid-template-rows: repeat(3, 1fr); gap: 0; }
     .right-col { display: grid; grid-template-rows: 1fr auto; gap: 0; }
-    .left-col .queue-card, .right-col > .card { height: 100%; border-radius: 0; }
-    .queue-card .display-1 { font-size: clamp(3rem, 8vw, 6rem); }
+  .left-col .queue-card, .right-col > .card { height: 100%; border-radius: 0; }
+  /* larger, TV-friendly queue numbers */
+  .queue-card .display-1 { font-size: clamp(4rem, 12vw, 10rem); }
     .queue-card h5 { font-weight: 600; }
     .video-area { height: 100%; min-height: 0; }
     /* Show whole video without cropping (no sound bars filled by background) */
-    .video-area video, .video-area img { width: 100%; height: 100%; object-fit: contain; background:#fff; display: block; }
+    .video-area video, .video-area img { width: 100%; height: 100%; object-fit: contain; background:#F87B1B; display: block; }
   #tvControls { z-index: 6; opacity: 1; transition: opacity .3s ease; }
   #tvControls .ctrl-btn { width: 40px; height: 40px; border-radius: 50%; opacity: 0.95; }
   #tvControls .ctrl-btn:hover { opacity: 1; }
@@ -144,8 +154,12 @@ include "../header.php";
   /* subtle cursor transition (best-effort: cursor can't fade, so we toggle classes) */
   #videoWrapper { transition: background-color .2s ease; }
     @media (min-width: 992px) {
-      .queue-card .display-1 { font-size: 6rem; }
+      /* larger desktop/tv size */
+      .queue-card .display-1 { font-size: 10rem; }
     }
+    /* running marquee for product showcase */
+    .product-marquee .track { display: inline-block; animation: marquee 14s linear infinite; }
+    @keyframes marquee { from { transform: translateX(0%); } to { transform: translateX(-50%); } }
   </style>
 
   <script>
