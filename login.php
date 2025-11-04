@@ -1,5 +1,10 @@
 <?php
 session_start(); // Memulai sesi
+// Read and clear one-time flash error so messages don't persist after refresh
+if (isset($_SESSION['flash_error'])) {
+    $error = $_SESSION['flash_error'];
+    unset($_SESSION['flash_error']);
+}
 include "config/database.php"; // Koneksi ke database
 
 // Ambil data role dari tabel role
@@ -24,37 +29,58 @@ if ($cabangResult->num_rows > 0) {
 
 // Cek jika form dikirim
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
-    $role_id = $_POST['role_id']; // Role yang dipilih
-    $cabang_id = $_POST['cabang_id']; // Cabang yang dipilih
+    // Safely read POST values to avoid undefined index warnings
+    $username = $_POST['username'] ?? '';
+    $password = $_POST['password'] ?? '';
+    // role_id and cabang_id may be empty strings when user hasn't selected an option
+    $role_id = isset($_POST['role_id']) && $_POST['role_id'] !== '' ? (int) $_POST['role_id'] : null; // Role yang dipilih
+    $cabang_id = isset($_POST['cabang_id']) && $_POST['cabang_id'] !== '' ? (int) $_POST['cabang_id'] : null; // Cabang yang dipilih
 
-    // Mencari username di database dengan role dan cabang yang sesuai
-    $query = "SELECT * FROM users WHERE username = ? AND role_id = ? AND cabang_id = ?";
-    $stmt = $mysqli->prepare($query);
-    $stmt->bind_param("sii", $username, $role_id, $cabang_id); // "sii" artinya string, int, int
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    if ($result->num_rows > 0) {
-        $user = $result->fetch_assoc();
-
-        // Verifikasi password
-        if (password_verify($password, $user['password'])) {
-            // Login berhasil, set session
-            $_SESSION['user_id'] = $user['id'];
-            $_SESSION['username'] = $user['username'];
-            $_SESSION['role_id'] = $user['role_id'];
-            $_SESSION['cabang_id'] = $user['cabang_id'];
-
-            // Redirect ke halaman index.php
-            header("Location: index.php");
-            exit;
-        } else {
-            $error = "Password salah!";
-        }
+    // Basic validation: ensure all fields provided
+    if ($username === '' || $password === '' || empty($role_id) || empty($cabang_id)) {
+        // use flash + PRG so the error is cleared on refresh
+        $_SESSION['flash_error'] = "Semua field harus diisi (Username, Password, Role, dan Cabang).";
+        header("Location: login.php");
+        exit;
     } else {
-        $error = "Username, Role, atau Cabang tidak sesuai!";
+        // Mencari username di database dengan role dan cabang yang sesuai
+        $query = "SELECT * FROM users WHERE username = ? AND role_id = ? AND cabang_id = ?";
+        $stmt = $mysqli->prepare($query);
+        if ($stmt) {
+            $stmt->bind_param("sii", $username, $role_id, $cabang_id); // "sii" artinya string, int, int
+            $stmt->execute();
+            $result = $stmt->get_result();
+
+            if ($result && $result->num_rows > 0) {
+                $user = $result->fetch_assoc();
+
+                // Verifikasi password
+                if (password_verify($password, $user['password'])) {
+                    // Login berhasil, set session
+                    $_SESSION['user_id'] = $user['id'];
+                    $_SESSION['username'] = $user['username'];
+                    $_SESSION['role_id'] = $user['role_id'];
+                    $_SESSION['cabang_id'] = $user['cabang_id'];
+
+                    // Redirect ke halaman index.php
+                    header("Location: index.php");
+                    exit;
+                } else {
+                    $_SESSION['flash_error'] = "Password salah!";
+                    header("Location: login.php");
+                    exit;
+                }
+            } else {
+                $_SESSION['flash_error'] = "Username, Role, atau Cabang tidak sesuai!";
+                header("Location: login.php");
+                exit;
+            }
+        } else {
+            // Prepare failed
+            $_SESSION['flash_error'] = "Terjadi kesalahan pada server. Silakan coba lagi.";
+            header("Location: login.php");
+            exit;
+        }
     }
 }
 ?>
@@ -80,10 +106,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <div class="container d-flex align-items-center justify-content-center min-vh-100">
             <div class="row w-100 justify-content-center">
                 <div class="col-md-8 col-lg-5">
-                    <!-- Tampilkan pesan error jika ada -->
-                    <?php if (!empty($error)): ?>
-                        <div class="alert alert-danger text-center shadow-sm"><?php echo $error; ?></div>
-                    <?php endif; ?>
+                    <!-- (moved) error will be displayed below the Masuk button inside the form -->
 
                     <!-- Card Form Login -->
                     <div class="card login-card shadow-lg">
@@ -138,6 +161,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                 <div class="d-grid">
                                     <button type="submit" class="btn btn-success btn-lg">Masuk</button>
                                 </div>
+                                <!-- Show server-side error messages directly under the submit button -->
+                                <?php if (!empty($error)): ?>
+                                    <div class="alert alert-danger text-center shadow-sm mt-3"><?php echo htmlspecialchars($error); ?></div>
+                                <?php endif; ?>
                             </form>
 
                             <div class="text-center mt-3 text-muted small">

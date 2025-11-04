@@ -20,7 +20,7 @@ include "header.php";
           <span style="background-color: #11224E;" class="text-white">
             Selamat Datang di <img src="assets/img/test.png" alt="BPR Sukabumi" style="width: 75px; height: 75px; object-fit: contain; vertical-align: middle;"> Silahkan pilih menu berikut.
           </span>
-          <a href="logout.php" class="btn btn-danger">Logout</a>
+          <a href="logout.php" class="btn" style="background-color: #F87B1B; border-color: #F87B1B; color: #fff;">Logout</a>
         </div>
       </div>
       <div class="row g-3 justify-content-start">
