@@ -31,64 +31,66 @@ if (empty($nama_cabang)) {
 
 <body class="d-flex flex-column h-100">
     <main class="flex-shrink-0">
-        <div class="container pt-5">
-            <div class="row justify-content-lg-center">
-                <div class="col-lg-8 mb-4">
-                    <div class="px-4 py-3 mb-4 bg-white rounded-2 shadow-sm">
-                        <!-- Judul Halaman -->
-                        <div class="d-flex align-items-center me-md-auto">
-                            <i class="bi-people-fill text-success me-3 fs-3"></i>
-                            <h1 class="h5 pt-2">Nomor Antrian</h1>
-                        </div>
-                    </div>
-
-                    <div class="card border-0 shadow-sm">
-                        <div class="card-body text-center d-grid p-5">
-                            <div class="row">
-                                <!-- Antrian Customer Service -->
-                                <div class="col-12 col-md-4 mb-4">
-                                    <div class="border border-success rounded-2 py-2 mb-3">
-                                        <h3 class="pt-3">ANTRIAN CS</h3>
-                                        <h1 id="antrian_cs" class="display-4 fw-bold text-success text-center lh-1 pb-2"></h1>
-                                    </div>
-                                    <a id="insert_cs" href="javascript:void(0)" class="btn btn-success btn-block rounded-pill fs-6 px-4 py-3">
-                                        <i class="bi-person-plus fs-4 me-2"></i> Ambil Nomor CS
-                                    </a>
-                                </div>
-
-                                <!-- Antrian Teller -->
-                                <div class="col-12 col-md-4 mb-4">
-                                    <div class="border border-success rounded-2 py-2 mb-3">
-                                        <h3 class="pt-3">ANTRIAN TELLER</h3>
-                                        <h1 id="antrian_teller" class="display-4 fw-bold text-success text-center lh-1 pb-2"></h1>
-                                    </div>
-                                    <a id="insert_teller" href="javascript:void(0)" class="btn btn-success btn-block rounded-pill fs-6 px-4 py-3">
-                                        <i class="bi-person-plus fs-4 me-2"></i> Ambil Nomor Teller
-                                    </a>
-                                </div>
-
-                                <!-- Antrian Admin Kredit -->
-                                <div class="col-12 col-md-4 mb-4">
-                                    <div class="border border-success rounded-2 py-2 mb-3">
-                                        <h3 class="pt-3">ANTRIAN KREDIT</h3>
-                                        <h1 id="antrian_admin_kredit" class="display-4 fw-bold text-success text-center lh-1 pb-2"></h1>
-                                    </div>
-                                    <a id="insert_admin_kredit" href="javascript:void(0)" class="btn btn-success btn-block rounded-pill fs-6 px-4 py-3">
-                                        <i class="bi-person-plus fs-4 me-2"></i> Ambil Nomor Kredit
-                                    </a>
-                                </div>
-
+        <div class="container pt-4">
+            <div class="row g-3 justify-content-center">
+                <div class="col-12">
+                    <div class="alert alert-light d-flex align-items-center mb-5" role="alert" style="background-color: #11224E; overflow: hidden; border-radius: 0.50rem !important;">
+                        <i class="bi-people me-3 fs-3" style="color: #fff;"></i>
+                        <div class="d-flex justify-content-between align-items-center w-100">
+                            <div class="text-white fw-semibold">Ambil Nomor - <?= htmlspecialchars($nama_cabang) ?></div>
+                            <div class="text-end">
+                                <a href="../" class="btn btn-outline-light btn-sm">Kembali</a>
                             </div>
                         </div>
                     </div>
                 </div>
+
+                <!-- Cards grid similar to main index -->
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card border-0 shadow-sm h-100 rounded-2" style="background-color: #11224E; overflow: hidden; border-radius: 1rem !important;">
+                        <div class="card-body p-4 d-flex flex-column align-items-center">
+                            <i class="bi-person-plus mb-3" style="color: #fff; font-size: 2.2rem;"></i>
+                            <h5 class="mb-2" style="color: #fff;">Antrian Customer Service</h5>
+                            <p class="mb-3 text-center small" style="color: #fff;">Ambil nomor antrian untuk Customer Service.</p>
+                            <div class="display-4 fw-bold text-center mb-3" id="antrian_cs" style="color: #fff;"></div>
+                            <a id="insert_cs" href="javascript:void(0)" class="btn rounded-pill px-4 py-2 mt-auto w-100" style="background-color: #F87B1B; color: #fff;">
+                                Ambil Nomor CS <i class="bi-chevron-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card border-0 shadow-sm h-100 rounded-2" style="background-color: #11224E; overflow: hidden; border-radius: 1rem !important;">
+                        <div class="card-body p-4 d-flex flex-column align-items-center">
+                            <i class="bi-cash-stack mb-3" style="color: #fff; font-size: 2.2rem;"></i>
+                            <h5 class="mb-2" style="color: #fff;">Antrian Teller</h5>
+                            <p class="mb-3 text-center small" style="color: #fff;">Ambil nomor antrian untuk Teller.</p>
+                            <div class="display-4 fw-bold text-center mb-3" id="antrian_teller" style="color: #fff;"></div>
+                            <a id="insert_teller" href="javascript:void(0)" class="btn rounded-pill px-4 py-2 mt-auto w-100" style="background-color: #F87B1B; color: #fff;">
+                                Ambil Nomor Teller <i class="bi-chevron-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="col-12 col-md-6 col-lg-3">
+                    <div class="card border-0 shadow-sm h-100 rounded-2" style="background-color: #11224E; overflow: hidden; border-radius: 1rem !important;">
+                        <div class="card-body p-4 d-flex flex-column align-items-center">
+                            <i class="bi-credit-card-2-back mb-3" style="color: #fff; font-size: 2.2rem;"></i>
+                            <h5 class="mb-2" style="color: #fff;">Antrian Admin Kredit</h5>
+                            <p class="mb-3 text-center small" style="color: #fff;">Ambil nomor antrian untuk Admin Kredit.</p>
+                            <div class="display-4 fw-bold text-center mb-3" id="antrian_admin_kredit" style="color: #fff;"></div>
+                            <a id="insert_admin_kredit" href="javascript:void(0)" class="btn rounded-pill px-4 py-2 mt-auto w-100" style="background-color: #F87B1B; color: #fff;">
+                                Ambil Nomor Kredit <i class="bi-chevron-right ms-2"></i>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         </div>
     </main>
-
-    <!-- Footer -->
-    <?php include "../footer.php"; ?>
-
     <!-- jQuery Core -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
     <script src="print_blue.js"></script>

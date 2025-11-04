@@ -2,90 +2,99 @@
 include "../header.php";
 
 // Mulai sesi untuk mendapatkan data pengguna yang login
+
 session_start();
+// Ensure database connection is available so we can read branch name
+if (!isset($mysqli) && file_exists(__DIR__ . '/../config/database.php')) {
+  include_once __DIR__ . '/../config/database.php';
+}
 
 // Ambil cabang_id dari session
 $cabang_id = $_SESSION['cabang_id'] ?? null; // Gunakan null jika session tidak tersedia
+
+// Default nama cabang
+$nama_cabang = "BPR Sukabumi";
+
+// Jika cabang_id tersedia and $mysqli (DB) exists, ambil nama cabang
+if (!empty($cabang_id) && isset($mysqli)) {
+  $query = "SELECT nama FROM cabang WHERE id = ?";
+  if ($stmt = $mysqli->prepare($query)) {
+    $stmt->bind_param("i", $cabang_id);
+    $stmt->execute();
+    $stmt->bind_result($fetched_name);
+    if ($stmt->fetch() && !empty($fetched_name)) {
+      $nama_cabang = $fetched_name;
+    }
+    $stmt->close();
+  }
+}
 ?>
 
 <body class="d-flex flex-column h-100">
   <main class="flex-shrink-0">
-    <div class="container pt-5">
-      <!-- tampilkan pesan selamat datang -->
-      <div class="alert alert-light d-flex align-items-center mb-5" role="alert">
-        <i class="bi-info-circle text-success me-3 fs-3"></i>
-        <div>
-          Selamat Datang di Aplikasi Nomor Antrian <strong>BPR Sukabumi</strong>.
-        </div>
-      </div>
-
-      <div class="row gx-5">
-        <!-- link halaman nomor antrian -->
-        <div class="col-lg-6 mb-4">
-          <div class="card border-0 shadow-sm">
-            <div class="card-body p-5">
-              <div class="feature-icon-1 bg-success bg-gradient mb-4">
-                <i class="bi-people"></i>
+    <div class="container pt-4">
+  <div class="row g-3 justify-content-start">
+        <div class="col-12">
+          <div class="alert alert-light d-flex align-items-center mb-6" role="alert" style="background-color: #11224E; overflow: hidden; border-radius: 0.5rem !important;">
+            <i class="bi-info-circle me-3 fs-3" style="color: #fff;"></i>
+            <div class="d-flex justify-content-between align-items-center w-100">
+              <div class="text-white fw-semibold">Panel Panggilan - <?= htmlspecialchars($nama_cabang) ?></div>
+              <div class="text-end">
+                <a href="../" class="btn btn-outline-light btn-sm">Kembali</a>
               </div>
-              <h3>Customer Service</h3>
-              <p class="mb-4">Panggil Nasabah Loket Customer Service</p>
-              <a href="../panggilan-antrian" class="btn btn-success rounded-pill px-4 py-2">
+            </div>
+          </div>
+        </div>
+
+        <!-- card: Customer Service -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="card border-0 shadow-sm h-100 rounded-2" style="background-color: #11224E; overflow: hidden; border-radius: 1rem !important;">
+            <div class="card-body p-4 d-flex flex-column align-items-center">
+              <i class="bi-people mb-3" style="color: #fff; font-size: 2.2rem;"></i>
+              <h5 class="mb-2" style="color: #fff;">Customer Service</h5>
+              <p class="mb-3 text-center small" style="color: #fff;">Panggil Nasabah Loket Customer Service</p>
+              <a href="../panggilan-antrian" class="btn rounded-pill px-4 py-2 mt-auto w-100" style="background-color: #F87B1B; color: #fff;">
                 Tampilkan <i class="bi-chevron-right ms-2"></i>
               </a>
             </div>
           </div>
         </div>
 
-        <!-- link halaman panggilan antrian teller -->
-        <div class="col-lg-6 mb-4">
-          <div class="card border-0 shadow-sm">
-            <div class="card-body p-5">
-              <div class="feature-icon-1 bg-success bg-gradient mb-4">
-                <i class="bi-mic"></i>
+        <!-- card: Teller -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="card border-0 shadow-sm h-100 rounded-2" style="background-color: #11224E; overflow: hidden; border-radius: 1rem !important;">
+            <div class="card-body p-4 d-flex flex-column align-items-center">
+              <i class="bi-mic mb-3" style="color: #fff; font-size: 2.2rem;"></i>
+              <h5 class="mb-2" style="color: #fff;">Teller</h5>
+              <p class="mb-3 text-center small" style="color: #fff;">Panggil Nasabah Loket Teller</p>
+              <div class="d-flex gap-2 w-100">
+                <?php if ($cabang_id == 312): ?>
+                  <a href="../panggilan-antrian-teller-a" class="btn rounded-pill px-3 py-2 w-50" style="background-color: #F87B1B; color: #fff;">Teller 1<i class="bi-chevron-right ms-2"></i></a>
+                  <a href="../panggilan-antrian-teller-b" class="btn rounded-pill px-3 py-2 w-50" style="background-color: #F87B1B; color: #fff;">Teller 2<i class="bi-chevron-right ms-2"></i></a>
+                <?php else: ?>
+                  <a href="../panggilan-antrian-teller" class="btn rounded-pill px-4 py-2 w-100" style="background-color: #F87B1B; color: #fff;">Tampilkan <i class="bi-chevron-right ms-2"></i></a>
+                <?php endif; ?>
               </div>
-              <h3>Teller</h3>
-              <p class="mb-4">Panggil Nasabah Loket Teller</p>
-              <?php if ($cabang_id == 312): ?>
-                <!-- Khusus cabang_id 312, tampilkan Teller A dan Teller B -->
-                <a href="../panggilan-antrian-teller-a" class="btn btn-success rounded-pill px-4 py-2 me-2">
-                  Teller 1
-                </a>
-                <a href="../panggilan-antrian-teller-b" class="btn btn-success rounded-pill px-4 py-2">
-                  Teller 2
-                </a>
-              <?php else: ?>
-                <!-- Selain cabang_id 312, tampilkan tombol Tampilkan -->
-                <a href="../panggilan-antrian-teller" class="btn btn-success rounded-pill px-4 py-2">
-                  Tampilkan <i class="bi-chevron-right ms-2"></i>
-                </a>
-              <?php endif; ?>
             </div>
           </div>
         </div>
-        <div class="row gx-5">
-        <!-- link halaman nomor antrian -->
-        <div class="col-lg-6 mb-4">
-          <div class="card border-0 shadow-sm">
-            <div class="card-body p-5">
-              <div class="feature-icon-1 bg-success bg-gradient mb-4">
-                <i class="bi-credit-card"></i>
-              </div>
-              <h3>Admin Kredit</h3>
-              <p class="mb-4">Panggil Nasabah Loket Admin Kredit</p>
-              <a href="../panggilan-antrian-kredit" class="btn btn-success rounded-pill px-4 py-2">
-                Tampilkan <i class="bi-chevron-right ms-2"></i>
-              </a>
+
+        <!-- card: Admin Kredit -->
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="card border-0 shadow-sm h-100 rounded-2" style="background-color: #11224E; overflow: hidden; border-radius: 1rem !important;">
+            <div class="card-body p-4 d-flex flex-column align-items-center">
+              <i class="bi-credit-card-2-back mb-3" style="color: #fff; font-size: 2.2rem;"></i>
+              <h5 class="mb-2" style="color: #fff;">Admin Kredit</h5>
+              <p class="mb-3 text-center small" style="color: #fff;">Panggil Nasabah Loket Admin Kredit</p>
+              <a href="../panggilan-antrian-kredit" class="btn rounded-pill px-4 py-2 mt-auto w-100" style="background-color: #F87B1B; color: #fff;">Tampilkan <i class="bi-chevron-right ms-2"></i></a>
             </div>
           </div>
         </div>
+
       </div>
     </div>
   </main>
 
-  <!-- Footer -->
-  <?php
-  include "../footer.php";
-  ?>
 
   <!-- Popper and Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js" integrity="sha384-IQsoLXl5PILFhosVNubq5LC7Qb9DXgDA9i+tQ8Zj3iwWAwPtgFTxbJ8NT4GN1R8p" crossorigin="anonymous"></script>

@@ -280,6 +280,10 @@ table.table-bordered.dataTable th {
 /* small helpers */
 .btn-lg { border-radius: 10px; }
 
+/* Extra spacing utilities beyond Bootstrap's mb-5 */
+.mb-6 { margin-bottom: 4rem !important; }
+.mb-7 { margin-bottom: 6rem !important; }
+
 /* Autofill overrides to ensure white background and readable text
    for Firefox (-moz-autofill) and WebKit browsers (-webkit-autofill) */
 /* Scoped: apply autofill override only inside the login card to avoid global side-effects */
