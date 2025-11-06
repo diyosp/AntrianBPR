@@ -101,8 +101,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="assets/css/style.css"> <!-- project stylesheet -->
 </head>
 
-<body class="d-flex flex-column h-100">
-    <main class="flex-shrink-0 login-page">
+<body class="d-flex flex-column h-100" style="background-color: #F5F7FA !important;">
+    <main class="flex-shrink-0 login-page" style="background: #F5F7FA !important;">
         <div class="container d-flex align-items-center justify-content-center min-vh-100">
             <div class="row w-100 justify-content-center">
                 <div class="col-md-8 col-lg-5">

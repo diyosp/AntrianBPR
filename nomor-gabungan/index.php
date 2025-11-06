@@ -47,12 +47,12 @@ if (empty($nama_cabang)) {
 
                 <!-- Cards grid similar to main index -->
                 <div class="col-12 col-md-6 col-lg-3">
-                    <div class="card border-0 shadow-sm h-100 rounded-2" style="background-color: #11224E; overflow: hidden; border-radius: 1rem !important;">
+                    <div class="card border-0 shadow-sm h-100 rounded-2" style="background-color: #11224E; overflow: hidden; border-radius: 1rem !important; min-height: 400px;">
                         <div class="card-body p-4 d-flex flex-column align-items-center">
                             <i class="bi-person-plus mb-3" style="color: #fff; font-size: 2.2rem;"></i>
                             <h5 class="mb-2" style="color: #fff;">Antrian Customer Service</h5>
-                            <p class="mb-3 text-center small" style="color: #fff;">Ambil nomor antrian untuk Customer Service.</p>
-                            <div class="display-4 fw-bold text-center mb-3" id="antrian_cs" style="color: #fff;"></div>
+                            <p class="mb-3 text-center small" style="color: #fff;">Ambil nomor antrian untuk CS.</p>
+                            <div class="display-4 fw-bold text-center mb-3" id="antrian_cs" style="color: #fff; font-size: 5rem;"></div>
                             <a id="insert_cs" href="javascript:void(0)" class="btn rounded-pill px-4 py-2 mt-auto w-100" style="background-color: #F87B1B; color: #fff;">
                                 Ambil Nomor CS <i class="bi-chevron-right ms-2"></i>
                             </a>
@@ -66,7 +66,7 @@ if (empty($nama_cabang)) {
                             <i class="bi-cash-stack mb-3" style="color: #fff; font-size: 2.2rem;"></i>
                             <h5 class="mb-2" style="color: #fff;">Antrian Teller</h5>
                             <p class="mb-3 text-center small" style="color: #fff;">Ambil nomor antrian untuk Teller.</p>
-                            <div class="display-4 fw-bold text-center mb-3" id="antrian_teller" style="color: #fff;"></div>
+                            <div class="display-4 fw-bold text-center mb-3" id="antrian_teller" style="color: #fff; font-size: 5rem;"></div>
                             <a id="insert_teller" href="javascript:void(0)" class="btn rounded-pill px-4 py-2 mt-auto w-100" style="background-color: #F87B1B; color: #fff;">
                                 Ambil Nomor Teller <i class="bi-chevron-right ms-2"></i>
                             </a>
@@ -80,7 +80,7 @@ if (empty($nama_cabang)) {
                             <i class="bi-credit-card-2-back mb-3" style="color: #fff; font-size: 2.2rem;"></i>
                             <h5 class="mb-2" style="color: #fff;">Antrian Admin Kredit</h5>
                             <p class="mb-3 text-center small" style="color: #fff;">Ambil nomor antrian untuk Admin Kredit.</p>
-                            <div class="display-4 fw-bold text-center mb-3" id="antrian_admin_kredit" style="color: #fff;"></div>
+                            <div class="display-4 fw-bold text-center mb-3" id="antrian_admin_kredit" style="color: #fff; font-size: 5rem;"></div>
                             <a id="insert_admin_kredit" href="javascript:void(0)" class="btn rounded-pill px-4 py-2 mt-auto w-100" style="background-color: #F87B1B; color: #fff;">
                                 Ambil Nomor Kredit <i class="bi-chevron-right ms-2"></i>
                             </a>
@@ -91,6 +91,25 @@ if (empty($nama_cabang)) {
             </div>
         </div>
     </main>
+    <style>
+        /* Center the counter number vertically in the card while keeping the button at bottom */
+        .card.h-100 .card-body {
+            display: flex;
+            flex-direction: column;
+        }
+        .card.h-100 .card-body .display-4 {
+            flex: 1 1 auto;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 1rem;
+            font-size: 5rem; /* ensure large number stays large */
+            color: #fff;
+        }
+        .card.h-100 .card-body .btn {
+            margin-top: auto;
+        }
+    </style>
     <!-- jQuery Core -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
     <script src="print_blue.js"></script>
