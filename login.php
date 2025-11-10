@@ -29,40 +29,79 @@ if ($cabangResult->num_rows > 0) {
 
 // Cek jika form dikirim
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    // Safely read POST values to avoid undefined index warnings
-    $username = $_POST['username'] ?? '';
+    $username = $_POST['username'] ?? ''; // This will now accept nomor_pegawai or username
     $password = $_POST['password'] ?? '';
-    // role_id and cabang_id may be empty strings when user hasn't selected an option
-    $role_id = isset($_POST['role_id']) && $_POST['role_id'] !== '' ? (int) $_POST['role_id'] : null; // Role yang dipilih
-    $cabang_id = isset($_POST['cabang_id']) && $_POST['cabang_id'] !== '' ? (int) $_POST['cabang_id'] : null; // Cabang yang dipilih
+    $role_id = isset($_POST['role_id']) && $_POST['role_id'] !== '' ? (int) $_POST['role_id'] : null;
+    $cabang_id = isset($_POST['cabang_id']) && $_POST['cabang_id'] !== '' ? (int) $_POST['cabang_id'] : null;
 
-    // Basic validation: ensure all fields provided
     if ($username === '' || $password === '' || empty($role_id) || empty($cabang_id)) {
-        // use flash + PRG so the error is cleared on refresh
-        $_SESSION['flash_error'] = "Semua field harus diisi (Username, Password, Role, dan Cabang).";
+        $_SESSION['flash_error'] = "Semua field harus diisi (Username/ID Pegawai, Password, Role, dan Cabang).";
         header("Location: login.php");
         exit;
     } else {
-        // Mencari username di database dengan role dan cabang yang sesuai
-        $query = "SELECT * FROM users WHERE username = ? AND role_id = ? AND cabang_id = ?";
+        // First, get the column name from pegawai table to avoid errors
+        // Query without JOIN first to find user
+        $query = "SELECT u.* 
+                  FROM users u 
+                  WHERE (u.username = ? OR u.id_pegawai = ?) 
+                  AND u.role_id = ? 
+                  AND u.cabang_id = ?
+                  AND u.status = 'active'";
         $stmt = $mysqli->prepare($query);
+        
         if ($stmt) {
-            $stmt->bind_param("sii", $username, $role_id, $cabang_id); // "sii" artinya string, int, int
+            $stmt->bind_param("ssii", $username, $username, $role_id, $cabang_id);
             $stmt->execute();
             $result = $stmt->get_result();
 
             if ($result && $result->num_rows > 0) {
                 $user = $result->fetch_assoc();
 
-                // Verifikasi password
                 if (password_verify($password, $user['password'])) {
-                    // Login berhasil, set session
+                    // Get pegawai name from EIS database if id_pegawai exists
+                    $nama_pegawai = $user['username']; // default to username
+                    
+                    if (!empty($user['id_pegawai'])) {
+                        // Check what columns exist in pegawai table
+                        $pegawaiQuery = "SELECT * FROM bprsukab_eis.pegawai WHERE id_pegawai = ? LIMIT 1";
+                        $stmtPegawai = $mysqli_eis->prepare($pegawaiQuery);
+                        if ($stmtPegawai) {
+                            $stmtPegawai->bind_param("s", $user['id_pegawai']);
+                            $stmtPegawai->execute();
+                            $pegawaiResult = $stmtPegawai->get_result();
+                            
+                            if ($pegawaiResult && $pegawaiResult->num_rows > 0) {
+                                $pegawai = $pegawaiResult->fetch_assoc();
+                                
+                                // Try different possible column names
+                                if (isset($pegawai['nama_pegawai'])) {
+                                    $nama_pegawai = $pegawai['nama_pegawai'];
+                                } elseif (isset($pegawai['nama'])) {
+                                    $nama_pegawai = $pegawai['nama'];
+                                } elseif (isset($pegawai['name'])) {
+                                    $nama_pegawai = $pegawai['name'];
+                                }
+                            }
+                            $stmtPegawai->close();
+                        }
+                    }
+                    
+                    // Login berhasil
                     $_SESSION['user_id'] = $user['id'];
                     $_SESSION['username'] = $user['username'];
+                    $_SESSION['id_pegawai'] = $user['id_pegawai'];
+                    $_SESSION['nama_pegawai'] = $nama_pegawai;
                     $_SESSION['role_id'] = $user['role_id'];
                     $_SESSION['cabang_id'] = $user['cabang_id'];
+                    $_SESSION['logged_in'] = true;
+                    $_SESSION['login_time'] = time();
 
-                    // Redirect ke halaman index.php
+                    // Update last login
+                    $updateStmt = $mysqli->prepare("UPDATE users SET last_login = NOW() WHERE id = ?");
+                    $updateStmt->bind_param("i", $user['id']);
+                    $updateStmt->execute();
+                    $updateStmt->close();
+
                     header("Location: index.php");
                     exit;
                 } else {
@@ -71,12 +110,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     exit;
                 }
             } else {
-                $_SESSION['flash_error'] = "Username, Role, atau Cabang tidak sesuai!";
+                $_SESSION['flash_error'] = "Username/ID Pegawai, Role, atau Cabang tidak sesuai!";
                 header("Location: login.php");
                 exit;
             }
+            $stmt->close();
         } else {
-            // Prepare failed
             $_SESSION['flash_error'] = "Terjadi kesalahan pada server. Silakan coba lagi.";
             header("Location: login.php");
             exit;
@@ -116,10 +155,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
 
                             <form method="POST" action="login.php" novalidate>
-                                <!-- Username -->
+                                <!-- Username or ID Pegawai -->
                                 <div class="mb-3 form-floating">
                                     <input type="text" name="username" id="username" class="form-control" placeholder=" " required aria-required="true">
-                                    <label for="username">Username</label>
+                                    <label for="username">Username / ID Pegawai</label>
+                                    <small class="text-muted">Gunakan username atau nomor pegawai Anda</small>
                                 </div>
 
                                 <!-- Password with toggle -->
@@ -127,10 +167,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                                     <input type="password" name="password" id="password" class="form-control" placeholder=" " required aria-required="true">
                                     <label for="password">Password</label>
                                     <button type="button" class="btn btn-sm btn-outline-secondary password-toggle" aria-label="Show password" onclick="togglePassword()">
-                                <!-- eye icon (visible) - stroked eye with filled pupil -->
-                                    <img src="assets/img/view.png" class="icon-eye" width="20" height="20" alt="Show password" onerror="this.style.display='none'">
-                                <!-- eye-slash icon (hidden) -->
-                                    <img src="assets/img/hide.png" class="icon-eye-slash d-none" width="20" height="20" alt="Hide password" onerror="this.style.display='none'">
+                                        <!-- eye icon (visible) - stroked eye with filled pupil -->
+                                        <img src="assets/img/view.png" class="icon-eye" width="20" height="20" alt="Show password" onerror="this.style.display='none'">
+                                        <!-- eye-slash icon (hidden) -->
+                                        <img src="assets/img/hide.png" class="icon-eye-slash d-none" width="20" height="20" alt="Hide password" onerror="this.style.display='none'">
                                     </button>
                                 </div>
 

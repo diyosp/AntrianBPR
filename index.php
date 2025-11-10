@@ -110,17 +110,20 @@ include "header.php";
             </div>
           </div>
         <?php endif; ?>
-              <!-- card: Dashboard Analytics -->
-        <div class="col-12 col-md-6 col-lg-3">
-          <div class="card border-0 shadow-sm h-100 rounded-2" style="background-color: #11224E; overflow: hidden; border-radius: 1rem !important;">
-            <div class="card-body p-4 d-flex flex-column align-items-center">
-              <i class="bi-graph-up mb-3" style="color: #fff; font-size: 2.2rem;"></i>
-              <h5 class="mb-2" style="color: #fff;">Dashboard</h5>
-              <p class="mb-3 text-center small" style="color: #fff;">Lihat analytics: throughput, rata-rata waktu tunggu & aktivitas staf</p>
-              <a href="dashboard.php" class="btn rounded-pill px-4 py-2 mt-auto w-100" style="background-color: #F87B1B; color: #fff;">Buka Dashboard <i class="bi-chevron-right ms-2"></i></a>
+        <!-- Dashboard Analytics (role_id 1,2,3: Super Admin, Pinca, Kasie) -->
+        <?php if (in_array($_SESSION['role_id'], [1, 2, 3])): ?>
+          <!-- card: Dashboard Analytics -->
+          <div class="col-12 col-md-6 col-lg-3">
+            <div class="card border-0 shadow-sm h-100 rounded-2" style="background-color: #11224E; overflow: hidden; border-radius: 1rem !important;">
+              <div class="card-body p-4 d-flex flex-column align-items-center">
+                <i class="bi-graph-up mb-3" style="color: #fff; font-size: 2.2rem;"></i>
+                <h5 class="mb-2" style="color: #fff;">Dashboard</h5>
+                <p class="mb-3 text-center small" style="color: #fff;">Lihat analytics: throughput, rata-rata waktu tunggu & aktivitas staf</p>
+                <a href="dashboard.php" class="btn rounded-pill px-4 py-2 mt-auto w-100" style="background-color: #F87B1B; color: #fff;">Buka Dashboard <i class="bi-chevron-right ms-2"></i></a>
+              </div>
             </div>
           </div>
-        </div>
+        <?php endif; ?>
         <!-- Tambah User (role_id 1) -->
         <?php if ($_SESSION['role_id'] == 1): ?>
           <div class="col-12 col-md-6 col-lg-3">

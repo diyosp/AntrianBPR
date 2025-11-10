@@ -90,18 +90,6 @@ if (!empty($cabang_id) && isset($mysqli)) {
             </div>
           </div>
         </div>
-
-        <div class="col-md-3 mb-4">
-                    <a href="../dashboard.php" class="text-decoration-none">
-                        <div class="card shadow-sm h-100">
-                            <div class="card-body text-center">
-                                <i class="fas fa-chart-line fa-3x text-info mb-3"></i>
-                                <h5 class="card-title">Dashboard</h5>
-                                <p class="card-text text-muted">View analytics & reports</p>
-                            </div>
-                        </div>
-                    </a>
-                </div>
       </div>
     </div>
   </main>

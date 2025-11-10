@@ -22,13 +22,72 @@ if ($cabangResult && $cabangResult->num_rows > 0) {
     }
 }
 
+// Ambil data jabatan yang difilter (CS, Teller, Pimpinan Cabang, Kepala Seksi)
+$jabatan_list = [];
+try {
+    $jabatanQuery = "SELECT id_jabatan, jabatan 
+                     FROM bprsukab_eis.jabatan 
+                     WHERE id_jabatan IN (27, 28, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 56, 59, 63, 1002)
+                     ORDER BY jabatan";
+    $jabatanResult = $mysqli_eis->query($jabatanQuery);
+    
+    if ($jabatanResult && $jabatanResult->num_rows > 0) {
+        while ($row = $jabatanResult->fetch_assoc()) {
+            $jabatan_list[] = $row;
+        }
+    }
+} catch (Exception $e) {
+    error_log("Error fetching jabatan: " . $e->getMessage());
+}
+
+// Ambil data pegawai dari EIS database
+$pegawai_list = [];
+try {
+    // Get actual column names first
+    $columnsQuery = "SHOW COLUMNS FROM bprsukab_eis.pegawai";
+    $columnsResult = $mysqli_eis->query($columnsQuery);
+    $columns = [];
+    while ($col = $columnsResult->fetch_assoc()) {
+        $columns[] = $col['Field'];
+    }
+    
+    // Determine the correct column name for pegawai name
+    $nameColumn = 'id_pegawai'; // default
+    if (in_array('nama_pegawai', $columns)) {
+        $nameColumn = 'nama_pegawai';
+    } elseif (in_array('nama', $columns)) {
+        $nameColumn = 'nama';
+    } elseif (in_array('name', $columns)) {
+        $nameColumn = 'name';
+    }
+    
+    // Filter only: Customer Service, Teller, Pimpinan Cabang, and Kepala Seksi
+    // Customer Service = 27, Teller = 28, Kepala Cabang = 9, Kepala Seksi = 11-20, 56, 59, 63, 1002
+    $pegawaiQuery = "SELECT p.id_pegawai, p.$nameColumn as nama_pegawai, p.kode_cabang, p.id_jabatan, j.jabatan 
+                     FROM bprsukab_eis.pegawai p
+                     LEFT JOIN bprsukab_eis.jabatan j ON p.id_jabatan = j.id_jabatan
+                     WHERE p.id_jabatan IN (27, 28, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 56, 59, 63, 1002)
+                     ORDER BY j.jabatan, p.$nameColumn";
+    $pegawaiResult = $mysqli_eis->query($pegawaiQuery);
+    
+    if ($pegawaiResult && $pegawaiResult->num_rows > 0) {
+        while ($row = $pegawaiResult->fetch_assoc()) {
+            $pegawai_list[] = $row;
+        }
+    }
+} catch (Exception $e) {
+    error_log("Error fetching pegawai: " . $e->getMessage());
+}
+
 // Ambil data user untuk ditampilkan di tabel
 $users = [];
 $userQuery = "
-    SELECT users.id, users.username, role.nama AS role, cabang.nama AS cabang, users.role_id, users.cabang_id
+    SELECT users.id, users.id_pegawai, users.username, role.nama AS role, cabang.nama AS cabang, 
+           users.role_id, users.cabang_id, p.id_jabatan
     FROM users
     JOIN role ON users.role_id = role.role_id
     JOIN cabang ON users.cabang_id = cabang.id
+    LEFT JOIN bprsukab_eis.pegawai p ON users.id_pegawai = p.id_pegawai
 ";
 $userResult = $mysqli->query($userQuery);
 if ($userResult && $userResult->num_rows > 0) {
@@ -52,6 +111,8 @@ if ($userResult && $userResult->num_rows > 0) {
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
 </head>
 
 <body class="d-flex flex-column h-100" style="background-color: #081941;">
@@ -200,6 +261,36 @@ if ($userResult && $userResult->num_rows > 0) {
             color: #fff !important;
             border: 1px solid rgba(255,255,255,0.15) !important;
         }
+        /* Select2 styling for modals */
+        .select2-container--default .select2-selection--single {
+            background-color: #11224E !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+            height: 38px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            color: #fff !important;
+            line-height: 36px;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 36px;
+        }
+        .select2-dropdown {
+            background-color: #11224E !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+        }
+        .select2-container--default .select2-results__option {
+            background-color: #11224E !important;
+            color: #fff !important;
+        }
+        .select2-container--default .select2-results__option--highlighted[aria-selected] {
+            background-color: #F87B1B !important;
+            color: #fff !important;
+        }
+        .select2-container--default .select2-search--dropdown .select2-search__field {
+            background-color: #11224E !important;
+            color: #fff !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+        }
     </style>
     <main class="flex-shrink-0">
         <div class="container pt-5 user-container">
@@ -218,6 +309,7 @@ if ($userResult && $userResult->num_rows > 0) {
                         <thead>
                             <tr>
                                 <th>No</th>
+                                <th>ID Pegawai</th>
                                 <th>Username</th>
                                 <th>Role</th>
                                 <th>Cabang</th>
@@ -228,6 +320,7 @@ if ($userResult && $userResult->num_rows > 0) {
                             <?php foreach ($users as $key => $user): ?>
                                 <tr>
                                     <td><?php echo $key + 1; ?></td>
+                                    <td><?php echo htmlspecialchars($user['id_pegawai'] ?? '-'); ?></td>
                                     <td><?php echo htmlspecialchars($user['username']); ?></td>
                                     <td><?php echo htmlspecialchars($user['role']); ?></td>
                                     <td><?php echo htmlspecialchars($user['cabang']); ?></td>
@@ -236,6 +329,8 @@ if ($userResult && $userResult->num_rows > 0) {
                                             class="btn btn-sm btn-edit"
                                             style="background-color: #F87B1B; border-color: #F87B1B; color: #fff;"
                                             data-id="<?php echo $user['id']; ?>"
+                                            data-id-pegawai="<?php echo htmlspecialchars($user['id_pegawai'] ?? ''); ?>"
+                                            data-id-jabatan="<?php echo htmlspecialchars($user['id_jabatan'] ?? ''); ?>"
                                             data-username="<?php echo htmlspecialchars($user['username']); ?>"
                                             data-role-id="<?php echo $user['role_id']; ?>"
                                             data-cabang-id="<?php echo $user['cabang_id']; ?>"
@@ -267,15 +362,40 @@ if ($userResult && $userResult->num_rows > 0) {
                 <div class="modal-body">
                     <form id="addUserForm" method="POST">
                         <div class="mb-3">
-                            <label for="username" class="form-label">Username</label>
-                            <input type="text" name="username" id="username" class="form-control" required>
+                            <label for="filter_jabatan" class="form-label">Filter Jabatan <span style="color: #F87B1B;">*</span></label>
+                            <select id="filter_jabatan" class="form-select" required>
+                                <option value="">Pilih Jabatan Terlebih Dahulu</option>
+                                <?php foreach ($jabatan_list as $jabatan): ?>
+                                    <option value="<?php echo $jabatan['id_jabatan']; ?>">
+                                        <?php echo htmlspecialchars($jabatan['jabatan']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
                         </div>
                         <div class="mb-3">
-                            <label for="password" class="form-label">Password</label>
+                            <label for="id_pegawai" class="form-label">ID Pegawai <span style="color: #F87B1B;">*</span></label>
+                            <select name="id_pegawai" id="id_pegawai" class="form-select select2-pegawai" required disabled>
+                                <option value="">Pilih Jabatan Terlebih Dahulu</option>
+                                <?php foreach ($pegawai_list as $pegawai): ?>
+                                    <option value="<?php echo htmlspecialchars($pegawai['id_pegawai']); ?>" 
+                                            data-jabatan="<?php echo htmlspecialchars($pegawai['id_jabatan']); ?>"
+                                            data-nama="<?php echo htmlspecialchars($pegawai['nama_pegawai']); ?>">
+                                        <?php echo htmlspecialchars($pegawai['id_pegawai'] . ' - ' . $pegawai['nama_pegawai']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="username" class="form-label">Username <span style="color: #F87B1B;">*</span></label>
+                            <input type="text" name="username" id="username" class="form-control" required>
+                            <small style="color: #F87B1B;">Bisa sama dengan ID Pegawai atau berbeda</small>
+                        </div>
+                        <div class="mb-3">
+                            <label for="password" class="form-label">Password <span style="color: #F87B1B;">*</span></label>
                             <input type="password" name="password" id="password" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="role_id" class="form-label">Role</label>
+                            <label for="role_id" class="form-label">Role <span style="color: #F87B1B;">*</span></label>
                             <select name="role_id" id="role_id" class="form-select" required>
                                 <option value="" disabled selected>Pilih Role</option>
                                 <?php foreach ($roles as $role): ?>
@@ -284,7 +404,7 @@ if ($userResult && $userResult->num_rows > 0) {
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="cabang_id" class="form-label">Cabang</label>
+                            <label for="cabang_id" class="form-label">Cabang <span style="color: #F87B1B;">*</span></label>
                             <select name="cabang_id" id="cabang_id" class="form-select" required>
                                 <option value="" disabled selected>Pilih Cabang</option>
                                 <?php foreach ($cabangs as $cabang): ?>
@@ -312,11 +432,35 @@ if ($userResult && $userResult->num_rows > 0) {
                     <form id="editUserForm" method="POST" action="edit_user.php">
                         <input type="hidden" name="user_id" id="editUserId">
                         <div class="mb-3">
-                            <label for="editUsername" class="form-label">Username</label>
+                            <label for="edit_filter_jabatan" class="form-label">Filter Jabatan <span style="color: #F87B1B;">*</span></label>
+                            <select id="edit_filter_jabatan" class="form-select" required>
+                                <option value="">Pilih Jabatan Terlebih Dahulu</option>
+                                <?php foreach ($jabatan_list as $jabatan): ?>
+                                    <option value="<?php echo $jabatan['id_jabatan']; ?>">
+                                        <?php echo htmlspecialchars($jabatan['jabatan']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editIdPegawai" class="form-label">ID Pegawai <span style="color: #F87B1B;">*</span></label>
+                            <select name="id_pegawai" id="editIdPegawai" class="form-select select2-pegawai-edit" required disabled>
+                                <option value="">Pilih Jabatan Terlebih Dahulu</option>
+                                <?php foreach ($pegawai_list as $pegawai): ?>
+                                    <option value="<?php echo htmlspecialchars($pegawai['id_pegawai']); ?>" 
+                                            data-jabatan="<?php echo htmlspecialchars($pegawai['id_jabatan']); ?>"
+                                            data-nama="<?php echo htmlspecialchars($pegawai['nama_pegawai']); ?>">
+                                        <?php echo htmlspecialchars($pegawai['id_pegawai'] . ' - ' . $pegawai['nama_pegawai']); ?>
+                                    </option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="mb-3">
+                            <label for="editUsername" class="form-label">Username <span style="color: #F87B1B;">*</span></label>
                             <input type="text" name="username" id="editUsername" class="form-control" required>
                         </div>
                         <div class="mb-3">
-                            <label for="editRoleId" class="form-label">Role</label>
+                            <label for="editRoleId" class="form-label">Role <span style="color: #F87B1B;">*</span></label>
                             <select name="role_id" id="editRoleId" class="form-select" required>
                                 <?php foreach ($roles as $role): ?>
                                     <option value="<?php echo $role['role_id']; ?>"><?php echo htmlspecialchars($role['nama']); ?></option>
@@ -324,7 +468,7 @@ if ($userResult && $userResult->num_rows > 0) {
                             </select>
                         </div>
                         <div class="mb-3">
-                            <label for="editCabangId" class="form-label">Cabang</label>
+                            <label for="editCabangId" class="form-label">Cabang <span style="color: #F87B1B;">*</span></label>
                             <select name="cabang_id" id="editCabangId" class="form-select" required>
                                 <?php foreach ($cabangs as $cabang): ?>
                                     <option value="<?php echo $cabang['id']; ?>"><?php echo htmlspecialchars($cabang['nama']); ?></option>
@@ -334,6 +478,7 @@ if ($userResult && $userResult->num_rows > 0) {
                         <div class="mb-3">
                             <label for="editPassword" class="form-label">Password</label>
                             <input type="password" name="password" id="editPassword" class="form-control">
+                            <small style="color: #F87B1B;">Kosongkan jika tidak ingin mengubah password</small>
                         </div>
 
                         <button type="submit" class="btn btn-theme w-100 py-2">Simpan Perubahan</button>
@@ -349,10 +494,175 @@ if ($userResult && $userResult->num_rows > 0) {
     <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.13.6/js/jquery.dataTables.min.js"></script>
+    <!-- Select2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
     <!-- JavaScript -->
     <script>
         $(document).ready(function() {
+            // Store original pegawai options for filtering
+            var originalPegawaiOptions = $('#id_pegawai option').clone();
+            var originalPegawaiOptionsEdit = $('#editIdPegawai option').clone();
+
+            // Initialize Select2 for ID Pegawai dropdowns
+            $('.select2-pegawai').select2({
+                dropdownParent: $('#addUserModal'),
+                placeholder: "Pilih Pegawai",
+                allowClear: true,
+                width: '100%'
+            });
+
+            $('.select2-pegawai-edit').select2({
+                dropdownParent: $('#editUserModal'),
+                placeholder: "Pilih Pegawai",
+                allowClear: true,
+                width: '100%'
+            });
+
+            // Reset Add modal when it's closed
+            $('#addUserModal').on('hidden.bs.modal', function () {
+                $('#addUserForm')[0].reset();
+                $('#filter_jabatan').val('').trigger('change');
+                $('#id_pegawai').val(null).trigger('change').prop('disabled', true);
+            });
+
+            // Reset Edit modal when it's closed
+            $('#editUserModal').on('hidden.bs.modal', function () {
+                $('#editUserForm')[0].reset();
+                $('#edit_filter_jabatan').val('').trigger('change');
+                $('#editIdPegawai').val(null).trigger('change').prop('disabled', true);
+            });
+
+            // Filter pegawai by jabatan in Add modal
+            $('#filter_jabatan').on('change', function() {
+                var selectedJabatan = $(this).val();
+                var $pegawaiSelect = $('#id_pegawai');
+                
+                // Destroy Select2 first
+                $pegawaiSelect.select2('destroy');
+                
+                // Clear all options
+                $pegawaiSelect.empty();
+                
+                if (selectedJabatan) {
+                    // Enable pegawai dropdown
+                    $pegawaiSelect.prop('disabled', false);
+                    
+                    // Add placeholder first
+                    $pegawaiSelect.append('<option value="">Pilih Pegawai</option>');
+                    
+                    // Filter and add only matching options
+                    originalPegawaiOptions.each(function() {
+                        var $option = $(this);
+                        var optionJabatan = $option.data('jabatan');
+                        
+                        // Skip empty option (placeholder)
+                        if ($option.val() === '') {
+                            return;
+                        }
+                        
+                        // Add only if jabatan matches
+                        if (optionJabatan == selectedJabatan) {
+                            $pegawaiSelect.append($option.clone());
+                        }
+                    });
+                } else {
+                    // Disable pegawai dropdown if no jabatan selected
+                    $pegawaiSelect.prop('disabled', true);
+                    $pegawaiSelect.append('<option value="">Pilih Jabatan Terlebih Dahulu</option>');
+                }
+                
+                // Re-initialize Select2
+                $pegawaiSelect.select2({
+                    dropdownParent: $('#addUserModal'),
+                    placeholder: "Pilih Pegawai",
+                    allowClear: true,
+                    width: '100%'
+                });
+            });
+
+            // Filter pegawai by jabatan in Edit modal
+            $('#edit_filter_jabatan').on('change', function() {
+                var selectedJabatan = $(this).val();
+                var $pegawaiSelect = $('#editIdPegawai');
+                
+                // Store current value before filtering
+                var currentValue = $pegawaiSelect.val();
+                
+                // Destroy Select2 first
+                $pegawaiSelect.select2('destroy');
+                
+                // Clear all options
+                $pegawaiSelect.empty();
+                
+                if (selectedJabatan) {
+                    // Enable pegawai dropdown
+                    $pegawaiSelect.prop('disabled', false);
+                    
+                    // Add placeholder first
+                    $pegawaiSelect.append('<option value="">Pilih Pegawai</option>');
+                    
+                    // Filter and add only matching options
+                    originalPegawaiOptionsEdit.each(function() {
+                        var $option = $(this);
+                        var optionJabatan = $option.data('jabatan');
+                        
+                        // Skip empty option (placeholder)
+                        if ($option.val() === '') {
+                            return;
+                        }
+                        
+                        // Add only if jabatan matches
+                        if (optionJabatan == selectedJabatan) {
+                            $pegawaiSelect.append($option.clone());
+                        }
+                    });
+                    
+                    // Restore previous value if it's still in the filtered list
+                    if (currentValue && $pegawaiSelect.find('option[value="' + currentValue + '"]').length > 0) {
+                        $pegawaiSelect.val(currentValue);
+                    }
+                } else {
+                    // Disable pegawai dropdown if no jabatan selected
+                    $pegawaiSelect.prop('disabled', true);
+                    $pegawaiSelect.append('<option value="">Pilih Jabatan Terlebih Dahulu</option>');
+                }
+                
+                // Re-initialize Select2
+                $pegawaiSelect.select2({
+                    dropdownParent: $('#editUserModal'),
+                    placeholder: "Pilih Pegawai",
+                    allowClear: true,
+                    width: '100%'
+                });
+            });
+
+            // Auto-fill username when pegawai is selected in Add modal
+            $('#id_pegawai').on('change', function() {
+                var selectedOption = $(this).find('option:selected');
+                var idPegawai = selectedOption.val();
+                
+                if (idPegawai) {
+                    // Auto-fill username with ID Pegawai
+                    $('#username').val(idPegawai);
+                } else {
+                    $('#username').val('');
+                }
+            });
+
+            // Auto-fill username when pegawai is selected in Edit modal
+            $('#editIdPegawai').on('change', function() {
+                var selectedOption = $(this).find('option:selected');
+                var idPegawai = selectedOption.val();
+                
+                if (idPegawai) {
+                    // Auto-fill username with ID Pegawai (only if username is empty)
+                    if ($('#editUsername').val() === '') {
+                        $('#editUsername').val(idPegawai);
+                    }
+                }
+            });
+
             // Inisialisasi DataTable
             $(document).ready(function() {
                 const table = $('#userTable').DataTable({
@@ -360,6 +670,12 @@ if ($userResult && $userResult->num_rows > 0) {
                     ordering: false,
                     columns: [{
                             data: 'no'
+                        },
+                        {
+                            data: 'id_pegawai',
+                            render: function(data, type, row) {
+                                return data ? data : '-';
+                            }
                         },
                         {
                             data: 'username'
@@ -374,7 +690,15 @@ if ($userResult && $userResult->num_rows > 0) {
                             data: null,
                             render: function(data, type, row) {
                                 return `
-                        <button class="btn btn-sm btn-edit" style="background-color: #F87B1B; border-color: #F87B1B; color: #fff;" data-id="${row.id}" data-username="${row.username}" data-role-id="${row.role_id}" data-cabang-id="${row.cabang_id}" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
+                        <button class="btn btn-sm btn-edit" style="background-color: #F87B1B; border-color: #F87B1B; color: #fff;" 
+                                data-id="${row.id}" 
+                                data-id-pegawai="${row.id_pegawai || ''}" 
+                                data-id-jabatan="${row.id_jabatan || ''}" 
+                                data-username="${row.username}" 
+                                data-role-id="${row.role_id}" 
+                                data-cabang-id="${row.cabang_id}" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#editUserModal">Edit</button>
                         <button class="btn btn-danger btn-sm btn-delete" data-id="${row.id}">Hapus</button>
                     `;
                             }
@@ -400,6 +724,8 @@ if ($userResult && $userResult->num_rows > 0) {
                     // Event Edit
                     $('.btn-edit').off('click').on('click', function() {
                         const userId = $(this).data('id');
+                        const idPegawai = $(this).data('id-pegawai');
+                        const idJabatan = $(this).data('id-jabatan');
                         const username = $(this).data('username');
                         const roleId = $(this).data('role-id');
                         const cabangId = $(this).data('cabang-id');
@@ -408,6 +734,18 @@ if ($userResult && $userResult->num_rows > 0) {
                         $('#editUsername').val(username);
                         $('#editRoleId').val(roleId);
                         $('#editCabangId').val(cabangId);
+                        
+                        // Set jabatan filter first, then set pegawai
+                        if (idJabatan) {
+                            $('#edit_filter_jabatan').val(idJabatan).trigger('change');
+                            
+                            // Wait a bit for the filter to apply, then set pegawai
+                            setTimeout(function() {
+                                $('#editIdPegawai').val(idPegawai).trigger('change');
+                            }, 100);
+                        } else {
+                            $('#editIdPegawai').val(idPegawai).trigger('change');
+                        }
                     });
 
                     // Event Delete
@@ -442,6 +780,7 @@ if ($userResult && $userResult->num_rows > 0) {
                     // Ambil data dari form
                     const formData = {
                         user_id: $('#editUserId').val(),
+                        id_pegawai: $('#editIdPegawai').val(),
                         username: $('#editUsername').val(),
                         role_id: $('#editRoleId').val(),
                         cabang_id: $('#editCabangId').val(),
@@ -480,6 +819,7 @@ if ($userResult && $userResult->num_rows > 0) {
 
                 // Ambil data dari form
                 const formData = {
+                    id_pegawai: $('#id_pegawai').val(),
                     username: $('#username').val(),
                     password: $('#password').val(),
                     role_id: $('#role_id').val(),
@@ -495,6 +835,8 @@ if ($userResult && $userResult->num_rows > 0) {
                         // Jika berhasil, tampilkan notifikasi dan refresh tabel
                         alert('User berhasil ditambahkan!');
                         $('#addUserModal').modal('hide'); // Tutup modal Tambah User
+                        $('#addUserForm')[0].reset(); // Reset form
+                        $('#id_pegawai').val(null).trigger('change'); // Reset Select2
                         $('#userTable').DataTable().ajax.reload(); // Reload data di tabel
                     },
                     error: function(xhr, status, error) {
