@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="card login-card shadow-lg">
                         <div class="card-body p-4 p-md-5">
                             <div class="d-flex align-items-center mb-2">
-                                <img src="assets/img/logotest.png" alt="logo" class="brand-logo me-3" onerror="this.style.display='none'">
+                                <img src="assets/img/testfs.png" alt="logo" class="brand-logo me-3" onerror="this.style.display='none'">
                             </div>
 
                             <form method="POST" action="login.php" novalidate>

@@ -18,7 +18,7 @@ include "header.php";
         <i class="bi-info-circle text-success me-3 fs-3"></i>
         <div class="d-flex justify-content-between align-items-center w-100">
           <span style="background-color: #11224E;" class="text-white">
-            Selamat Datang di <img src="assets/img/logotest.png" alt="BPR Sukabumi" style="width: 75px; height: 75px; object-fit: contain; vertical-align: middle;"> Silahkan pilih menu berikut.
+            Selamat Datang di <img src="assets/img/testfs.png" alt="BPR Sukabumi" style="width: 75px; height: 75px; object-fit: contain; vertical-align: middle;"> Silahkan pilih menu berikut.
           </span>
           <a href="logout.php" class="btn" style="background-color: #F87B1B; border-color: #F87B1B; color: #fff;">Logout</a>
         </div>

@@ -92,8 +92,20 @@ if ($userResult && $userResult->num_rows > 0) {
         .user-container .dataTables_wrapper .dataTables_paginate {
             color: #fff;
         }
+        /* Add spacing between the DataTable search (Cari) and the table */
+        .user-container .dataTables_wrapper .dataTables_filter {
+            margin-bottom: 0.75rem !important;
+        }
+        /* Ensure a little gap above the table itself */
+        .user-container table.dataTable {
+            margin-top: 0.5rem !important;
+        }
         .user-container .dataTables_wrapper .dataTables_paginate .paginate_button {
             color: #fff !important;
+        }
+        /* Add spacing between the table and pagination controls */
+        .user-container .dataTables_wrapper .dataTables_paginate {
+            margin-top: 0.75rem !important;
         }
         .user-container .dataTables_wrapper .dataTables_paginate .paginate_button.current {
             background: #F87B1B !important;
@@ -104,6 +116,29 @@ if ($userResult && $userResult->num_rows > 0) {
             background: #F87B1B !important;
             border-color: #F87B1B !important;
             color: #fff !important;
+        }
+        /* Fix DataTable borders */
+        .user-container table.dataTable {
+            border-collapse: collapse !important;
+            width: 100% !important;
+            font-size: 0.875rem;
+        }
+        .user-container table.dataTable thead th,
+        .user-container table.dataTable thead td {
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            padding: 0.5rem !important;
+        }
+        .user-container table.dataTable tbody th,
+        .user-container table.dataTable tbody td {
+            border: 1px solid rgba(255,255,255,0.2) !important;
+            padding: 0.5rem !important;
+        }
+        .user-container table.dataTable.table-bordered {
+            border: 1px solid rgba(255,255,255,0.2) !important;
+        }
+        .user-container .btn-sm {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
         }
         .form-label { color: #fff; }
         .form-control, .form-select {
@@ -168,9 +203,10 @@ if ($userResult && $userResult->num_rows > 0) {
     </style>
     <main class="flex-shrink-0">
         <div class="container pt-5 user-container">
-            <div class="page-header d-flex justify-content-between align-items-center mb-4">
-                <h1 class="h5 mb-0">Manajemen User</h1>
-                <button class="btn btn-theme" data-bs-toggle="modal" data-bs-target="#addUserModal">
+            <div class="page-header d-flex align-items-center mb-3">
+                <i class="bi-person-square me-3 fs-3" style="margin-top: 0.3rem;"></i>
+                <h1 class="h5 pt-2 mb-0">Manajemen User</h1>
+                <button class="btn btn-theme" data-bs-toggle="modal" data-bs-target="#addUserModal" style="margin-left: auto;">
                     <i class="bi-person-plus"></i> Tambah User
                 </button>
             </div>
@@ -178,43 +214,42 @@ if ($userResult && $userResult->num_rows > 0) {
             <!-- Tabel Data User -->
             <div class="card border-0 shadow-sm">
                 <div class="card-body p-3">
-                    <div class="table-responsive">
-                        <table id="userTable" class="table table-bordered table-striped mb-0">
-                <thead>
-                    <tr>
-                        <th>No</th>
-                        <th>Username</th>
-                        <th>Role</th>
-                        <th>Cabang</th>
-                        <th>Aksi</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($users as $key => $user): ?>
-                        <tr>
-                            <td><?php echo $key + 1; ?></td>
-                            <td><?php echo htmlspecialchars($user['username']); ?></td>
-                            <td><?php echo htmlspecialchars($user['role']); ?></td>
-                            <td><?php echo htmlspecialchars($user['cabang']); ?></td>
-                            <td>
-                                <button
-                                    class="btn btn-warning btn-sm btn-edit"
-                                    data-id="<?php echo $user['id']; ?>"
-                                    data-username="<?php echo htmlspecialchars($user['username']); ?>"
-                                    data-role-id="<?php echo $user['role_id']; ?>"
-                                    data-cabang-id="<?php echo $user['cabang_id']; ?>"
-                                    data-bs-toggle="modal"
-                                    data-bs-target="#editUserModal">
-                                    Edit
-                                </button>
+                    <table id="userTable" class="table table-bordered table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Username</th>
+                                <th>Role</th>
+                                <th>Cabang</th>
+                                <th>Aksi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php foreach ($users as $key => $user): ?>
+                                <tr>
+                                    <td><?php echo $key + 1; ?></td>
+                                    <td><?php echo htmlspecialchars($user['username']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['role']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['cabang']); ?></td>
+                                    <td>
+                                        <button
+                                            class="btn btn-sm btn-edit"
+                                            style="background-color: #F87B1B; border-color: #F87B1B; color: #fff;"
+                                            data-id="<?php echo $user['id']; ?>"
+                                            data-username="<?php echo htmlspecialchars($user['username']); ?>"
+                                            data-role-id="<?php echo $user['role_id']; ?>"
+                                            data-cabang-id="<?php echo $user['cabang_id']; ?>"
+                                            data-bs-toggle="modal"
+                                            data-bs-target="#editUserModal">
+                                            Edit
+                                        </button>
 
-                                <button class="btn btn-danger btn-sm btn-delete" data-id="<?php echo $user['id']; ?>">Hapus</button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-                    </div>
+                                        <button class="btn btn-danger btn-sm btn-delete" data-id="<?php echo $user['id']; ?>">Hapus</button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>
@@ -225,6 +260,7 @@ if ($userResult && $userResult->num_rows > 0) {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
+                    <i class="bi-person-plus me-3 fs-3" style="margin-top: 0.3rem;"></i>
                     <h5 class="modal-title" id="addUserModalLabel">Tambah User Baru</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -297,7 +333,7 @@ if ($userResult && $userResult->num_rows > 0) {
                         </div>
                         <div class="mb-3">
                             <label for="editPassword" class="form-label">Password</label>
-                            <input type="password" name="password" id="editPassword" class="form-control" placeholder="Kosongkan jika tidak ingin mengubah password">
+                            <input type="password" name="password" id="editPassword" class="form-control">
                         </div>
 
                         <button type="submit" class="btn btn-theme w-100 py-2">Simpan Perubahan</button>
@@ -321,6 +357,7 @@ if ($userResult && $userResult->num_rows > 0) {
             $(document).ready(function() {
                 const table = $('#userTable').DataTable({
                     ajax: 'get_users.php',
+                    ordering: false,
                     columns: [{
                             data: 'no'
                         },
@@ -337,7 +374,7 @@ if ($userResult && $userResult->num_rows > 0) {
                             data: null,
                             render: function(data, type, row) {
                                 return `
-                        <button class="btn btn-warning btn-sm btn-edit" data-id="${row.id}" data-username="${row.username}" data-role-id="${row.role_id}" data-cabang-id="${row.cabang_id}" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
+                        <button class="btn btn-sm btn-edit" style="background-color: #F87B1B; border-color: #F87B1B; color: #fff;" data-id="${row.id}" data-username="${row.username}" data-role-id="${row.role_id}" data-cabang-id="${row.cabang_id}" data-bs-toggle="modal" data-bs-target="#editUserModal">Edit</button>
                         <button class="btn btn-danger btn-sm btn-delete" data-id="${row.id}">Hapus</button>
                     `;
                             }
@@ -347,6 +384,8 @@ if ($userResult && $userResult->num_rows > 0) {
                         search: "Cari:",
                         lengthMenu: "Tampilkan _MENU_ data",
                         info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                        infoEmpty: "Menampilkan 0 sampai 0 dari 0 data",
+                        infoFiltered: "(disaring dari _MAX_ total data)",
                         paginate: {
                             first: "Awal",
                             last: "Akhir",
