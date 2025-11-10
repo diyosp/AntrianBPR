@@ -30,12 +30,12 @@ if (!empty($cabang_id) && isset($mysqli)) {
 }
 ?>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100" style="background-color: #081941;">
   <main class="flex-shrink-0">
     <div class="container pt-4">
   <div class="row g-3 justify-content-start">
         <div class="col-12">
-          <div class="alert alert-light d-flex align-items-center mb-6" role="alert" style="background-color: #11224E; overflow: hidden; border-radius: 0.5rem !important;">
+          <div class="alert alert-light d-flex align-items-center mb-6" role="alert" style="background-color: #11224E; border-color: #11224E; color: #fff; overflow: hidden; border-radius: 0.5rem !important;">
             <i class="bi-info-circle me-3 fs-3" style="color: #fff;"></i>
             <div class="d-flex justify-content-between align-items-center w-100">
               <div class="text-white fw-semibold">Panel Panggilan - <?= htmlspecialchars($nama_cabang) ?></div>

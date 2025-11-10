@@ -85,11 +85,137 @@ $result = $stmt->get_result();
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
 </head>
 
-<body>
-    <div class="container pt-5">
-        <div class="d-flex align-items-center mb-4">
-            <i class="bi-file-earmark-text text-success me-3 fs-3"></i>
-            <h1 class="h5 pt-2">Laporan Customer Service</h1>
+<body class="d-flex flex-column h-100" style="background-color: #081941;">
+    <style>
+        /* Page color scheme */
+        .page-header {
+            background-color: #11224E;
+            color: #fff;
+            padding: 1rem 1rem;
+            border-radius: .5rem;
+        }
+        .page-header i { color: #fff; }
+        .report-container .card {
+            background-color: #11224E;
+            color: #fff;
+            border: 0;
+        }
+        .report-container table {
+            color: #fff;
+        }
+        /* Ensure all table text (headers, body rows and cells) is white */
+        .report-container table,
+        .report-container table thead th,
+        .report-container table tbody tr,
+        .report-container table tbody td,
+        .report-container table tbody th {
+            color: #fff !important;
+        }
+        /* Keep striped backgrounds but force text white on odd/even rows */
+        .report-container table.table-striped tbody tr:nth-of-type(odd),
+        .report-container table.table-striped tbody tr:nth-of-type(even) {
+            color: #fff !important;
+        }
+        .form-label { color: #fff; }
+        .form-control, .form-select {
+            background-color: #11224E !important;
+            color: #fff !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #11224E !important;
+            color: #fff !important;
+            border: 1px solid rgba(255,255,255,0.3) !important;
+            box-shadow: 0 0 0 0.25rem rgba(255,255,255,0.1) !important;
+            outline: none !important;
+        }
+        .form-control:hover, .form-select:hover {
+            background-color: #11224E !important;
+            color: #fff !important;
+            border: 1px solid rgba(255,255,255,0.3) !important;
+        }
+        /* Style the select dropdown when opened */
+        select {
+            background-color: #11224E !important;
+            color: #fff !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+        }
+        
+        select:hover {
+            border: 1px solid rgba(255,255,255,0.3) !important;
+        }
+        
+        select:focus {
+            border: 1px solid rgba(255,255,255,0.3) !important;
+            background-color: #11224E !important;
+        }
+        
+        /* Dropdown options styling */
+        .form-select option, select option {
+            background-color: #11224E !important;
+            color: #fff !important;
+            border: none !important;
+        }
+        .btn-theme {
+            background-color: #F87B1B;
+            border-color: #F87B1B;
+            color: #fff;
+        }
+        /* Remove hover/focus/active color change */
+        .btn-theme:hover,
+        .btn-theme:focus,
+        .btn-theme:active {
+            background-color: #F87B1B !important;
+            border-color: #F87B1B !important;
+            color: #fff !important;
+            box-shadow: none !important;
+        }
+        .dropdown-menu { background-color: #11224E; color: #fff; }
+        .dropdown-menu a { color: #fff; }
+        
+        /* Specific styling for date inputs to match teller/kredit */
+        #tanggal_awal, #tanggal_akhir {
+          background-color: #11224E !important;
+          color: #fff !important;
+          border: 1px solid rgba(255,255,255,0.15) !important;
+        }
+
+        #tanggal_awal:hover, #tanggal_akhir:hover {
+          border-color: rgba(255,255,255,0.30) !important;
+        }
+
+        #tanggal_awal:focus, #tanggal_akhir:focus {
+          background-color: #11224E !important;
+          border-color: rgba(255,255,255,0.30) !important;
+          box-shadow: 0 0 0 .25rem rgba(255,255,255,0.1) !important;
+          outline: none !important;
+        }
+
+        /* Calendar picker icon for date inputs */
+        input[type="date"]::-webkit-calendar-picker-indicator {
+          filter: invert(1);
+        }
+
+        /* Custom arrow (optional) */
+        .report-container .form-select {
+          background-image:
+            linear-gradient(45deg, transparent 50%, #fff 50%),
+            linear-gradient(135deg, #fff 50%, transparent 50%),
+            linear-gradient(to right, #11224E, #11224E);
+          background-position:
+            calc(100% - 18px) calc(50% + 2px),
+            calc(100% - 12px) calc(50% + 2px),
+            100% 0;
+          background-size: 6px 6px, 6px 6px, 2.5em 100%;
+          background-repeat: no-repeat;
+          padding-right: 2.8em;
+        }
+    </style>
+
+    <div class="container pt-5 report-container">
+        <div class="page-header d-flex align-items-center mb-4">
+            <i class="bi-file-earmark-text me-3 fs-3"></i>
+            <h1 class="h5 pt-2 mb-0">Laporan Customer Service</h1>
         </div>
 
         <!-- Form Filter -->
@@ -146,74 +272,75 @@ $result = $stmt->get_result();
             </div>
             <div class="col-md-2 d-flex align-items-end justify-content-end">
                 <div class="btn-group w-100">
-                    <button type="submit" class="btn btn-primary">Filter</button>
-                    <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                    <button type="submit" class="btn btn-theme">Filter</button>
+                    <button type="button" class="btn btn-theme dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="visually-hidden">Toggle Dropdown</span>
                     </button>
                     <ul class="dropdown-menu dropdown-menu-end">
                         <li><a class="dropdown-item" href="export-pdf.php?<?= http_build_query($_GET) ?>">Download PDF</a></li>
                         <li><a class="dropdown-item" href="export-excel.php?<?= http_build_query($_GET) ?>">Download Excel</a></li>
-                        <li><hr class="dropdown-divider"></li>
+                        <li><hr class="dropdown-divider" style="background-color: #dee2e6;"></li>
                         <li><a class="dropdown-item" href="print.php?<?= http_build_query($_GET) ?>" target="_blank">Print</a></li>
                     </ul>
                 </div>
             </div>
         </form>
 
-        <!-- Actions moved into split dropdown next to Filter -->
-
-
-
         <!-- Tabel Laporan -->
-        <table class="table table-bordered table-striped">
-            <thead>
-                <tr>
-                    <th>No</th>
-                    <th>Cabang ID</th>
-                    <th>Tanggal</th>
-                    <th>No Antrian</th>
-                    <th>Waktu Mulai</th>
-                    <th>Waktu Selesai</th>
-                    <th>Status</th>
-                    <th>Durasi</th>
-                </tr>
-            </thead>
-            <tbody>
-                <?php
-                if ($result->num_rows > 0) {
-                    $nomor = 1;
-                    $previous_date = null;
+        <div class="card border-0 shadow-sm">
+            <div class="card-body p-3">
+                <div class="table-responsive">
+                    <table class="table table-bordered table-striped mb-0">
+                        <thead>
+                            <tr>
+                                <th>No</th>
+                                <th>Cabang ID</th>
+                                <th>Tanggal</th>
+                                <th>No Antrian</th>
+                                <th>Waktu Mulai</th>
+                                <th>Waktu Selesai</th>
+                                <th>Status</th>
+                                <th>Durasi</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <?php
+                            if ($result->num_rows > 0) {
+                                $nomor = 1;
 
-                    while ($row = $result->fetch_assoc()) {
-                        echo "<tr>";
-                        echo "<td>{$nomor}</td>";
-                        echo "<td>{$row['cabang_id']}</td>";
-                        echo "<td>" . date('d/m/Y', strtotime($row['tanggal'])) . "</td>";
-                        echo "<td>{$row['no_antrian']}</td>";
-                        // Waktu Mulai
-                        echo "<td>" . (!empty($row['waktu_mulai']) ? date('H:i:s', strtotime($row['waktu_mulai'])) : '-') . "</td>";
-                        // Waktu Selesai
-                        echo "<td>" . (!empty($row['waktu_selesai']) ? date('H:i:s', strtotime($row['waktu_selesai'])) : '-') . "</td>";
-                        echo "<td>" . ($row['status'] == '2' ? 'Selesai' : 'Menunggu') . "</td>";
+                                while ($row = $result->fetch_assoc()) {
+                                    echo "<tr>";
+                                    echo "<td>{$nomor}</td>";
+                                    echo "<td>{$row['cabang_id']}</td>";
+                                    echo "<td>" . date('d/m/Y', strtotime($row['tanggal'])) . "</td>";
+                                    echo "<td>{$row['no_antrian']}</td>";
+                                    // Waktu Mulai
+                                    echo "<td>" . (!empty($row['waktu_mulai']) ? date('H:i:s', strtotime($row['waktu_mulai'])) : '-') . "</td>";
+                                    // Waktu Selesai
+                                    echo "<td>" . (!empty($row['waktu_selesai']) ? date('H:i:s', strtotime($row['waktu_selesai'])) : '-') . "</td>";
+                                    echo "<td>" . ($row['status'] == '2' ? 'Selesai' : 'Menunggu') . "</td>";
 
-                        // Hitung durasi dari waktu_mulai dan waktu_selesai jika tersedia
-                        if (!empty($row['waktu_mulai']) && !empty($row['waktu_selesai'])) {
-                            $mulai = strtotime($row['waktu_mulai']);
-                            $selesai = strtotime($row['waktu_selesai']);
-                            $d = $selesai - $mulai;
-                            $formatted_duration = sprintf("%02d:%02d:%02d", floor($d / 3600), floor(($d % 3600) / 60), $d % 60);
-                        } else {
-                            $formatted_duration = "-";
-                        }
-                        echo "<td>{$formatted_duration}</td>";
-                        $nomor++;
-                    }
-                } else {
-                    echo "<tr><td colspan='8' class='text-center'>Tidak ada data tersedia</td></tr>";
-                }
-                ?>
-            </tbody>
-        </table>
+                                    // Hitung durasi dari waktu_mulai dan waktu_selesai jika tersedia
+                                    if (!empty($row['waktu_mulai']) && !empty($row['waktu_selesai'])) {
+                                        $mulai = strtotime($row['waktu_mulai']);
+                                        $selesai = strtotime($row['waktu_selesai']);
+                                        $d = $selesai - $mulai;
+                                        $formatted_duration = sprintf("%02d:%02d:%02d", floor($d / 3600), floor((($d % 3600) / 60)), $d % 60);
+                                    } else {
+                                        $formatted_duration = "-";
+                                    }
+                                    echo "<td>{$formatted_duration}</td>";
+                                    $nomor++;
+                                }
+                            } else {
+                                echo "<tr><td colspan='8' class='text-center'>Tidak ada data tersedia</td></tr>";
+                            }
+                            ?>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/js/bootstrap.bundle.min.js"></script>

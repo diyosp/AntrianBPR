@@ -48,20 +48,138 @@ if ($userResult && $userResult->num_rows > 0) {
     <title>Manajemen User - BPR Sukabumi</title>
     <!-- Bootstrap CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.5.0/font/bootstrap-icons.css">
     <!-- DataTables CSS -->
     <link rel="stylesheet" href="https://cdn.datatables.net/1.13.6/css/jquery.dataTables.min.css">
 </head>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100" style="background-color: #081941;">
+    <style>
+        /* Page color scheme */
+        .page-header {
+            background-color: #11224E;
+            color: #fff;
+            padding: 1rem 1rem;
+            border-radius: .5rem;
+        }
+        .page-header h1 { 
+            color: #fff;
+            margin: 0;
+        }
+        .user-container .card {
+            background-color: #11224E;
+            color: #fff;
+            border: 0;
+        }
+        .user-container table {
+            color: #fff;
+        }
+        /* Ensure all table text is white */
+        .user-container table,
+        .user-container table thead th,
+        .user-container table tbody tr,
+        .user-container table tbody td {
+            color: #fff !important;
+        }
+        /* DataTables specific styling */
+        .user-container .dataTables_wrapper {
+            color: #fff;
+        }
+        .user-container .dataTables_wrapper .dataTables_length,
+        .user-container .dataTables_wrapper .dataTables_filter,
+        .user-container .dataTables_wrapper .dataTables_info,
+        .user-container .dataTables_wrapper .dataTables_paginate {
+            color: #fff;
+        }
+        .user-container .dataTables_wrapper .dataTables_paginate .paginate_button {
+            color: #fff !important;
+        }
+        .user-container .dataTables_wrapper .dataTables_paginate .paginate_button.current {
+            background: #F87B1B !important;
+            border-color: #F87B1B !important;
+            color: #fff !important;
+        }
+        .user-container .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background: #F87B1B !important;
+            border-color: #F87B1B !important;
+            color: #fff !important;
+        }
+        .form-label { color: #fff; }
+        .form-control, .form-select {
+            background-color: #11224E !important;
+            color: #fff !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+        }
+        .form-control:focus, .form-select:focus {
+            background-color: #11224E !important;
+            color: #fff !important;
+            border: 1px solid rgba(255,255,255,0.3) !important;
+            box-shadow: 0 0 0 0.25rem rgba(255,255,255,0.1) !important;
+            outline: none !important;
+        }
+        .form-control:hover, .form-select:hover {
+            background-color: #11224E !important;
+            color: #fff !important;
+            border: 1px solid rgba(255,255,255,0.3) !important;
+        }
+        select option {
+            background-color: #11224E !important;
+            color: #fff !important;
+        }
+        .btn-theme {
+            background-color: #F87B1B;
+            border-color: #F87B1B;
+            color: #fff;
+        }
+        .btn-theme:hover,
+        .btn-theme:focus,
+        .btn-theme:active {
+            background-color: #F87B1B !important;
+            border-color: #F87B1B !important;
+            color: #fff !important;
+            box-shadow: none !important;
+        }
+        /* Modal styling */
+        .modal-content {
+            background-color: #11224E;
+            color: #fff;
+        }
+        .modal-header {
+            border-bottom-color: rgba(255,255,255,0.15);
+        }
+        .modal-title {
+            color: #fff;
+        }
+        .btn-close {
+            filter: invert(1);
+        }
+        /* DataTables search input */
+        .user-container .dataTables_wrapper input[type="search"] {
+            background-color: #11224E !important;
+            color: #fff !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+        }
+        .user-container .dataTables_wrapper select {
+            background-color: #11224E !important;
+            color: #fff !important;
+            border: 1px solid rgba(255,255,255,0.15) !important;
+        }
+    </style>
     <main class="flex-shrink-0">
-        <div class="container pt-5">
-            <div class="d-flex justify-content-between align-items-center mb-3">
-                <h1>Manajemen User</h1>
-                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addUserModal">Tambah User</button>
+        <div class="container pt-5 user-container">
+            <div class="page-header d-flex justify-content-between align-items-center mb-4">
+                <h1 class="h5 mb-0">Manajemen User</h1>
+                <button class="btn btn-theme" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                    <i class="bi-person-plus"></i> Tambah User
+                </button>
             </div>
 
             <!-- Tabel Data User -->
-            <table id="userTable" class="table table-bordered table-striped">
+            <div class="card border-0 shadow-sm">
+                <div class="card-body p-3">
+                    <div class="table-responsive">
+                        <table id="userTable" class="table table-bordered table-striped mb-0">
                 <thead>
                     <tr>
                         <th>No</th>
@@ -96,6 +214,9 @@ if ($userResult && $userResult->num_rows > 0) {
                     <?php endforeach; ?>
                 </tbody>
             </table>
+                    </div>
+                </div>
+            </div>
         </div>
     </main>
 
@@ -135,7 +256,7 @@ if ($userResult && $userResult->num_rows > 0) {
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <button type="submit" id="submitAddUser" class="btn btn-success w-100 py-2">Tambah User</button>
+                        <button type="submit" id="submitAddUser" class="btn btn-theme w-100 py-2">Tambah User</button>
                     </form>
 
                 </div>
@@ -179,7 +300,7 @@ if ($userResult && $userResult->num_rows > 0) {
                             <input type="password" name="password" id="editPassword" class="form-control" placeholder="Kosongkan jika tidak ingin mengubah password">
                         </div>
 
-                        <button type="submit" class="btn btn-warning w-100 py-2">Simpan Perubahan</button>
+                        <button type="submit" class="btn btn-theme w-100 py-2">Simpan Perubahan</button>
                     </form>
                 </div>
             </div>

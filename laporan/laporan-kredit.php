@@ -9,16 +9,114 @@ require_once "../config/database.php";
 ?>
 
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100" style="background-color: #081941;">
+  <style>
+    /* Page color scheme */
+    .page-header {
+      background-color: #11224E;
+      color: #fff;
+      padding: 1rem 1rem;
+      border-radius: .5rem;
+    }
+    .page-header i { color: #fff; }
+    .report-container .card {
+      background-color: #11224E;
+      color: #fff;
+      border: 0;
+    }
+    .report-container table {
+      color: #fff;
+    }
+    /* Ensure all table text (headers, body rows and cells) is white */
+    .report-container table,
+    .report-container table thead th,
+    .report-container table tbody tr,
+    .report-container table tbody td,
+    .report-container table tbody th {
+      color: #fff !important;
+    }
+    /* Keep striped backgrounds but force text white on odd/even rows */
+    .report-container table.table-striped tbody tr:nth-of-type(odd),
+    .report-container table.table-striped tbody tr:nth-of-type(even) {
+      color: #fff !important;
+    }
+    .form-label { color: #fff; }
+    .form-control, .form-select {
+      background-color: #11224E !important;
+      color: #fff !important;
+      border: 1px solid rgba(255,255,255,0.15) !important;
+    }
+    .form-control:focus, .form-select:focus {
+      background-color: #11224E !important;
+      color: #fff !important;
+      border: 1px solid rgba(255,255,255,0.3) !important;
+      box-shadow: 0 0 0 0.25rem rgba(255,255,255,0.1) !important;
+      outline: none !important;
+    }
+    .form-control:hover, .form-select:hover {
+      background-color: #11224E !important;
+      color: #fff !important;
+      border: 1px solid rgba(255,255,255,0.3) !important;
+    }
+    /* Style the select dropdown when opened */
+    select {
+      background-color: #11224E !important;
+      color: #fff !important;
+      border: 1px solid rgba(255,255,255,0.15) !important;
+    }
+    select:hover {
+      border: 1px solid rgba(255,255,255,0.3) !important;
+    }
+    select:focus {
+      border: 1px solid rgba(255,255,255,0.3) !important;
+      background-color: #11224E !important;
+    }
+    /* Dropdown options styling */
+    .form-select option, select option {
+      background-color: #11224E !important;
+      color: #fff !important;
+      border: none !important;
+    }
+    .btn-theme {
+      background-color: #F87B1B;
+      border-color: #F87B1B;
+      color: #fff;
+    }
+    /* Remove hover/focus/active color change */
+    .btn-theme:hover,
+    .btn-theme:focus,
+    .btn-theme:active {
+      background-color: #F87B1B !important;
+      border-color: #F87B1B !important;
+      color: #fff !important;
+      box-shadow: none !important;
+    }
+    .dropdown-menu { background-color: #11224E; color: #fff; }
+    .dropdown-menu a { color: #fff; }
+    /* Custom arrow (optional) */
+    .report-container .form-select {
+      background-image:
+        linear-gradient(45deg, transparent 50%, #fff 50%),
+        linear-gradient(135deg, #fff 50%, transparent 50%),
+        linear-gradient(to right, #11224E, #11224E);
+      background-position:
+        calc(100% - 18px) calc(50% + 2px),
+        calc(100% - 12px) calc(50% + 2px),
+        100% 0;
+      background-size: 6px 6px, 6px 6px, 2.5em 100%;
+      background-repeat: no-repeat;
+      padding-right: 2.8em;
+    }
+  </style>
   <script>
     // Set browser tab title for this page without modifying shared header
     document.title = 'Laporan Admin Kredit';
   </script>
   <main class="flex-shrink-0">
-    <div class="container pt-5">
-      <div class="d-flex align-items-center mb-4">
-        <i class="bi-file-earmark-text text-success me-3 fs-3"></i>
-        <h1 class="h5 pt-2">Laporan Admin Kredit</h1>
+    <div class="container pt-5 report-container">
+      <div class="page-header d-flex align-items-center mb-4">
+        <i class="bi-file-earmark-text me-3 fs-3"></i>
+        <h1 class="h5 pt-2 mb-0">Laporan Admin Kredit</h1>
       </div>
       <!-- Form Filter -->
       <form method="GET" class="row mb-4">
@@ -74,14 +172,14 @@ require_once "../config/database.php";
         </div>
         <div class="col-md-2 d-flex align-items-end justify-content-end">
           <div class="btn-group w-100">
-            <button type="submit" class="btn btn-primary">Filter</button>
-            <button type="button" class="btn btn-primary dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+            <button type="submit" class="btn btn-theme">Filter</button>
+            <button type="button" class="btn btn-theme dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
               <span class="visually-hidden">Toggle Dropdown</span>
             </button>
             <ul class="dropdown-menu dropdown-menu-end">
               <li><a class="dropdown-item" href="export-pdf-kredit.php?<?= http_build_query($_GET) ?>">Download PDF</a></li>
               <li><a class="dropdown-item" href="export-excel-kredit.php?<?= http_build_query($_GET) ?>">Download Excel</a></li>
-              <li><hr class="dropdown-divider"></li>
+              <li><hr class="dropdown-divider" style="background-color: #dee2e6;"></li>
               <li><a class="dropdown-item" href="print-kredit.php?<?= http_build_query($_GET) ?>" target="_blank">Print</a></li>
             </ul>
           </div>
@@ -89,7 +187,10 @@ require_once "../config/database.php";
       </form>
       <!-- Actions moved into split dropdown next to Filter -->
       <!-- Tabel Laporan (styled like CS) -->
-      <table class="table table-bordered table-striped">
+      <div class="card border-0 shadow-sm">
+        <div class="card-body p-3">
+          <div class="table-responsive">
+            <table class="table table-bordered table-striped mb-0">
         <thead>
           <tr>
             <th>No</th>
@@ -152,6 +253,9 @@ require_once "../config/database.php";
           <?php endif; ?>
         </tbody>
       </table>
+          </div>
+        </div>
+      </div>
     </div>
           </main>
 </body>

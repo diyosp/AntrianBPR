@@ -101,8 +101,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     <link rel="stylesheet" href="assets/css/style.css"> <!-- project stylesheet -->
 </head>
 
-<body class="d-flex flex-column h-100" style="background-color: #F5F7FA !important;">
-    <main class="flex-shrink-0 login-page" style="background: #F5F7FA !important;">
+<body class="d-flex flex-column h-100" style="background-color: #081941!important;">
+    <main class="flex-shrink-0 login-page" style="background: #081941 !important;">
         <div class="container d-flex align-items-center justify-content-center min-vh-100">
             <div class="row w-100 justify-content-center">
                 <div class="col-md-8 col-lg-5">
@@ -112,7 +112,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     <div class="card login-card shadow-lg">
                         <div class="card-body p-4 p-md-5">
                             <div class="d-flex align-items-center mb-2">
-                                <img src="assets/img/test.png" alt="logo" class="brand-logo me-3" onerror="this.style.display='none'">
+                                <img src="assets/img/logotest.png" alt="logo" class="brand-logo me-3" onerror="this.style.display='none'">
                             </div>
 
                             <form method="POST" action="login.php" novalidate>

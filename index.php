@@ -10,15 +10,15 @@ if (!isset($_SESSION['user_id'])) {
 include "header.php";
 ?>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100" style="background-color: #081941;">
   <main class="flex-shrink-0">
     <div class="container pt-4">
       <!-- tampilkan pesan selamat datang -->
-      <div class="alert alert-light d-flex align-items-center mb-4" role="alert" style="background-color: #11224E;">
+      <div class="alert alert-light d-flex align-items-center mb-4" role="alert" style="background-color: #11224E; border-color: #11224E; color: #fff;">
         <i class="bi-info-circle text-success me-3 fs-3"></i>
         <div class="d-flex justify-content-between align-items-center w-100">
           <span style="background-color: #11224E;" class="text-white">
-            Selamat Datang di <img src="assets/img/test.png" alt="BPR Sukabumi" style="width: 75px; height: 75px; object-fit: contain; vertical-align: middle;"> Silahkan pilih menu berikut.
+            Selamat Datang di <img src="assets/img/logotest.png" alt="BPR Sukabumi" style="width: 75px; height: 75px; object-fit: contain; vertical-align: middle;"> Silahkan pilih menu berikut.
           </span>
           <a href="logout.php" class="btn" style="background-color: #F87B1B; border-color: #F87B1B; color: #fff;">Logout</a>
         </div>

@@ -2,9 +2,9 @@
 include "../header.php";
 ?>
 
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100" style="background-color: #081941;">
   <main class="flex-shrink-0">
-    <div class="container pt-4">
+    <div class="container pt-5">
       <div class="d-flex flex-column flex-md-row px-4 py-3 mb-4 rounded-2 shadow-sm" style="background-color: #11224E;">
         <!-- judul halaman -->
         <div class="d-flex align-items-center me-md-auto">

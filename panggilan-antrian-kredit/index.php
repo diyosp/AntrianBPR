@@ -1,9 +1,9 @@
 <?php
 include "../header.php";
 ?>
-<body class="d-flex flex-column h-100">
+<body class="d-flex flex-column h-100" style="background-color: #081941;">
   <main class="flex-shrink-0">
-    <div class="container pt-4">
+    <div class="container pt-5">
       <div class="d-flex flex-column flex-md-row px-4 py-3 mb-4 rounded-2 shadow-sm" style="background-color: #11224E;">
         <div class="d-flex align-items-center me-md-auto">
           <i class="bi-mic-fill me-3 fs-3" style="color: #fff;"></i>
@@ -191,7 +191,6 @@ include "../header.php";
     }
   </style>
 
-  <?php include "../footer.php"; ?>
   <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.min.js"></script>
