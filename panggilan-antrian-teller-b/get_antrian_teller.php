@@ -19,8 +19,10 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
   $tanggal = gmdate("Y-m-d", time() + 60 * 60 * 7);
 
   // sql statement untuk menampilkan data dari tabel "tbl_antrian_teller" berdasarkan "tanggal" dan "cabang_id"
-  $query = mysqli_query($mysqli, "SELECT id_teller, no_antrian_teller, status_teller FROM tbl_antrian_teller 
-                                    WHERE tanggal_teller='$tanggal' AND cabang_id='$cabang_id'")
+  // Teller B hanya bisa melihat antrian yang belum diambil (bagian IS NULL) atau sudah diambil oleh Teller B (bagian = '2')
+  $query = mysqli_query($mysqli, "SELECT id_teller, no_antrian_teller, status_teller, bagian FROM tbl_antrian_teller 
+                                    WHERE tanggal_teller='$tanggal' AND cabang_id='$cabang_id'
+                                    AND (bagian IS NULL OR bagian = '2')")
     or die('Ada kesalahan pada query tampil data : ' . mysqli_error($mysqli));
 
   // ambil jumlah baris data hasil query
@@ -36,6 +38,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
       $data['id_teller']         = $row["id_teller"];
       $data['no_antrian_teller'] = $row["no_antrian_teller"];
       $data['status_teller']     = $row["status_teller"];
+      $data['bagian']            = $row["bagian"];
 
       array_push($response["data"], $data);
     }

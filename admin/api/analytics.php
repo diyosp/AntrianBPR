@@ -149,6 +149,20 @@ $bagian_map = [];
 $start_date = date('Y-m-d', strtotime("-$days days"));
 $end_date = date('Y-m-d');
 
+// CS (Customer Service)
+$stmt = $mysqli->prepare("SELECT COUNT(*) as cnt FROM tbl_antrian WHERE DATE(tanggal) BETWEEN ? AND ? " . ($cabang_id ? "AND cabang_id = ?" : ""));
+if ($cabang_id) {
+    $stmt->bind_param("ssi", $start_date, $end_date, $cabang_id);
+} else {
+    $stmt->bind_param("ss", $start_date, $end_date);
+}
+$stmt->execute();
+$result = $stmt->get_result();
+$row = $result->fetch_assoc();
+if ($row['cnt'] > 0) {
+    $bagian_map['Customer Service'] = $row['cnt'];
+}
+
 // Teller
 $stmt = $mysqli->prepare("SELECT bagian, COUNT(*) as cnt FROM tbl_antrian_teller WHERE DATE(tanggal_teller) BETWEEN ? AND ? " . ($cabang_id ? "AND cabang_id = ?" : "") . " GROUP BY bagian");
 if ($cabang_id) {
@@ -159,12 +173,22 @@ if ($cabang_id) {
 $stmt->execute();
 $result = $stmt->get_result();
 while ($row = $result->fetch_assoc()) {
-    $key = $row['bagian'] ?? '-';
+    $bagian_value = $row['bagian'];
+    // Convert numeric bagian to readable labels
+    if ($bagian_value == '1') {
+        $key = 'Teller 1';
+    } elseif ($bagian_value == '2') {
+        $key = 'Teller 2';
+    } elseif ($bagian_value) {
+        $key = $bagian_value;
+    } else {
+        $key = 'Teller';
+    }
     $bagian_map[$key] = ($bagian_map[$key] ?? 0) + $row['cnt'];
 }
 
 // Kredit
-$stmt = $mysqli->prepare("SELECT bagian, COUNT(*) as cnt FROM tbl_antrian_kredit WHERE DATE(tanggal_kredit) BETWEEN ? AND ? " . ($cabang_id ? "AND cabang_id = ?" : "") . " GROUP BY bagian");
+$stmt = $mysqli->prepare("SELECT COUNT(*) as cnt FROM tbl_antrian_kredit WHERE DATE(tanggal_kredit) BETWEEN ? AND ? " . ($cabang_id ? "AND cabang_id = ?" : ""));
 if ($cabang_id) {
     $stmt->bind_param("ssi", $start_date, $end_date, $cabang_id);
 } else {
@@ -172,9 +196,9 @@ if ($cabang_id) {
 }
 $stmt->execute();
 $result = $stmt->get_result();
-while ($row = $result->fetch_assoc()) {
-    $key = $row['bagian'] ?? '-';
-    $bagian_map[$key] = ($bagian_map[$key] ?? 0) + $row['cnt'];
+$row = $result->fetch_assoc();
+if ($row['cnt'] > 0) {
+    $bagian_map['Kredit'] = $row['cnt'];
 }
 
 foreach ($bagian_map as $label => $value) {
