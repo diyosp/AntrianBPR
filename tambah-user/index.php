@@ -22,12 +22,12 @@ if ($cabangResult && $cabangResult->num_rows > 0) {
     }
 }
 
-// Ambil data jabatan yang difilter (CS, Teller, Pimpinan Cabang, Kepala Seksi)
+// Ambil data jabatan yang difilter (CS, Teller, Pimpinan Cabang, Kepala Seksi, Kepala Satuan TI, Staff TI)
 $jabatan_list = [];
 try {
     $jabatanQuery = "SELECT id_jabatan, jabatan 
                      FROM bprsukab_eis.jabatan 
-                     WHERE id_jabatan IN (27, 28, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 56, 59, 63, 1002)
+                     WHERE id_jabatan IN (27, 28, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 41, 44, 56, 59, 63, 1002)
                      ORDER BY jabatan";
     $jabatanResult = $mysqli_eis->query($jabatanQuery);
     
@@ -61,12 +61,12 @@ try {
         $nameColumn = 'name';
     }
     
-    // Filter only: Customer Service, Teller, Pimpinan Cabang, and Kepala Seksi
-    // Customer Service = 27, Teller = 28, Kepala Cabang = 9, Kepala Seksi = 11-20, 56, 59, 63, 1002
+    // Filter only: Customer Service, Teller, Pimpinan Cabang, Kepala Seksi, Kepala Satuan TI, Staff TI
+    // Customer Service = 27, Teller = 28, Kepala Cabang = 9, Kepala Seksi = 11-20, 56, 59, 63, 1002, Kepala Satuan TI = 41, Staff TI = 44
     $pegawaiQuery = "SELECT p.id_pegawai, p.$nameColumn as nama_pegawai, p.kode_cabang, p.id_jabatan, j.jabatan 
                      FROM bprsukab_eis.pegawai p
                      LEFT JOIN bprsukab_eis.jabatan j ON p.id_jabatan = j.id_jabatan
-                     WHERE p.id_jabatan IN (27, 28, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 56, 59, 63, 1002)
+                     WHERE p.id_jabatan IN (27, 28, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 41, 44, 56, 59, 63, 1002)
                      ORDER BY j.jabatan, p.$nameColumn";
     $pegawaiResult = $mysqli_eis->query($pegawaiQuery);
     
