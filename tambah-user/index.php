@@ -79,22 +79,65 @@ try {
     error_log("Error fetching pegawai: " . $e->getMessage());
 }
 
+// Get filter values
+$filter_cabang = isset($_GET['cabang_id']) ? $_GET['cabang_id'] : null;
+$filter_role = isset($_GET['role_id']) ? $_GET['role_id'] : null;
+$filter_jabatan = isset($_GET['jabatan_id']) ? $_GET['jabatan_id'] : null;
+
 // Ambil data user untuk ditampilkan di tabel
 $users = [];
 $userQuery = "
     SELECT users.id, users.id_pegawai, users.username, role.nama AS role, cabang.nama AS cabang, 
-           users.role_id, users.cabang_id, p.id_jabatan
+           users.role_id, users.cabang_id, p.id_jabatan, j.jabatan
     FROM users
     JOIN role ON users.role_id = role.role_id
     JOIN cabang ON users.cabang_id = cabang.id
     LEFT JOIN bprsukab_eis.pegawai p ON users.id_pegawai = p.id_pegawai
+    LEFT JOIN bprsukab_eis.jabatan j ON p.id_jabatan = j.id_jabatan
+    WHERE 1=1
 ";
-$userResult = $mysqli->query($userQuery);
+
+// Add filters to query
+$params = [];
+$types = '';
+
+if (!empty($filter_cabang)) {
+    $userQuery .= " AND users.cabang_id = ?";
+    $params[] = $filter_cabang;
+    $types .= 'i';
+}
+
+if (!empty($filter_role)) {
+    $userQuery .= " AND users.role_id = ?";
+    $params[] = $filter_role;
+    $types .= 'i';
+}
+
+if (!empty($filter_jabatan)) {
+    $userQuery .= " AND p.id_jabatan = ?";
+    $params[] = $filter_jabatan;
+    $types .= 'i';
+}
+
+$userQuery .= " ORDER BY users.id ASC";
+
+if (!empty($params)) {
+    $stmt = $mysqli->prepare($userQuery);
+    $stmt->bind_param($types, ...$params);
+    $stmt->execute();
+    $userResult = $stmt->get_result();
+} else {
+    $userResult = $mysqli->query($userQuery);
+}
+
 if ($userResult && $userResult->num_rows > 0) {
     while ($row = $userResult->fetch_assoc()) {
         $users[] = $row;
     }
 }
+
+// Determine if filters are active
+$has_filters = !empty($filter_cabang) || !empty($filter_role) || !empty($filter_jabatan);
 ?>
 
 
@@ -197,7 +240,7 @@ if ($userResult && $userResult->num_rows > 0) {
         .user-container table.dataTable.table-bordered {
             border: 1px solid rgba(255,255,255,0.2) !important;
         }
-        .user-container .btn-sm {
+        .user-container table .btn-sm {
             font-size: 0.75rem;
             padding: 0.25rem 0.5rem;
         }
@@ -222,6 +265,20 @@ if ($userResult && $userResult->num_rows > 0) {
         select option {
             background-color: #11224E !important;
             color: #fff !important;
+        }
+        /* Custom white arrow for select dropdowns */
+        .user-container .form-select {
+            background-image:
+                linear-gradient(45deg, transparent 50%, #fff 50%),
+                linear-gradient(135deg, #fff 50%, transparent 50%),
+                linear-gradient(to right, #11224E, #11224E);
+            background-position:
+                calc(100% - 18px) calc(50% + 2px),
+                calc(100% - 12px) calc(50% + 2px),
+                100% 0;
+            background-size: 6px 6px, 6px 6px, 2.5em 100%;
+            background-repeat: no-repeat;
+            padding-right: 2.8em;
         }
         .btn-theme {
             background-color: #F87B1B;
@@ -250,6 +307,20 @@ if ($userResult && $userResult->num_rows > 0) {
         .btn-close {
             filter: invert(1);
         }
+        /* Modal form-select white arrow */
+        .modal-content .form-select {
+            background-image:
+                linear-gradient(45deg, transparent 50%, #fff 50%),
+                linear-gradient(135deg, #fff 50%, transparent 50%),
+                linear-gradient(to right, #11224E, #11224E);
+            background-position:
+                calc(100% - 18px) calc(50% + 2px),
+                calc(100% - 12px) calc(50% + 2px),
+                100% 0;
+            background-size: 6px 6px, 6px 6px, 2.5em 100%;
+            background-repeat: no-repeat;
+            padding-right: 2.8em;
+        }
         /* DataTables search input */
         .user-container .dataTables_wrapper input[type="search"] {
             background-color: #11224E !important;
@@ -265,14 +336,32 @@ if ($userResult && $userResult->num_rows > 0) {
         .select2-container--default .select2-selection--single {
             background-color: #11224E !important;
             border: 1px solid rgba(255,255,255,0.15) !important;
-            height: 38px;
+            height: calc(1.5em + 0.75rem + 2px) !important;
+            min-height: 38px !important;
         }
         .select2-container--default .select2-selection--single .select2-selection__rendered {
             color: #fff !important;
-            line-height: 36px;
+            line-height: calc(1.5em + 0.75rem) !important;
+            padding-left: 12px !important;
         }
         .select2-container--default .select2-selection--single .select2-selection__arrow {
-            height: 36px;
+            height: calc(1.5em + 0.75rem + 2px) !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__arrow b {
+            border-color: #fff transparent transparent transparent !important;
+        }
+        .select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b {
+            border-color: transparent transparent #fff transparent !important;
+        }
+        /* Select2 clear button (X) - make it white */
+        .select2-container--default .select2-selection--single .select2-selection__clear {
+            color: #fff !important;
+            font-size: 1.2em !important;
+            font-weight: bold !important;
+            margin-left: 2.5rem !important;
+        }
+        .select2-container--default .select2-selection--single .select2-selection__clear:hover {
+            color: #F87B1B !important;
         }
         .select2-dropdown {
             background-color: #11224E !important;
@@ -291,16 +380,97 @@ if ($userResult && $userResult->num_rows > 0) {
             color: #fff !important;
             border: 1px solid rgba(255,255,255,0.15) !important;
         }
+        /* Make DataTable filter and the Add button align on the same line and match heights */
+        .dataTables_filter {
+            display: flex !important;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .dataTables_filter label {
+            margin: 0;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .dataTables_filter input[type="search"] {
+            height: 38px !important;
+            padding: 6px 12px !important;
+            border-radius: 6px !important;
+        }
+        .dataTables_filter .btn-theme {
+            height: 38px !important;
+            padding: 6px 12px !important;
+            display: inline-flex;
+            align-items: center;
+        }
+        .dropdown-menu { background-color: #11224E; color: #fff; }
+        .dropdown-menu a { color: #fff; }
     </style>
     <main class="flex-shrink-0">
         <div class="container pt-5 user-container">
             <div class="page-header d-flex align-items-center mb-3">
                 <i class="bi-person-square me-3 fs-3" style="margin-top: 0.3rem;"></i>
                 <h1 class="h5 pt-2 mb-0">Manajemen User</h1>
-                <button class="btn btn-theme" data-bs-toggle="modal" data-bs-target="#addUserModal" style="margin-left: auto;">
-                    <i class="bi-person-plus"></i> Tambah User
-                </button>
+                <div class="text-end ms-auto">
+                    <a href="../" class="btn btn-outline-light btn-sm">Kembali</a>
+                </div>
             </div>
+
+            <!-- Form Filter -->
+            <form method="GET" class="row mb-4">
+                <div class="col-md-3">
+                    <label for="filter_cabang" class="form-label">Cabang</label>
+                    <select id="filter_cabang" name="cabang_id" class="form-select">
+                        <option value="">Semua Cabang</option>
+                        <?php foreach ($cabangs as $cabang): ?>
+                            <option value="<?php echo $cabang['id']; ?>" <?php echo (isset($_GET['cabang_id']) && $_GET['cabang_id'] == $cabang['id']) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($cabang['nama']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="filter_jabatan" class="form-label">Jabatan</label>
+                    <select id="filter_jabatan_filter" name="jabatan_id" class="form-select">
+                        <option value="">Semua Jabatan</option>
+                        <?php foreach ($jabatan_list as $jabatan): ?>
+                            <option value="<?php echo $jabatan['id_jabatan']; ?>" <?php echo (isset($_GET['jabatan_id']) && $_GET['jabatan_id'] == $jabatan['id_jabatan']) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($jabatan['jabatan']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="filter_role" class="form-label">Role</label>
+                    <select id="filter_role" name="role_id" class="form-select">
+                        <option value="">Semua Role</option>
+                        <?php foreach ($roles as $role): ?>
+                            <option value="<?php echo $role['role_id']; ?>" <?php echo (isset($_GET['role_id']) && $_GET['role_id'] == $role['role_id']) ? 'selected' : ''; ?>>
+                                <?php echo htmlspecialchars($role['nama']); ?>
+                            </option>
+                        <?php endforeach; ?>
+                    </select>
+                </div>
+                <div class="col-md-2 d-flex align-items-end justify-content-end">
+                    <div class="btn-group w-100">
+                        <button type="submit" class="btn btn-theme">Filter</button>
+                        <button type="button" class="btn btn-theme dropdown-toggle dropdown-toggle-split" data-bs-toggle="dropdown" aria-expanded="false">
+                            <span class="visually-hidden">Toggle Dropdown</span>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li><a class="dropdown-item" href="export-pdf.php?<?= http_build_query($_GET) ?>">Download PDF</a></li>
+                            <li><a class="dropdown-item" href="export-excel.php?<?= http_build_query($_GET) ?>">Download Excel</a></li>
+                            <li><hr class="dropdown-divider" style="background-color: #dee2e6;"></li>
+                            <li><a class="dropdown-item" href="print.php?<?= http_build_query($_GET) ?>" target="_blank">Print</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="col-md-2 d-flex align-items-end">
+                    <button type="button" class="btn btn-theme w-100" data-bs-toggle="modal" data-bs-target="#addUserModal">
+                        <i class="bi-person-plus"></i> Tambah User
+                    </button>
+                </div>
+            </form>
 
             <!-- Tabel Data User -->
             <div class="card border-0 shadow-sm">
@@ -313,6 +483,7 @@ if ($userResult && $userResult->num_rows > 0) {
                                 <th>Username</th>
                                 <th>Role</th>
                                 <th>Cabang</th>
+                                <th>Jabatan</th>
                                 <th>Aksi</th>
                             </tr>
                         </thead>
@@ -324,6 +495,7 @@ if ($userResult && $userResult->num_rows > 0) {
                                     <td><?php echo htmlspecialchars($user['username']); ?></td>
                                     <td><?php echo htmlspecialchars($user['role']); ?></td>
                                     <td><?php echo htmlspecialchars($user['cabang']); ?></td>
+                                    <td><?php echo htmlspecialchars($user['jabatan'] ?? '-'); ?></td>
                                     <td>
                                         <button
                                             class="btn btn-sm btn-edit"
@@ -425,6 +597,7 @@ if ($userResult && $userResult->num_rows > 0) {
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
+                    <i class="bi-pencil-square me-3 fs-3" style="margin-top: 0.3rem;"></i>
                     <h5 class="modal-title" id="editUserModalLabel">Edit User</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
@@ -508,14 +681,12 @@ if ($userResult && $userResult->num_rows > 0) {
             $('.select2-pegawai').select2({
                 dropdownParent: $('#addUserModal'),
                 placeholder: "Pilih Pegawai",
-                allowClear: true,
                 width: '100%'
             });
 
             $('.select2-pegawai-edit').select2({
                 dropdownParent: $('#editUserModal'),
                 placeholder: "Pilih Pegawai",
-                allowClear: true,
                 width: '100%'
             });
 
@@ -576,7 +747,6 @@ if ($userResult && $userResult->num_rows > 0) {
                 $pegawaiSelect.select2({
                     dropdownParent: $('#addUserModal'),
                     placeholder: "Pilih Pegawai",
-                    allowClear: true,
                     width: '100%'
                 });
             });
@@ -632,7 +802,6 @@ if ($userResult && $userResult->num_rows > 0) {
                 $pegawaiSelect.select2({
                     dropdownParent: $('#editUserModal'),
                     placeholder: "Pilih Pegawai",
-                    allowClear: true,
                     width: '100%'
                 });
             });
@@ -665,6 +834,26 @@ if ($userResult && $userResult->num_rows > 0) {
 
             // Inisialisasi DataTable
             $(document).ready(function() {
+                <?php if ($has_filters): ?>
+                // Use static data when filters are active
+                const table = $('#userTable').DataTable({
+                    ordering: false,
+                    language: {
+                        search: "Cari:",
+                        lengthMenu: "Tampilkan _MENU_ data",
+                        info: "Menampilkan _START_ sampai _END_ dari _TOTAL_ data",
+                        infoEmpty: "Menampilkan 0 sampai 0 dari 0 data",
+                        infoFiltered: "(disaring dari _MAX_ total data)",
+                        paginate: {
+                            first: "Awal",
+                            last: "Akhir",
+                            next: "Berikutnya",
+                            previous: "Sebelumnya"
+                        }
+                    }
+                });
+                <?php else: ?>
+                // Use AJAX data when no filters
                 const table = $('#userTable').DataTable({
                     ajax: 'get_users.php',
                     ordering: false,
@@ -685,6 +874,12 @@ if ($userResult && $userResult->num_rows > 0) {
                         },
                         {
                             data: 'cabang'
+                        },
+                        {
+                            data: 'jabatan',
+                            render: function(data, type, row) {
+                                return data ? data : '-';
+                            }
                         },
                         {
                             data: null,
@@ -718,6 +913,7 @@ if ($userResult && $userResult->num_rows > 0) {
                         }
                     }
                 });
+                <?php endif; ?>
 
                 // Re-bind event listener setelah tabel diperbarui
                 $('#userTable').on('draw.dt', function() {

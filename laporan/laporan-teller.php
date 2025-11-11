@@ -199,6 +199,9 @@ $result = $stmt->get_result();
         <div class="page-header d-flex align-items-center mb-4">
             <i class="bi-file-earmark-text me-3 fs-3"></i>
             <h1 class="h5 pt-2 mb-0">Laporan Teller</h1>
+            <div class="text-end ms-auto">
+                <a href="../" class="btn btn-outline-light btn-sm">Kembali</a>
+            </div>
         </div>
 
         <!-- Form Filter -->
