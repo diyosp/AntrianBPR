@@ -229,10 +229,15 @@ if (!empty($cabang_id) && isset($mysqli)) {
         <div class="col-lg-4">
           <div class="card border-0 shadow-sm chart-card" style="background-color: #11224E; border-radius: 1rem; height: 450px;">
             <div class="card-body p-4 d-flex flex-column h-100">
-              <h6 class="mb-4 text-white fw-semibold d-flex align-items-center">
+              <h6 class="mb-2 text-white fw-semibold d-flex align-items-center">
                   <i class="bi-pie-chart text-info" style="margin-right: 0.5rem;"></i>
                 Aktivitas per Bagian
               </h6>
+              <?php if ($cabang_id == 312 || empty($cabang_id)): ?>
+              <p class="mb-3 text-white-50" style="font-size: 0.7rem;">
+                <i class="bi-info-circle"></i> Teller = semua cabang | Teller A & B = Cikembar saja
+              </p>
+              <?php endif; ?>
               <div class="flex-grow-1" style="position: relative;">
                 <canvas id="chartPerStaff"></canvas>
               </div>
@@ -291,6 +296,11 @@ if (!empty($cabang_id) && isset($mysqli)) {
               <h6 class="mb-4 text-white fw-semibold d-flex align-items-center">
                   <i class="bi-trophy text-warning" style="margin-right: 0.5rem;"></i>
                 Performa per Bagian
+                <?php if ($cabang_id == 312 || empty($cabang_id)): ?>
+                <small class="ms-2 text-white-50" style="font-size: 0.75rem; font-weight: normal;">
+                  <i class="bi-info-circle"></i> Teller A & B khusus untuk Cabang Cikembar
+                </small>
+                <?php endif; ?>
               </h6>
               <div class="table-responsive">
                 <table class="table table-dark table-hover performance-table mb-0">
@@ -551,6 +561,10 @@ if (!empty($cabang_id) && isset($mysqli)) {
     async function loadDashboard(days = 7) {
       try {
         const data = await fetchAnalytics(days);
+        console.log('Analytics Data:', data);
+        console.log('Session Info:', data.debug_session);
+        console.log('Per Staff:', data.per_staff);
+        console.log('Debug Bagian Map:', data.debug_bagian_map);
         updateKPIs(data);
         renderCharts(data);
       } catch (err) {

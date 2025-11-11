@@ -7,6 +7,13 @@ require_once __DIR__ . '/../../config/database.php';
 $cabang_id = $_SESSION['cabang_id'] ?? null;
 $days = isset($_GET['days']) ? intval($_GET['days']) : 7;
 
+// Add debug info to response
+$response_debug = [
+    'session_cabang_id' => $cabang_id,
+    'session_role_id' => $_SESSION['role_id'] ?? null,
+    'days_requested' => $days
+];
+
 // Initialize response structure
 $response = [
     'dates' => [],
@@ -16,7 +23,8 @@ $response = [
     'hourly_dist' => ['hours' => [], 'counts' => []],
     'service_breakdown' => ['cs' => [], 'teller' => [], 'kredit' => []],
     'staff_performance' => [],
-    'peak_hour' => null
+    'peak_hour' => null,
+    'debug_session' => $response_debug
 ];
 
 // Generate date range
@@ -149,6 +157,9 @@ $bagian_map = [];
 $start_date = date('Y-m-d', strtotime("-$days days"));
 $end_date = date('Y-m-d');
 
+// Debug logging
+error_log("Analytics Debug - Start Date: $start_date, End Date: $end_date, Cabang ID: " . ($cabang_id ?? 'ALL'));
+
 // CS (Customer Service)
 $stmt = $mysqli->prepare("SELECT COUNT(*) as cnt FROM tbl_antrian WHERE DATE(tanggal) BETWEEN ? AND ? " . ($cabang_id ? "AND cabang_id = ?" : ""));
 if ($cabang_id) {
@@ -162,9 +173,22 @@ $row = $result->fetch_assoc();
 if ($row['cnt'] > 0) {
     $bagian_map['Customer Service'] = $row['cnt'];
 }
+error_log("CS Count: " . ($row['cnt'] ?? 0));
 
-// Teller
-$stmt = $mysqli->prepare("SELECT bagian, COUNT(*) as cnt FROM tbl_antrian_teller WHERE DATE(tanggal_teller) BETWEEN ? AND ? " . ($cabang_id ? "AND cabang_id = ?" : "") . " GROUP BY bagian");
+// Teller - separate into Default, A, and B based on bagian field
+$teller_query = "SELECT 
+    CASE 
+        WHEN bagian = '1' THEN 'teller_a'
+        WHEN bagian = '2' THEN 'teller_b'
+        ELSE 'teller_default'
+    END as bagian_type,
+    COUNT(*) as cnt 
+    FROM tbl_antrian_teller 
+    WHERE DATE(tanggal_teller) BETWEEN ? AND ? " 
+    . ($cabang_id ? "AND cabang_id = ? " : "") 
+    . "GROUP BY bagian_type";
+error_log("Teller Query: $teller_query");
+$stmt = $mysqli->prepare($teller_query);
 if ($cabang_id) {
     $stmt->bind_param("ssi", $start_date, $end_date, $cabang_id);
 } else {
@@ -173,14 +197,14 @@ if ($cabang_id) {
 $stmt->execute();
 $result = $stmt->get_result();
 while ($row = $result->fetch_assoc()) {
-    $bagian_value = $row['bagian'];
-    // Convert numeric bagian to readable labels
-    if ($bagian_value == '1') {
-        $key = 'Teller 1';
-    } elseif ($bagian_value == '2') {
-        $key = 'Teller 2';
-    } elseif ($bagian_value) {
-        $key = $bagian_value;
+    $bagian_type = $row['bagian_type'];
+    $count = $row['cnt'];
+    error_log("Teller Row - Type: $bagian_type, Count: $count");
+    // Convert bagian type to readable labels
+    if ($bagian_type == 'teller_a') {
+        $key = 'Teller A';
+    } elseif ($bagian_type == 'teller_b') {
+        $key = 'Teller B';
     } else {
         $key = 'Teller';
     }
@@ -200,10 +224,16 @@ $row = $result->fetch_assoc();
 if ($row['cnt'] > 0) {
     $bagian_map['Kredit'] = $row['cnt'];
 }
+error_log("Kredit Count: " . ($row['cnt'] ?? 0));
+
+error_log("Final Bagian Map: " . json_encode($bagian_map));
 
 foreach ($bagian_map as $label => $value) {
     $response['per_staff'][] = ['label' => $label, 'value' => $value];
 }
+
+// Debug: Add raw bagian_map to response for troubleshooting
+$response['debug_bagian_map'] = $bagian_map;
 
 // Staff performance (mock data - customize based on your schema)
 foreach ($bagian_map as $bagian => $total) {
