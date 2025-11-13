@@ -12,12 +12,12 @@ include "../header.php";
 
 <body class="d-flex flex-column h-100">
   <main class="flex-grow-1">
-    <div class="container-fluid px-0 tv-root h-100">
+  <div class="container-fluid px-0 tv-root h-100">
       <div class="row g-0 align-items-stretch h-100 tv-row">
         <!-- Left column: stacked queues -->
   <div class="col-12 col-lg-5 d-grid h-100 left-col">
           <!-- CS Queue -->
-          <div class="card border-0 shadow-sm queue-card">
+          <div class="card border-0 shadow-sm queue-card cs-card">
             <div class="card-body p-4" style="background-color: #11224E;">
               <div class="d-flex align-items-center justify-content-between mb-2">
                 <h5 class="mb-0" style="color: #fff;">Antrian Customer Service</h5>
@@ -25,7 +25,33 @@ include "../header.php";
               <div class="display-1 fw-bold text-center" id="queue-cs" style="color: #fff;">-</div>
             </div>
           </div>
-          <!-- Teller Queue -->
+          <?php
+          $cabang_id = $_SESSION['cabang_id'] ?? null;
+          if ($cabang_id == '312') {
+          ?>
+          <!-- Combined Teller Card: side-by-side Teller 1 & Teller 2 -->
+          <div class="card border-0 shadow-sm queue-card">
+            <div class="card-body p-4" style="background-color: #11224E;">
+              <div class="row g-2">
+                <div class="col-6 d-flex flex-column align-items-center justify-content-center">
+                  <div class="w-100 text-center mb-2">
+                    <h5 class="mb-0" style="color: #fff;">Teller 1</h5>
+                  </div>
+                  <div class="display-1 fw-bold text-center w-100" id="queue-teller1" style="color: #fff;">-</div>
+                </div>
+                <div class="col-6 d-flex flex-column align-items-center justify-content-center">
+                  <div class="w-100 text-center mb-2">
+                    <h5 class="mb-0" style="color: #fff;">Teller 2</h5>
+                  </div>
+                  <div class="display-1 fw-bold text-center w-100" id="queue-teller2" style="color: #fff;">-</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <?php
+          } else {
+          ?>
+          <!-- Teller Queue (default) -->
           <div class="card border-0 shadow-sm queue-card">
             <div class="card-body p-4" style="background-color: #11224E;">
               <div class="d-flex align-items-center justify-content-between mb-2">
@@ -34,6 +60,7 @@ include "../header.php";
               <div class="display-1 fw-bold text-center" id="queue-teller" style="color: #fff;">-</div>
             </div>
           </div>
+          <?php } ?>
           <!-- Kredit Queue -->
           <div class="card border-0 shadow-sm queue-card">
             <div class="card-body p-4" style="background-color: #11224E;">
@@ -46,6 +73,19 @@ include "../header.php";
         </div>
         <!-- Right column: video + company info -->
   <div class="col-12 col-lg-7 right-col h-100">
+          <!-- Clock bar above video -->
+          <div class="card border-0 shadow-sm clock-card mb-5">
+            <div class="card-body p-2 d-flex justify-content-between align-items-center" style="background-color: #F87B1B;">
+              <div class="d-flex align-items-center">
+                <img src="../assets/img/logis.png" style="height:40px; width:auto; object-fit:contain;" class="me-3" />
+                <div class="fw-semibold" style="color: #fff; font-size: 1.25rem;">BPR PERUMDA SUKABUMI</div>
+              </div>
+              <div class="d-flex align-items-center">
+                <div class="small text" style="color: #fff; font-size: 1.00rem;"></div>
+                <div class="fw-semibold ms-3" id="clock" style="color: #fff; font-size: 1.25rem;">-</div>
+              </div>
+            </div>
+          </div>
           <!-- Video Placeholder -->
           <div class="card border-0 shadow-sm flex-grow-1 mb-0">
             <div class="card-body p-0 d-flex align-items-center justify-content-center bg-dark text-white video-area" style="min-height: 360px;">
@@ -105,16 +145,7 @@ include "../header.php";
           <!-- Company Info -->
           <div class="card border-0 shadow-sm">
             <div class="card-body p-3 d-flex flex-column gap-2" style="background-color: #F87B1B;">
-              <div class="d-flex justify-content-between align-items-center w-100">
-                <div>
-                  <div class="fw-semibold" style="color: #fff; font-size: 1.50rem;">BPR Perumda Sukabumi</div>
-                  <div class="small text"  style="color: #fff; font-size: 1.00rem;">Layanan cepat, aman, dan terpercaya.</div>
-                </div>
-                <div class="text-end">
-                  <div class="small text" style="color: #fff; font-size: 1.50rem;">Tanggal & Waktu</div>
-                  <div class="fw-semibold" id="clock"  style="color: #fff; font-size: 1.00rem;">-</div>
-                </div>
-              </div>
+              <!-- company name moved to top clock bar -->
 
               <!-- Product marquee (running text)
               <div class="product-marquee" aria-hidden="false" style="width:100%; overflow:hidden;">
@@ -138,10 +169,19 @@ include "../header.php";
     .tv-root { position: fixed; inset: 0; }
     .tv-row { height: 100%; }
     .left-col { grid-template-rows: repeat(3, 1fr); gap: 0; }
-    .right-col { display: grid; grid-template-rows: 1fr auto; gap: 0; }
+  .right-col { display: grid; grid-template-rows: auto 1fr auto; gap: 0; }
   .left-col .queue-card, .right-col > .card { height: 100%; border-radius: 0; }
+  /* separators between stacked queue cards on the left column */
+  .left-col .queue-card { border: 0; }
+  /* put a clear, TV-friendly separator between stacked cards */
+  .left-col .queue-card + .queue-card .card-body { border-top: 6px solid rgba(255, 255, 255, 1); }
+  /* when a card holds two teller columns, separate them visually */
+  .left-col .queue-card .row > .col-6 + .col-6 { border-left: 4px solid rgba(255, 255, 255, 1); }
   /* larger, TV-friendly queue numbers */
   .queue-card .display-1 { font-size: clamp(4rem, 12vw, 10rem); }
+  /* Make the big queue number vertically and horizontally centered inside each card */
+  .queue-card .card-body { display: flex; flex-direction: column; }
+  .queue-card .card-body .display-1 { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; text-align: center; }
     .queue-card h5 { font-weight: 600; }
     .video-area { height: 100%; min-height: 0; }
     /* Show whole video without cropping (no sound bars filled by background) */
@@ -160,6 +200,26 @@ include "../header.php";
     /* running marquee for product showcase */
     .product-marquee .track { display: inline-block; animation: marquee 14s linear infinite; }
     @keyframes marquee { from { transform: translateX(0%); } to { transform: translateX(-50%); } }
+    /* Top clock/company bar uses Montserrat for improved TV readability */
+    .clock-card,
+    .clock-card .fw-semibold,
+    .clock-card .small,
+    .clock-card #clock {
+      font-family: Raleway, sans-serif;
+}
+/* Larger, bolder company name and clock for TV */
+.clock-card .fw-semibold {
+  font-weight: 800;
+  font-size: 1.35rem;
+}
+.clock-card #clock {
+  font-weight: 700;
+  font-size: 1.35rem;
+}
+@media (min-width: 992px) {
+  .clock-card .fw-semibold { font-size: 1.6rem; }
+  .clock-card #clock { font-size: 1.6rem; }
+}
   </style>
 
   <script>
@@ -193,7 +253,12 @@ include "../header.php";
 
     function pollQueues() {
       fetchQueue('./api/get_last_cs.php', 'queue-cs');
+  <?php if ($cabang_id == '312') { ?>
+      fetchQueue('./api/get_last_teller1.php', 'queue-teller1');
+      fetchQueue('./api/get_last_teller2.php', 'queue-teller2');
+      <?php } else { ?>
       fetchQueue('./api/get_last_teller.php', 'queue-teller');
+      <?php } ?>
       fetchQueue('./api/get_last_kredit.php', 'queue-kredit');
     }
 

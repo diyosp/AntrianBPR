@@ -496,42 +496,56 @@ if (!empty($cabang_id) && isset($mysqli)) {
       });
 
       // Service Comparison Chart
-      createOrUpdateChart('chartServiceComparison', {
-        type: 'bar',
-        data: {
-          labels: data.dates,
-          datasets: [
-            {
-              label: 'CS',
-              data: data.service_breakdown?.cs || [],
-              backgroundColor: '#FF6384',
-              borderRadius: 4
-            },
-            {
-              label: 'Teller',
-              data: data.service_breakdown?.teller || [],
-              backgroundColor: '#36A2EB',
-              borderRadius: 4
-            },
-            {
-              label: 'Kredit',
-              data: data.service_breakdown?.kredit || [],
-              backgroundColor: '#FFCE56',
-              borderRadius: 4
-            }
-          ]
-        },
-        options: {
-          ...chartDefaults,
-          plugins: { 
-            legend: { position: 'top' }
-          },
-          scales: {
-            y: { stacked: true, ...chartDefaults.scales.y },
-            x: { stacked: true, ...chartDefaults.scales.x }
-          }
+      (function() {
+        const sb = data.service_breakdown || {};
+        const datasets = [];
+        datasets.push({
+          label: 'CS',
+          data: sb.cs || [],
+          backgroundColor: '#FF6384',
+          borderRadius: 4
+        });
+
+        // If API provides teller_a and teller_b arrays (for cabang 312), show them separately
+        if (Array.isArray(sb.teller_a) && Array.isArray(sb.teller_b)) {
+          datasets.push({
+            label: 'Teller A',
+            data: sb.teller_a,
+            backgroundColor: '#36A2EB',
+            borderRadius: 4
+          });
+          datasets.push({
+            label: 'Teller B',
+            data: sb.teller_b,
+            backgroundColor: '#4BC0C0',
+            borderRadius: 4
+          });
+        } else {
+          datasets.push({
+            label: 'Teller',
+            data: sb.teller || [],
+            backgroundColor: '#36A2EB',
+            borderRadius: 4
+          });
         }
-      });
+
+        datasets.push({
+          label: 'Kredit',
+          data: sb.kredit || [],
+          backgroundColor: '#FFCE56',
+          borderRadius: 4
+        });
+
+        createOrUpdateChart('chartServiceComparison', {
+          type: 'bar',
+          data: { labels: data.dates, datasets },
+          options: {
+            ...chartDefaults,
+            plugins: { legend: { position: 'top' } },
+            scales: { y: { stacked: true, ...chartDefaults.scales.y }, x: { stacked: true, ...chartDefaults.scales.x } }
+          }
+        });
+      })();
 
       // Performance Table
       const tbody = document.getElementById('performanceTableBody');

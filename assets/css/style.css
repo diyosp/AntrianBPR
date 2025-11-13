@@ -3,6 +3,28 @@ body {
   background-color: #f6f8fd;
 }
 
+/* Top clock/company bar uses Montserrat for improved TV readability */
+.clock-card,
+.clock-card .fw-semibold,
+.clock-card .small,
+.clock-card #clock {
+  font-family: 'Montserrat', Raleway, sans-serif;
+}
+
+/* Larger, bolder company name and clock for TV */
+.clock-card .fw-semibold {
+  font-weight: 800;
+  font-size: 1.35rem;
+}
+.clock-card #clock {
+  font-weight: 700;
+  font-size: 1.35rem;
+}
+@media (min-width: 992px) {
+  .clock-card .fw-semibold { font-size: 1.6rem; }
+  .clock-card #clock { font-size: 1.6rem; }
+}
+
 .p-45 {
   padding: 2rem !important;
 }

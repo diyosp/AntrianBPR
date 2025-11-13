@@ -7,6 +7,9 @@ require_once __DIR__ . '/../../config/database.php';
 $cabang_id = $_SESSION['cabang_id'] ?? null;
 $days = isset($_GET['days']) ? intval($_GET['days']) : 7;
 
+// For branch-specific rules: Cikembar (312) uses Teller A & B only
+$exclude_default_teller = ($cabang_id == 312);
+
 // Add debug info to response
 $response_debug = [
     'session_cabang_id' => $cabang_id,
@@ -37,6 +40,8 @@ foreach ($response['dates'] as $date) {
     $cs_count = 0;
     $teller_count = 0;
     $kredit_count = 0;
+    $teller_a_count = 0;
+    $teller_b_count = 0;
     
     // CS
     $stmt = $mysqli->prepare("SELECT COUNT(*) as cnt FROM tbl_antrian WHERE DATE(tanggal) = ? " . ($cabang_id ? "AND cabang_id = ?" : ""));
@@ -50,15 +55,32 @@ foreach ($response['dates'] as $date) {
     $cs_count = $result['cnt'] ?? 0;
     
     // Teller
-    $stmt = $mysqli->prepare("SELECT COUNT(*) as cnt FROM tbl_antrian_teller WHERE DATE(tanggal_teller) = ? " . ($cabang_id ? "AND cabang_id = ?" : ""));
-    if ($cabang_id) {
-        $stmt->bind_param("si", $date, $cabang_id);
+    if ($exclude_default_teller) {
+        // Count Teller A and Teller B separately for cabang 312
+        $stmt = $mysqli->prepare("SELECT bagian, COUNT(*) as cnt FROM tbl_antrian_teller WHERE DATE(tanggal_teller) = ? AND bagian IN (1,2) " . ($cabang_id ? "AND cabang_id = ?" : "") . " GROUP BY bagian");
+        if ($cabang_id) {
+            $stmt->bind_param("si", $date, $cabang_id);
+        } else {
+            $stmt->bind_param("s", $date);
+        }
+        $stmt->execute();
+        $res = $stmt->get_result();
+        while ($r = $res->fetch_assoc()) {
+            if ($r['bagian'] == 1) $teller_a_count = $r['cnt'];
+            if ($r['bagian'] == 2) $teller_b_count = $r['cnt'];
+        }
+        $teller_count = $teller_a_count + $teller_b_count;
     } else {
-        $stmt->bind_param("s", $date);
+        $stmt = $mysqli->prepare("SELECT COUNT(*) as cnt FROM tbl_antrian_teller WHERE DATE(tanggal_teller) = ? " . ($cabang_id ? "AND cabang_id = ?" : ""));
+        if ($cabang_id) {
+            $stmt->bind_param("si", $date, $cabang_id);
+        } else {
+            $stmt->bind_param("s", $date);
+        }
+        $stmt->execute();
+        $result = $stmt->get_result()->fetch_assoc();
+        $teller_count = $result['cnt'] ?? 0;
     }
-    $stmt->execute();
-    $result = $stmt->get_result()->fetch_assoc();
-    $teller_count = $result['cnt'] ?? 0;
     
     // Kredit
     $stmt = $mysqli->prepare("SELECT COUNT(*) as cnt FROM tbl_antrian_kredit WHERE DATE(tanggal_kredit) = ? " . ($cabang_id ? "AND cabang_id = ?" : ""));
@@ -72,7 +94,14 @@ foreach ($response['dates'] as $date) {
     $kredit_count = $result['cnt'] ?? 0;
     
     $response['service_breakdown']['cs'][] = $cs_count;
-    $response['service_breakdown']['teller'][] = $teller_count;
+    if ($exclude_default_teller) {
+        $response['service_breakdown']['teller_a'][] = $teller_a_count;
+        $response['service_breakdown']['teller_b'][] = $teller_b_count;
+        // maintain backward compatibility by also providing a combined 'teller' if needed
+        $response['service_breakdown']['teller'][] = $teller_count;
+    } else {
+        $response['service_breakdown']['teller'][] = $teller_count;
+    }
     $response['service_breakdown']['kredit'][] = $kredit_count;
     $response['throughput'][] = $cs_count + $teller_count + $kredit_count;
 }
@@ -97,11 +126,21 @@ foreach ($response['dates'] as $date) {
     }
     
     // Teller wait times
-    $stmt = $mysqli->prepare("SELECT AVG(durasi) as avg_dur FROM tbl_antrian_teller WHERE DATE(tanggal_teller) = ? AND durasi IS NOT NULL " . ($cabang_id ? "AND cabang_id = ?" : ""));
-    if ($cabang_id) {
-        $stmt->bind_param("si", $date, $cabang_id);
+    if ($exclude_default_teller) {
+        $tellerWaitQuery = "SELECT AVG(durasi) as avg_dur FROM tbl_antrian_teller WHERE DATE(tanggal_teller) = ? AND durasi IS NOT NULL AND bagian IN (1,2) " . ($cabang_id ? "AND cabang_id = ?" : "");
+        $stmt = $mysqli->prepare($tellerWaitQuery);
+        if ($cabang_id) {
+            $stmt->bind_param("si", $date, $cabang_id);
+        } else {
+            $stmt->bind_param("s", $date);
+        }
     } else {
-        $stmt->bind_param("s", $date);
+        $stmt = $mysqli->prepare("SELECT AVG(durasi) as avg_dur FROM tbl_antrian_teller WHERE DATE(tanggal_teller) = ? AND durasi IS NOT NULL " . ($cabang_id ? "AND cabang_id = ?" : ""));
+        if ($cabang_id) {
+            $stmt->bind_param("si", $date, $cabang_id);
+        } else {
+            $stmt->bind_param("s", $date);
+        }
     }
     $stmt->execute();
     $result = $stmt->get_result()->fetch_assoc();
@@ -207,6 +246,10 @@ while ($row = $result->fetch_assoc()) {
         $key = 'Teller B';
     } else {
         $key = 'Teller';
+    }
+    // If this branch excludes default teller, skip adding the generic 'Teller' bucket
+    if ($exclude_default_teller && $bagian_type == 'teller_default') {
+        continue;
     }
     $bagian_map[$key] = ($bagian_map[$key] ?? 0) + $row['cnt'];
 }
