@@ -17,11 +17,10 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
 
   // mengecek data post dari ajax
   if (isset($_POST['id_teller']) && isset($_POST['bagian'])) {
-  $id = mysqli_real_escape_string($mysqli, $_POST['id_teller']);
-  $bagian = mysqli_real_escape_string($mysqli, $_POST['bagian']);
-  $action = isset($_POST['action']) ? $_POST['action'] : '';
-  $updated_date = gmdate("Y-m-d H:i:s", time() + 60 * 60 * 7);
-  $result = ["success" => false, "message" => "No update performed."];
+    $id = mysqli_real_escape_string($mysqli, $_POST['id_teller']);
+    $bagian = mysqli_real_escape_string($mysqli, $_POST['bagian']);
+    $action = isset($_POST['action']) ? $_POST['action'] : '';
+    $updated_date = gmdate("Y-m-d H:i:s", time() + 60 * 60 * 7);
 
     // Validasi: Teller B hanya bisa mengakses antrian yang belum diklaim (bagian IS NULL) atau sudah diklaim oleh Teller B (bagian = '2')
     $check_query = mysqli_query($mysqli, "SELECT id_teller, status_teller, waktu_mulai, waktu_selesai, bagian FROM tbl_antrian_teller 
@@ -49,27 +48,17 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
             or die('Ada kesalahan pada query update : ' . mysqli_error($mysqli));
         }
       } else if ($action === 'finish') {
-        if (!empty($waktu_mulai)) {
+        if ($status_teller == '1') {
           $waktu_selesai = $updated_date;
           $mulai = strtotime($waktu_mulai);
           $selesai = strtotime($waktu_selesai);
           $durasi = $selesai - $mulai;
-          $update = mysqli_query($mysqli, "UPDATE tbl_antrian_teller SET status_teller='2', updated_date_teller='$updated_date', waktu_selesai='$waktu_selesai', durasi='$durasi', bagian='$bagian' WHERE id_teller='$id' AND cabang_id='$cabang_id'");
-          if ($update) {
-            $result = ["success" => true, "message" => "Status updated to 2 for id $id."];
-          } else {
-            $result = ["success" => false, "message" => "Query failed: " . mysqli_error($mysqli)];
-          }
-        } else {
-          $result = ["success" => false, "message" => "waktu_mulai is empty, cannot finish."];
+          $update = mysqli_query($mysqli, "UPDATE tbl_antrian_teller SET status_teller='2', updated_date_teller='$updated_date', waktu_selesai='$waktu_selesai', durasi='$durasi', bagian='$bagian' WHERE id_teller='$id' AND cabang_id='$cabang_id'")
+            or die('Ada kesalahan pada query update : ' . mysqli_error($mysqli));
         }
       }
     } else {
       die('Data tidak ditemukan atau Anda tidak memiliki akses untuk memperbarui data ini.');
-  }
-  // Output JSON response for AJAX
-  header('Content-Type: application/json');
-  echo json_encode($result);
-  exit;
+    }
   }
 }

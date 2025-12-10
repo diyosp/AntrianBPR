@@ -13,9 +13,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
         $id = mysqli_real_escape_string($mysqli, $_POST['id_kredit']);
         $action = isset($_POST['action']) ? $_POST['action'] : '';
         $updated_date = gmdate("Y-m-d H:i:s", time() + 60 * 60 * 7);
-        $result = ["success" => false, "message" => "Unknown error."];
 
-        // Ambil data kredit saat ini
         $check_query = mysqli_query($mysqli, "SELECT id_kredit, status_kredit, waktu_mulai, waktu_selesai FROM tbl_antrian_kredit WHERE id_kredit='$id' AND cabang_id='$cabang_id'")
             or die('Ada kesalahan pada query validasi cabang : ' . mysqli_error($mysqli));
 
@@ -26,50 +24,30 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
             $waktu_selesai = $row['waktu_selesai'];
 
             if ($action === 'start') {
-                // Jika status = 0 (belum dipanggil), set ke 1 dan set waktu_mulai jika kosong
                 if ($status_kredit == '0') {
                     if (empty($waktu_mulai)) {
-                        $update = mysqli_query($mysqli, "UPDATE tbl_antrian_kredit SET status_kredit='1', updated_date_kredit='$updated_date', waktu_mulai='$updated_date' WHERE id_kredit='$id' AND cabang_id='$cabang_id'");
+                        $update = mysqli_query($mysqli, "UPDATE tbl_antrian_kredit SET status_kredit='1', updated_date_kredit='$updated_date', waktu_mulai='$updated_date' WHERE id_kredit='$id' AND cabang_id='$cabang_id'")
+                            or die('Ada kesalahan pada query update : ' . mysqli_error($mysqli));
                     } else {
-                        $update = mysqli_query($mysqli, "UPDATE tbl_antrian_kredit SET status_kredit='1', updated_date_kredit='$updated_date' WHERE id_kredit='$id' AND cabang_id='$cabang_id'");
-                    }
-                    if ($update) {
-                        $result = ["success" => true, "message" => "Kredit dipanggil."];
-                    } else {
-                        $result = ["success" => false, "message" => "Gagal update panggil: " . mysqli_error($mysqli)];
+                        $update = mysqli_query($mysqli, "UPDATE tbl_antrian_kredit SET status_kredit='1', updated_date_kredit='$updated_date' WHERE id_kredit='$id' AND cabang_id='$cabang_id'")
+                            or die('Ada kesalahan pada query update : ' . mysqli_error($mysqli));
                     }
                 } else if ($status_kredit == '1') {
-                    // ulangi panggilan (hanya perbarui updated_date)
-                    $update = mysqli_query($mysqli, "UPDATE tbl_antrian_kredit SET updated_date_kredit='$updated_date' WHERE id_kredit='$id' AND cabang_id='$cabang_id'");
-                    if ($update) {
-                        $result = ["success" => true, "message" => "Panggilan diulang."];
-                    } else {
-                        $result = ["success" => false, "message" => "Gagal update ulang: " . mysqli_error($mysqli)];
-                    }
+                    $update = mysqli_query($mysqli, "UPDATE tbl_antrian_kredit SET updated_date_kredit='$updated_date' WHERE id_kredit='$id' AND cabang_id='$cabang_id'")
+                        or die('Ada kesalahan pada query update : ' . mysqli_error($mysqli));
                 }
             } else if ($action === 'finish') {
-                // Jika status = 1, set selesai dan hitung durasi jika belum ada waktu_selesai
-                if ($status_kredit == '1' && empty($waktu_selesai)) {
+                if ($status_kredit == '1') {
                     $waktu_selesai = $updated_date;
                     $mulai_ts = strtotime($waktu_mulai);
                     $selesai_ts = strtotime($waktu_selesai);
                     $durasi = ($mulai_ts && $selesai_ts) ? max(0, $selesai_ts - $mulai_ts) : 0;
-                    $update = mysqli_query($mysqli, "UPDATE tbl_antrian_kredit SET status_kredit='2', updated_date_kredit='$updated_date', waktu_selesai='$waktu_selesai', durasi='$durasi' WHERE id_kredit='$id' AND cabang_id='$cabang_id'");
-                    if ($update) {
-                        $result = ["success" => true, "message" => "Kredit selesai."];
-                    } else {
-                        $result = ["success" => false, "message" => "Gagal update selesai: " . mysqli_error($mysqli)];
-                    }
-                } else {
-                    $result = ["success" => false, "message" => "Tidak dapat menyelesaikan: status bukan 1 atau sudah selesai."];
+                    $update = mysqli_query($mysqli, "UPDATE tbl_antrian_kredit SET status_kredit='2', updated_date_kredit='$updated_date', waktu_selesai='$waktu_selesai', durasi='$durasi' WHERE id_kredit='$id' AND cabang_id='$cabang_id'")
+                        or die('Ada kesalahan pada query update : ' . mysqli_error($mysqli));
                 }
             }
         } else {
             die('Data tidak ditemukan atau Anda tidak memiliki akses untuk memperbarui data ini.');
         }
-
-        header('Content-Type: application/json');
-        echo json_encode($result);
-        exit;
     }
 }
