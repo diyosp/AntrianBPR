@@ -1,16 +1,16 @@
 <?php
-include "../header.php";
-
-// Mulai sesi untuk mendapatkan data pengguna yang login
-
+// Mulai sesi DULU sebelum output apapun
 session_start();
-// Ensure database connection is available so we can read branch name
-if (!isset($mysqli) && file_exists(__DIR__ . '/../config/database.php')) {
+
+// Ensure database connection is available
+if (file_exists(__DIR__ . '/../config/database.php')) {
   include_once __DIR__ . '/../config/database.php';
 }
 
 // Ambil cabang_id dari session
 $cabang_id = $_SESSION['cabang_id'] ?? null; // Gunakan null jika session tidak tersedia
+
+include "../header.php";
 
 // Default nama cabang
 $nama_cabang = "BPR Sukabumi";

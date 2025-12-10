@@ -59,7 +59,7 @@ include "header.php";
               <i class="bi-person-badge mb-3" style="color: #fff; font-size: 2rem;"></i>
               <h5 class="mb-2" style="color: #fff;">Panggilan</h5>
               <p class="mb-3 text-center small" style="color: #fff;">Kelola panggilan antrian nasabah.</p>
-              <a href="/admin" class="btn btn-success rounded-pill px-4 py-2 mt-auto">
+              <a href="admin/" class="btn btn-success rounded-pill px-4 py-2 mt-auto">
                 Masuk <i class="bi-chevron-right ms-2"></i>
               </a>
             </div>
