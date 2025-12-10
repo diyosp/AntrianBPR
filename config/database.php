@@ -1,16 +1,15 @@
 <?php
-// deklarasi parameter koneksi database
-$host     = "localhost";              // server database, default “localhost” atau “127.0.0.1”
-$username = "root";                   // username database, default “root”
-$password = "";                       // password database, default kosong
-$database = "bprsukab_antrix";             // memilih database yang akan digunakan
-
-// buat koneksi database
-$mysqli = mysqli_connect($host, $username, $password, $database);
-
-// cek koneksi
-// jika koneksi gagal 
-if (!$mysqli) {
-  // tampilkan pesan gagal koneksi
-  die('Koneksi Database Gagal : ' . mysqli_connect_error());
+// Antrix Database (main application)
+$mysqli = new mysqli("localhost", "root", "", "bprsukab_antrix");
+if ($mysqli->connect_error) {
+    die("Connection failed: " . $mysqli->connect_error);
 }
+$mysqli->set_charset("utf8mb4");
+
+// EIS Database (for pegawai data)
+$mysqli_eis = new mysqli("localhost", "root", "", "bprsukab_eis");
+if ($mysqli_eis->connect_error) {
+    die("EIS Connection failed: " . $mysqli_eis->connect_error);
+}
+$mysqli_eis->set_charset("utf8mb4");
+?>

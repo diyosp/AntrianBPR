@@ -1,0 +1,433 @@
+<?php
+session_start();
+
+// Optional: require login like other pages
+if (!isset($_SESSION['user_id'])) {
+  header("Location: ../login.php");
+  exit;
+}
+
+include "../header.php";
+?>
+
+<body class="d-flex flex-column h-100">
+  <main class="flex-grow-1">
+  <div class="container-fluid px-0 tv-root h-100">
+      <div class="row g-0 align-items-stretch h-100 tv-row">
+        <!-- Left column: stacked queues -->
+  <div class="col-12 col-lg-5 d-grid h-100 left-col">
+          <!-- CS Queue -->
+          <div class="card border-0 shadow-sm queue-card cs-card">
+            <div class="card-body p-4" style="background-color: #11224E;">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <h5 class="mb-0" style="color: #fff;">Antrian Customer Service</h5>
+              </div>
+              <div class="display-1 fw-bold text-center" id="queue-cs" style="color: #fff;">-</div>
+            </div>
+          </div>
+          <?php
+          $cabang_id = $_SESSION['cabang_id'] ?? null;
+          if ($cabang_id == '312') {
+          ?>
+          <!-- Combined Teller Card: side-by-side Teller 1 & Teller 2 -->
+          <div class="card border-0 shadow-sm queue-card">
+            <div class="card-body p-4" style="background-color: #11224E;">
+              <div class="row g-2">
+                <div class="col-6 d-flex flex-column align-items-center justify-content-center">
+                  <div class="w-100 text-center mb-2">
+                    <h5 class="mb-0" style="color: #fff;">Teller 1</h5>
+                  </div>
+                  <div class="display-1 fw-bold text-center w-100" id="queue-teller1" style="color: #fff;">-</div>
+                </div>
+                <div class="col-6 d-flex flex-column align-items-center justify-content-center">
+                  <div class="w-100 text-center mb-2">
+                    <h5 class="mb-0" style="color: #fff;">Teller 2</h5>
+                  </div>
+                  <div class="display-1 fw-bold text-center w-100" id="queue-teller2" style="color: #fff;">-</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <?php
+          } else {
+          ?>
+          <!-- Teller Queue (default) -->
+          <div class="card border-0 shadow-sm queue-card">
+            <div class="card-body p-4" style="background-color: #11224E;">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <h5 class="mb-0" style="color: #fff;">Antrian Teller</h5>
+              </div>
+              <div class="display-1 fw-bold text-center" id="queue-teller" style="color: #fff;">-</div>
+            </div>
+          </div>
+          <?php } ?>
+          <!-- Kredit Queue -->
+          <div class="card border-0 shadow-sm queue-card">
+            <div class="card-body p-4" style="background-color: #11224E;">
+              <div class="d-flex align-items-center justify-content-between mb-2">
+                <h5 class="mb-0" style="color: #fff;">Antrian Admin Kredit</h5>
+              </div>
+              <div class="display-1 fw-bold text-center" id="queue-kredit" style="color: #fff;">-</div>
+            </div>
+          </div>
+        </div>
+        <!-- Right column: video + company info -->
+  <div class="col-12 col-lg-7 right-col h-100">
+          <!-- Clock bar above video -->
+          <div class="card border-0 shadow-sm clock-card mb-5">
+            <div class="card-body p-2 d-flex justify-content-between align-items-center" style="background-color: #F87B1B;">
+              <div class="d-flex align-items-center">
+                <img src="../assets/img/logis.png" style="height:40px; width:auto; object-fit:contain;" class="me-3" />
+                <div class="fw-semibold" style="color: #fff; font-size: 1.25rem;">BPR PERUMDA SUKABUMI</div>
+              </div>
+              <div class="d-flex align-items-center">
+                <div class="small text" style="color: #fff; font-size: 1.00rem;"></div>
+                <div class="fw-semibold ms-3" id="clock" style="color: #fff; font-size: 1.25rem;">-</div>
+              </div>
+            </div>
+          </div>
+          <!-- Video Placeholder -->
+          <div class="card border-0 shadow-sm flex-grow-1 mb-0">
+            <div class="card-body p-0 d-flex align-items-center justify-content-center bg-dark text-white video-area" style="min-height: 360px;">
+              <?php
+                // Auto-detect first video file in common folders
+                $videoWebPath = null;
+                $candidates = [
+                  ['fs' => __DIR__ . '/../assets/video', 'web' => '../assets/video'],
+                  ['fs' => __DIR__ . '/../video',        'web' => '../video'],
+                  ['fs' => __DIR__ . '/video',           'web' => 'video'],
+                ];
+                foreach ($candidates as $cand) {
+                  if (is_dir($cand['fs'])) {
+                    $files = glob($cand['fs'] . '/*.{mp4,webm,ogg}', GLOB_BRACE);
+                    if ($files && count($files) > 0) {
+                      sort($files);
+                      $file = basename($files[0]);
+                      $videoWebPath = rtrim($cand['web'], '/') . '/' . $file;
+                      break;
+                    }
+                  }
+                }
+              ?>
+              <?php if ($videoWebPath): ?>
+                <div id="videoWrapper" class="position-relative w-100 h-100">
+                  <video id="tvVideo" class="w-100 h-100" autoplay muted loop playsinline>
+                    <source src="<?= htmlspecialchars($videoWebPath) ?>" type="video/mp4">
+                    <source src="<?= htmlspecialchars($videoWebPath) ?>" type="video/webm">
+                    <source src="<?= htmlspecialchars($videoWebPath) ?>" type="video/ogg">
+                    Browser Anda tidak mendukung pemutaran video.
+                  </video>
+                  <!-- Persistent control bar -->
+                  <div id="tvControls" class="position-absolute bottom-0 start-50 translate-middle-x mb-3 d-flex align-items-center gap-2 bg-dark bg-opacity-50 rounded-pill px-2 py-1 shadow">
+                    <button id="playBtn" type="button" class="btn btn-light btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center ctrl-btn" aria-label="Putar/Jeda" title="Putar/Jeda">
+                      <i class="bi-pause-fill fs-5"></i>
+                    </button>
+                    <button id="muteBtn" type="button" class="btn btn-light btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center ctrl-btn" aria-label="Bisu/Suara" title="Bisu/Suara">
+                      <i class="bi-volume-mute fs-5"></i>
+                    </button>
+                    <button id="fitBtn" type="button" class="btn btn-light btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center ctrl-btn" aria-label="Mode Tampilan" title="Mode Tampilan">
+                      <i class="bi-aspect-ratio fs-5"></i>
+                    </button>
+                    <button id="fsBtn" type="button" class="btn btn-light btn-sm rounded-circle p-2 d-flex align-items-center justify-content-center ctrl-btn" aria-label="Layar Penuh" title="Layar Penuh">
+                      <i class="bi-arrows-fullscreen fs-5"></i>
+                    </button>
+                  </div>
+                </div>
+              <?php else: ?>
+                <div class="text-center p-4">
+                  <i class="bi-tv display-1 d-block mb-2"></i>
+                  <div class="h4 mb-1">Video Placeholder</div>
+                  <div class="text-muted"><code>assets/video/company.mp4</code>.</div>
+                </div>
+              <?php endif; ?>
+            </div>
+          </div>
+          <!-- Company Info -->
+          <div class="card border-0 shadow-sm">
+            <div class="card-body p-3 d-flex flex-column gap-2" style="background-color: #F87B1B;">
+              <!-- company name moved to top clock bar -->
+
+              <!-- Product marquee (running text)
+              <div class="product-marquee" aria-hidden="false" style="width:100%; overflow:hidden;">
+                <div class="track" style="white-space:nowrap; display:inline-block;">
+                  <span style="color:#fff; margin-right:2rem; font-weight:600;">Tabungan — Bunga kompetitif</span>
+                  <span style="color:#fff; margin-right:2rem; font-weight:600;">Deposito — Jangka pendek &amp; panjang</span>
+                  <span style="color:#fff; margin-right:2rem; font-weight:600;">Kredit — Pembiayaan cepat</span>
+                  <span style="color:#fff; margin-right:2rem; font-weight:600;">Tabungan — Bunga kompetitif</span>
+                </div>
+              </div> -->
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+   <style>
+    html, body { height: 100%; width: 100%; }
+    body { margin: 0 !important; padding: 0 !important; overflow: hidden; }
+    .tv-root { position: fixed; inset: 0; }
+    .tv-row { height: 100%; }
+    .left-col { grid-template-rows: repeat(3, 1fr); gap: 0; }
+  .right-col { display: grid; grid-template-rows: auto 1fr auto; gap: 0; }
+  .left-col .queue-card, .right-col > .card { height: 100%; border-radius: 0; }
+  /* separators between stacked queue cards on the left column */
+  .left-col .queue-card { border: 0; }
+  /* put a clear, TV-friendly separator between stacked cards */
+  .left-col .queue-card + .queue-card .card-body { border-top: 6px solid rgba(255, 255, 255, 1); }
+  /* when a card holds two teller columns, separate them visually */
+  .left-col .queue-card .row > .col-6 + .col-6 { border-left: 4px solid rgba(255, 255, 255, 1); }
+  /* larger, TV-friendly queue numbers */
+  .queue-card .display-1 { font-size: clamp(4rem, 12vw, 10rem); }
+  /* Make the big queue number vertically and horizontally centered inside each card */
+  .queue-card .card-body { display: flex; flex-direction: column; }
+  .queue-card .card-body .display-1 { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; text-align: center; }
+    .queue-card h5 { font-weight: 600; }
+    .video-area { height: 100%; min-height: 0; }
+    /* Show whole video without cropping (no sound bars filled by background) */
+    .video-area video, .video-area img { width: 100%; height: 100%; object-fit: contain; background:#F87B1B; display: block; }
+  #tvControls { z-index: 6; opacity: 1; transition: opacity .3s ease; }
+  #tvControls .ctrl-btn { width: 40px; height: 40px; border-radius: 50%; opacity: 0.95; }
+  #tvControls .ctrl-btn:hover { opacity: 1; }
+  #tvControls.hide { opacity: 0; pointer-events: none; }
+  #videoWrapper.controls-hidden { cursor: none; }
+  /* subtle cursor transition (best-effort: cursor can't fade, so we toggle classes) */
+  #videoWrapper { transition: background-color .2s ease; }
+    @media (min-width: 992px) {
+      /* larger desktop/tv size */
+      .queue-card .display-1 { font-size: 10rem; }
+    }
+    /* running marquee for product showcase */
+    .product-marquee .track { display: inline-block; animation: marquee 14s linear infinite; }
+    @keyframes marquee { from { transform: translateX(0%); } to { transform: translateX(-50%); } }
+    /* Top clock/company bar uses Montserrat for improved TV readability */
+    .clock-card,
+    .clock-card .fw-semibold,
+    .clock-card .small,
+    .clock-card #clock {
+      font-family: Raleway, sans-serif;
+}
+/* Larger, bolder company name and clock for TV */
+.clock-card .fw-semibold {
+  font-weight: 800;
+  font-size: 1.35rem;
+}
+.clock-card #clock {
+  font-weight: 700;
+  font-size: 1.35rem;
+}
+@media (min-width: 992px) {
+  .clock-card .fw-semibold { font-size: 1.6rem; }
+  .clock-card #clock { font-size: 1.6rem; }
+}
+  </style>
+
+  <script>
+    function updateClock() {
+      const el = document.getElementById('clock');
+      if (!el) return;
+      const now = new Date();
+      const opts = { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' };
+      const dateStr = now.toLocaleDateString('id-ID', opts);
+      const timeStr = now.toLocaleTimeString('id-ID', { hour12: false });
+      el.textContent = `${dateStr} ${timeStr}`;
+    }
+
+    async function fetchQueue(url, targetId) {
+      try {
+        const cacheBuster = Date.now();
+        const res = await fetch(`${url}?_=${cacheBuster}` , {
+          headers: { 'X-Requested-With': 'XMLHttpRequest' },
+          credentials: 'same-origin',
+          cache: 'no-store'
+        });
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const text = await res.text();
+        const el = document.getElementById(targetId);
+        if (el) el.textContent = text && text.trim() ? text : '-';
+      } catch (e) {
+        const el = document.getElementById(targetId);
+        if (el) el.textContent = '-';
+      }
+    }
+
+    function pollQueues() {
+      fetchQueue('./api/get_last_cs.php', 'queue-cs');
+  <?php if ($cabang_id == '312') { ?>
+      fetchQueue('./api/get_last_teller1.php', 'queue-teller1');
+      fetchQueue('./api/get_last_teller2.php', 'queue-teller2');
+      <?php } else { ?>
+      fetchQueue('./api/get_last_teller.php', 'queue-teller');
+      <?php } ?>
+      fetchQueue('./api/get_last_kredit.php', 'queue-kredit');
+    }
+
+    // Enable audio after user interaction
+    document.addEventListener('DOMContentLoaded', () => {
+      const v = document.getElementById('tvVideo');
+      const playBtn = document.getElementById('playBtn');
+      const muteBtn = document.getElementById('muteBtn');
+      const fsBtn = document.getElementById('fsBtn');
+      const wrapper = document.getElementById('videoWrapper');
+      const controls = document.getElementById('tvControls');
+      const fitBtn = document.getElementById('fitBtn');
+      const fsRoot = document.querySelector('.tv-root') || document.documentElement;
+      if (!v) return;
+
+      const syncControls = () => {
+        if (playBtn) {
+          const playing = !v.paused && !v.ended;
+          playBtn.innerHTML = playing ? '<i class="bi-pause-fill fs-5"></i>' : '<i class="bi-play-fill fs-5"></i>';
+          playBtn.title = playing ? 'Jeda' : 'Putar';
+          playBtn.setAttribute('aria-label', playBtn.title);
+        }
+        if (muteBtn) {
+          const muted = v.muted || v.volume === 0;
+          muteBtn.innerHTML = muted ? '<i class="bi-volume-mute fs-5"></i>' : '<i class="bi-volume-up fs-5"></i>';
+          muteBtn.title = muted ? 'Suara Mati' : 'Suara Menyala';
+          muteBtn.setAttribute('aria-label', muteBtn.title);
+        }
+        if (fsBtn) {
+          const inFs = !!document.fullscreenElement;
+          fsBtn.innerHTML = inFs ? '<i class="bi-fullscreen-exit fs-5"></i>' : '<i class="bi-arrows-fullscreen fs-5"></i>';
+          fsBtn.title = inFs ? 'Keluar Layar Penuh' : 'Layar Penuh';
+          fsBtn.setAttribute('aria-label', fsBtn.title);
+        }
+      };
+
+      // Event handlers
+      if (playBtn) {
+        playBtn.addEventListener('click', async () => {
+          try {
+            if (v.paused) {
+              await v.play();
+            } else {
+              v.pause();
+            }
+          } catch (e) { /* no-op */ }
+          syncControls();
+          scheduleHide();
+        });
+      }
+
+      if (muteBtn) {
+        muteBtn.addEventListener('click', () => {
+          v.muted = !v.muted;
+          if (!v.muted && v.volume === 0) v.volume = 1.0;
+          // If starting audio, ensure playback continues
+          v.play().catch(() => {});
+          syncControls();
+          scheduleHide();
+        });
+      }
+
+      const toggleFs = async () => {
+        try {
+          if (document.fullscreenElement) {
+            await document.exitFullscreen();
+          } else {
+            await fsRoot.requestFullscreen();
+          }
+        } catch (e) { /* no-op */ }
+        syncControls();
+      };
+      if (fsBtn) {
+        fsBtn.addEventListener('click', toggleFs);
+        document.addEventListener('fullscreenchange', syncControls);
+      }
+
+      // Also allow clicking video to toggle play/pause
+      v.addEventListener('click', async () => {
+        try {
+          if (v.paused) {
+            await v.play();
+          } else {
+            v.pause();
+          }
+        } catch (e) { /* no-op */ }
+        syncControls();
+        scheduleHide();
+      });
+
+      // Keep controls in sync with video events
+      v.addEventListener('play', () => { syncControls(); scheduleHide(); });
+      v.addEventListener('pause', () => { syncControls(); showControls(); });
+      v.addEventListener('volumechange', syncControls);
+
+      // Auto-hide controls after inactivity when playing
+      let hideTimer;
+      let stopTimer;
+      const hideControls = () => {
+        if (!controls || !wrapper) return;
+        if (!v.paused && !v.ended) {
+          controls.classList.add('hide');
+          wrapper.classList.add('controls-hidden');
+        }
+      };
+      const showControls = () => {
+        if (!controls || !wrapper) return;
+        controls.classList.remove('hide');
+        wrapper.classList.remove('controls-hidden');
+      };
+      const scheduleHide = () => {
+        if (!controls || !wrapper) return;
+        clearTimeout(hideTimer);
+        if (!v.paused && !v.ended) hideTimer = setTimeout(hideControls, 3000);
+      };
+
+      // Show controls only after mouse stops moving (delay until user stops)
+      const onMouseMove = () => {
+        if (!wrapper) return;
+        // while moving, keep controls hidden; wait for stop
+        showControls();
+        wrapper.classList.remove('controls-hidden');
+        clearTimeout(stopTimer);
+        stopTimer = setTimeout(() => {
+          // show controls when user stops moving, then schedule auto-hide
+          showControls();
+          scheduleHide();
+        }, 350);
+      };
+
+      if (wrapper) {
+        wrapper.addEventListener('mousemove', onMouseMove);
+        // touch should show controls immediately
+        wrapper.addEventListener('touchstart', () => { showControls(); scheduleHide(); });
+        wrapper.addEventListener('touchmove', () => { showControls(); scheduleHide(); });
+      }
+
+      // Fit button: cycle through contain, cover, fill; persist in localStorage
+      const fitModes = ['contain','cover','fill'];
+      const setFitMode = (mode) => {
+        if (!v) return;
+        v.style.objectFit = mode;
+        localStorage.setItem('tvVideoFit', mode);
+        if (!fitBtn) return;
+        const icon = mode === 'contain' ? 'bi-aspect-ratio' : (mode === 'cover' ? 'bi-arrows-expand' : 'bi-arrows-fullscreen');
+        fitBtn.innerHTML = `<i class="${icon} fs-5"></i>`;
+        fitBtn.title = `Mode tampilan: ${mode}`;
+      };
+      const initFit = () => {
+        const saved = localStorage.getItem('tvVideoFit') || 'contain';
+        setFitMode(saved);
+        if (fitBtn) fitBtn.addEventListener('click', () => {
+          const cur = v.style.objectFit || 'contain';
+          const idx = fitModes.indexOf(cur);
+          const next = fitModes[(idx + 1) % fitModes.length];
+          setFitMode(next);
+        });
+      };
+      initFit();
+
+      // Initial sync and hide schedule
+      syncControls();
+      scheduleHide();
+    });
+
+    // initial
+    updateClock();
+    pollQueues();
+    // intervals
+    setInterval(updateClock, 1000);
+    setInterval(pollQueues, 3000);
+  </script>

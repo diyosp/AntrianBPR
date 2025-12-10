@@ -8,7 +8,9 @@
   <meta name="author" content="Indra Styawantoro">
 
   <!-- Title -->
-  <title>BPR Sukabumi</title>
+  <title><?php echo isset($pageTitle) && $pageTitle
+    ? htmlspecialchars($pageTitle) . ' - BPR Sukabumi'
+    : 'BPR Sukabumi'; ?></title>
 
   <!-- Favicon icon -->
   <link rel="shortcut icon" href="" type="image/x-icon">
@@ -21,6 +23,8 @@
 
   <!-- Font -->
   <link href="https://fonts.googleapis.com/css?family=Raleway:100,200,300,400,500,600,700,800,900&amp;display=swap" rel="stylesheet">
+  <!-- Montserrat for TV top bar -->
+  <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600;700;800&display=swap" rel="stylesheet">
 
   <!-- Custom Style -->
   <link rel="stylesheet" href="assets/css/style.css">

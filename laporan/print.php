@@ -81,61 +81,148 @@ $result = $stmt->get_result();
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Print Laporan Customer Service</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         @media print {
             @page {
-                margin: 1cm;
-                /* Margin halaman saat dicetak */
+                size: A4 portrait;
+                margin: 1.5cm 1cm;
+            }
+            
+            .no-print {
+                display: none;
             }
         }
 
-        body {
-            font-family: Arial, sans-serif;
-            font-size: 12px;
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
         }
 
-        h2 {
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 11pt;
+            line-height: 1.4;
+            color: #333;
+            padding: 20px;
+        }
+
+        .header {
             text-align: center;
+            margin-bottom: 30px;
+            border-bottom: 3px solid #2c3e50;
+            padding-bottom: 15px;
+        }
+
+        .header h1 {
+            font-size: 20pt;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+
+        .header .subtitle {
+            font-size: 11pt;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .filter-info {
+            background-color: #f8f9fa;
+            padding: 10px 15px;
+            border-left: 4px solid #3498db;
             margin-bottom: 20px;
+            font-size: 10pt;
         }
 
         table {
-            border-collapse: collapse;
             width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
         }
 
-        table,
-        th,
-        td {
-            border: 1px solid black;
+        table thead {
+            background-color: #34495e;
+            color: white;
         }
 
-        th,
-        td {
-            padding: 8px;
+        table th {
+            padding: 12px 8px;
             text-align: left;
+            font-weight: 600;
+            font-size: 10pt;
+            border: 1px solid #2c3e50;
         }
 
-        th {
-            background-color: #f2f2f2;
+        table td {
+            padding: 10px 8px;
+            border: 1px solid #ddd;
+            font-size: 10pt;
+        }
+
+        table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+
+        table tbody tr:hover {
+            background-color: #e9ecef;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .footer {
+            margin-top: 30px;
+            padding-top: 15px;
+            border-top: 2px solid #ecf0f1;
+            font-size: 9pt;
+            color: #7f8c8d;
+        }
+
+        .print-date {
+            text-align: right;
+            font-style: italic;
         }
     </style>
 </head>
 
 <body onload="window.print();">
-    <h2>Laporan Customer Service</h2>
+    <div class="header">
+        <h1>Laporan Customer Service</h1>
+        <div class="subtitle">Sistem Antrian BPR</div>
+    </div>
+
+    <?php
+    $filter_text = [];
+    if (!empty($filter_cabang)) $filter_text[] = "Cabang: " . htmlspecialchars($filter_cabang);
+    if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
+        $filter_text[] = "Periode: " . date('d/m/Y', strtotime($tanggal_awal)) . " - " . date('d/m/Y', strtotime($tanggal_akhir));
+    }
+    if (!empty($bulan)) {
+        $bulan_nama = date('F', mktime(0, 0, 0, $bulan, 1));
+        $filter_text[] = "Bulan: " . $bulan_nama;
+    }
+    if (!empty($tahun)) $filter_text[] = "Tahun: " . $tahun;
+    
+    if (!empty($filter_text)):
+    ?>
+    <div class="filter-info">
+        <strong>Filter:</strong> <?= implode(' | ', $filter_text) ?>
+    </div>
+    <?php endif; ?>
+
     <table>
         <thead>
             <tr>
-                <th>No</th>
-                <th>Cabang ID</th>
-                <th>Tanggal</th>
-                <th>No Antrian</th>
-                <th>Waktu Mulai</th>
-                <th>Waktu Selesai</th>
-                <th>Status</th>
-                <th>Durasi</th>
+                <th style="width: 5%;">No</th>
+                <th style="width: 10%;">Cabang</th>
+                <th style="width: 12%;">Tanggal</th>
+                <th style="width: 12%;">No Antrian</th>
+                <th style="width: 12%;">Waktu Mulai</th>
+                <th style="width: 12%;">Waktu Selesai</th>
+                <th style="width: 10%;">Status</th>
+                <th style="width: 10%;">Durasi</th>
             </tr>
         </thead>
         <tbody>
@@ -176,6 +263,12 @@ $result = $stmt->get_result();
             ?>
         </tbody>
     </table>
+
+    <div class="footer">
+        <div class="print-date">
+            Dicetak pada: <?= date('d/m/Y H:i:s') ?>
+        </div>
+    </div>
 </body>
 
 </html>

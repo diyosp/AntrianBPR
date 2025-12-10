@@ -3,36 +3,56 @@ body {
   background-color: #f6f8fd;
 }
 
+/* Top clock/company bar uses Montserrat for improved TV readability */
+.clock-card,
+.clock-card .fw-semibold,
+.clock-card .small,
+.clock-card #clock {
+  font-family: 'Montserrat', Raleway, sans-serif;
+}
+
+/* Larger, bolder company name and clock for TV */
+.clock-card .fw-semibold {
+  font-weight: 800;
+  font-size: 1.35rem;
+}
+.clock-card #clock {
+  font-weight: 700;
+  font-size: 1.35rem;
+}
+@media (min-width: 992px) {
+  .clock-card .fw-semibold { font-size: 1.6rem; }
+  .clock-card #clock { font-size: 1.6rem; }
+}
+
 .p-45 {
   padding: 2rem !important;
 }
 
 .bg-success {
-  background-color: #00aa9d !important;
+  background-color: #F87B1B !important;
 }
 
 .text-success {
-  color: #00aa9d !important;
+  color: #F87B1B !important;
 }
-
 .btn-success {
   color: #fff;
-  background-color: #00aa9d;
-  border-color: #00aa9d;
+  background-color: #F87B1B;
+  border-color: #F87B1B;
 }
-
 .btn-success:hover {
   color: #fff;
-  background-color: #00a189;
-  border-color: #00a491;
+  background-color: #e66a16; /* slightly darker on hover */
+  border-color: #d95f12;
 }
 
 .btn-check:focus + .btn-success,
 .btn-success:focus {
   color: #fff;
-  background-color: #00a189;
-  border-color: #00a491;
-  box-shadow: 0 0 0 0.25rem rgba(60, 153, 110, 0.5);
+  background-color: #e66a16;
+  border-color: #d95f12;
+  box-shadow: 0 0 0 0.25rem rgba(248,123,27,0.35);
 }
 
 .btn-check:checked + .btn-success,
@@ -41,8 +61,8 @@ body {
 .btn-success.active,
 .show > .btn-success.dropdown-toggle {
   color: #fff;
-  background-color: #00a491;
-  border-color: #00a189;
+  background-color: #d95f12;
+  border-color: #e66a16;
 }
 
 .btn-check:checked + .btn-success:focus,
@@ -50,18 +70,18 @@ body {
 .btn-success:active:focus,
 .btn-success.active:focus,
 .show > .btn-success.dropdown-toggle:focus {
-  box-shadow: 0 0 0 0.25rem rgba(60, 153, 110, 0.5);
+  box-shadow: 0 0 0 0.25rem rgba(248,123,27,0.35);
 }
 
 .btn-success:disabled,
 .btn-success.disabled {
   color: #fff;
-  background-color: #00aa9d;
-  border-color: #00aa9d;
+  background-color: #F87B1B;
+  border-color: #F87B1B;
 }
 
 .border-success {
-  border-color: #00aa9d !important;
+  border-color: #F87B1B !important;
 }
 
 .card {
@@ -140,7 +160,7 @@ table.table-bordered.dataTable th {
 .page-link {
   position: relative;
   display: block;
-  color: #00aa9d;
+  color: #F87B1B;
   text-decoration: none;
   background-color: #fff;
   border: 1px solid #dee2e6;
@@ -150,14 +170,14 @@ table.table-bordered.dataTable th {
 
 .page-link:hover {
   z-index: 2;
-  color: #00a189;
+  color: #e66a16;
   background-color: #e9ecef;
   border-color: #dee2e6;
 }
 
 .page-link:focus {
   z-index: 3;
-  color: #00a189;
+  color: #e66a16;
   background-color: #e9ecef;
   outline: 0;
   box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
@@ -166,6 +186,153 @@ table.table-bordered.dataTable th {
 .page-item.active .page-link {
   z-index: 3;
   color: #fff;
-  background-color: #00aa9d;
-  border-color: #00aa9d;
+  background-color: #F87B1B;
+  border-color: #F87B1B;
 }
+
+/* Login page specific styles */
+.login-page {
+  background: linear-gradient(180deg, #f5fbfb 0%, #eef7f6 40%, #f6f8fd 100%);
+}
+
+.login-card {
+  border: 0;
+  border-radius: 12px;
+  overflow: hidden;
+  /* Dark blue card to match requested color */
+  background-color: #11224E;
+  color: #fff;
+}
+
+.brand-logo {
+  display: block;
+  margin: -50px auto -50px !important;
+  width: 250px;
+  height: 250px;
+  object-fit: contain;
+}
+
+
+/* Adjust colors inside the dark login card for contrast */
+.login-card .card-body h5,
+.login-card .card-body h4,
+.login-card .card-title {
+  color: #fff;
+}
+
+/* Keep form inputs white for readability against the dark card */
+.login-card .form-control,
+.login-card .form-select {
+  background: #fff;
+  color: #000;
+  border: 1px solid #e6e6e6;
+}
+
+.login-card .form-control::placeholder {
+  color: #6c757d;
+  opacity: 1;
+}
+
+/* Floating labels over white inputs should be muted gray */
+.login-card .form-floating label {
+  color: #6c757d;
+}
+
+/* Links / small text on the dark card */
+.login-card .text-muted,
+.login-card .text-muted a {
+  color: rgba(255,255,255,0.85) !important;
+}
+
+/* Password toggle styling to stand out on dark background */
+.login-card .password-toggle {
+  position: absolute;
+  right: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  background: #fff;
+  color: #11224E;
+  border: 0;
+  padding: 0.25rem 0.5rem;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(17,34,78,0.12);
+}
+
+/* style for image-based eye icons inside the toggle button */
+.password-toggle .icon-eye,
+.password-toggle .icon-eye-slash {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  display: inline-block;
+}
+
+.password-toggle img[onerror] { display: inline-block; }
+
+/* floating form tweaks */
+.form-floating > .form-control,
+.form-floating > .form-select {
+  height: calc(3.5rem + 2px);
+  padding: 1rem 1rem;
+  padding-right: 3.5rem; /* leave room for the password toggle button */
+  border-radius: 8px;
+}
+
+/* Make sure card is centered on small screens */
+@media (max-width: 576px) {
+  .brand-logo { width: 64px; height: 64px; }
+  .form-floating > .form-control, .form-floating > .form-select { height: calc(3.25rem + 2px); }
+}
+
+/* subtle shadow for inputs when focused */
+.form-control:focus, .form-select:focus {
+  box-shadow: 0 6px 18px rgba(248,123,27,0.08) !important;
+  border-color: #F87B1B !important;
+}
+
+.alert {
+  border-radius: 10px;
+}
+
+.card-body h5 { font-weight: 600; }
+
+.text-muted a { color: inherit; }
+
+/* small helpers */
+.btn-lg { border-radius: 10px; }
+
+/* Extra spacing utilities beyond Bootstrap's mb-5 */
+.mb-6 { margin-bottom: 4rem !important; }
+.mb-7 { margin-bottom: 6rem !important; }
+
+/* Autofill overrides to ensure white background and readable text
+   for Firefox (-moz-autofill) and WebKit browsers (-webkit-autofill) */
+/* Scoped: apply autofill override only inside the login card to avoid global side-effects */
+.login-card input:-moz-autofill, .login-card textarea:-moz-autofill, .login-card select:-moz-autofill {
+  box-shadow: 0 0 0 1000px #fff inset !important; /* force white background */
+  -moz-text-fill-color: #000 !important; /* readable text color in Firefox */
+  background-clip: padding-box;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+.login-card input:-webkit-autofill, .login-card textarea:-webkit-autofill, .login-card select:-webkit-autofill {
+  box-shadow: 0 0 0 1000px #fff inset !important; /* force white background */
+  -webkit-text-fill-color: #000 !important; /* readable text color in WebKit */
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Fallback: keep the global rules (less specific) below in case other pages rely on them. */
+input:-moz-autofill, textarea:-moz-autofill, select:-moz-autofill {
+  box-shadow: 0 0 0 1000px #fff inset !important;
+  -moz-text-fill-color: #000 !important;
+  background-clip: padding-box;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+input:-webkit-autofill, textarea:-webkit-autofill, select:-webkit-autofill {
+  box-shadow: 0 0 0 1000px #fff inset !important;
+  -webkit-text-fill-color: #000 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+

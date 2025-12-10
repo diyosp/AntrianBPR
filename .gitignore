@@ -1,0 +1,14 @@
+# Local video assets (keep videos out of the repository)
+assets/video/
+video/
+tampilan-tv/video/
+
+# Ignore common large video formats (optional - prevents accidental additions)
+*.mp4
+*.webm
+*.ogg
+
+# Node / PHP / editor temporary files (keep existing patterns short)
+.DS_Store
+.vscode/
+thumbs.db

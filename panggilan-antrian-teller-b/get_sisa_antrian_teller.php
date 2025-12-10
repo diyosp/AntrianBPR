@@ -18,9 +18,11 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
   // ambil tanggal sekarang
   $tanggal = gmdate("Y-m-d", time() + 60 * 60 * 7);
 
-  // sql statement untuk menghitung jumlah sisa antrian teller berdasarkan "tanggal", "status_teller = 0", dan "cabang_id"
+  // sql statement untuk menghitung jumlah sisa antrian teller berdasarkan "tanggal", "status_teller = 0", "cabang_id", dan "bagian"
+  // Hitung antrian yang belum diklaim (bagian IS NULL) saja untuk Teller B
   $query = mysqli_query($mysqli, "SELECT count(id_teller) as jumlah FROM tbl_antrian_teller 
-                                    WHERE tanggal_teller='$tanggal' AND status_teller='0' AND cabang_id='$cabang_id'")
+                                    WHERE tanggal_teller='$tanggal' AND status_teller='0' AND cabang_id='$cabang_id'
+                                    AND bagian IS NULL")
     or die('Ada kesalahan pada query tampil data : ' . mysqli_error($mysqli));
 
   // ambil data hasil query

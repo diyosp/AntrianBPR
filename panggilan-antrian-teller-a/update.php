@@ -22,7 +22,10 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
     $action = isset($_POST['action']) ? $_POST['action'] : '';
     $updated_date = gmdate("Y-m-d H:i:s", time() + 60 * 60 * 7);
 
-    $check_query = mysqli_query($mysqli, "SELECT id_teller, status_teller, waktu_mulai, waktu_selesai FROM tbl_antrian_teller WHERE id_teller='$id' AND cabang_id='$cabang_id'")
+    // Validasi: Teller A hanya bisa mengakses antrian yang belum diklaim (bagian IS NULL) atau sudah diklaim oleh Teller A (bagian = '1')
+    $check_query = mysqli_query($mysqli, "SELECT id_teller, status_teller, waktu_mulai, waktu_selesai, bagian FROM tbl_antrian_teller 
+                                           WHERE id_teller='$id' AND cabang_id='$cabang_id' 
+                                           AND (bagian IS NULL OR bagian = '1')")
       or die('Ada kesalahan pada query validasi cabang : ' . mysqli_error($mysqli));
 
     if (mysqli_num_rows($check_query) > 0) {
