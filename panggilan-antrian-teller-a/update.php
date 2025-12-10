@@ -48,7 +48,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
             or die('Ada kesalahan pada query update : ' . mysqli_error($mysqli));
         }
       } else if ($action === 'finish') {
-        if ($status_teller == '1' && empty($waktu_selesai)) {
+        if ($status_teller == '1') {
           $waktu_selesai = $updated_date;
           $mulai = strtotime($waktu_mulai);
           $selesai = strtotime($waktu_selesai);
