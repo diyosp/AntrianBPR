@@ -7,7 +7,7 @@ if ($mysqli->connect_error) {
 $mysqli->set_charset("utf8mb4");
 
 // EIS Database (for pegawai data)
-$mysqli_eis = new mysqli("localhost", "root", "", "bprsukab_eis");
+$mysqli_eis = new mysqli("localhost", "root", "", "bprsukab_eis_update");
 if ($mysqli_eis->connect_error) {
     die("EIS Connection failed: " . $mysqli_eis->connect_error);
 }
