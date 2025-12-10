@@ -6,7 +6,7 @@ require_once "../config/database.php";
 $pegawai_list = [];
 try {
     // Get actual column names first
-    $columnsQuery = "SHOW COLUMNS FROM bprsukab_eis.pegawai";
+    $columnsQuery = "SHOW COLUMNS FROM bprsukab_eis_update.pegawai";
     $columnsResult = $mysqli_eis->query($columnsQuery);
     $columns = [];
     while ($col = $columnsResult->fetch_assoc()) {
@@ -24,7 +24,7 @@ try {
     }
     
     $pegawaiQuery = "SELECT id_pegawai, $nameColumn as nama_pegawai, kode_cabang 
-                     FROM bprsukab_eis.pegawai 
+                     FROM bprsukab_eis_update.pegawai 
                      ORDER BY $nameColumn";
     $pegawaiResult = $mysqli_eis->query($pegawaiQuery);
     

@@ -14,8 +14,8 @@ $userQuery = "
     FROM users
     JOIN role ON users.role_id = role.role_id
     JOIN cabang ON users.cabang_id = cabang.id
-    LEFT JOIN bprsukab_eis.pegawai p ON users.id_pegawai = p.id_pegawai
-    LEFT JOIN bprsukab_eis.jabatan j ON p.id_jabatan = j.id_jabatan
+    LEFT JOIN bprsukab_eis_update.pegawai p ON users.id_pegawai = p.id_pegawai
+    LEFT JOIN bprsukab_eis_update.jabatan j ON p.id_jabatan = j.id_jabatan
     WHERE 1=1
 ";
 
@@ -72,7 +72,7 @@ if (!empty($filter_role)) {
     }
 }
 if (!empty($filter_jabatan)) {
-    $jabatan_query = $mysqli_eis->prepare("SELECT jabatan FROM bprsukab_eis.jabatan WHERE id_jabatan = ?");
+    $jabatan_query = $mysqli_eis->prepare("SELECT jabatan FROM bprsukab_eis_update.jabatan WHERE id_jabatan = ?");
     $jabatan_query->bind_param("i", $filter_jabatan);
     $jabatan_query->execute();
     $jabatan_result = $jabatan_query->get_result();

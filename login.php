@@ -63,7 +63,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     
                     if (!empty($user['id_pegawai'])) {
                         // Check what columns exist in pegawai table
-                        $pegawaiQuery = "SELECT * FROM bprsukab_eis.pegawai WHERE id_pegawai = ? LIMIT 1";
+                        $pegawaiQuery = "SELECT * FROM bprsukab_eis_update.pegawai WHERE id_pegawai = ? LIMIT 1";
                         $stmtPegawai = $mysqli_eis->prepare($pegawaiQuery);
                         if ($stmtPegawai) {
                             $stmtPegawai->bind_param("s", $user['id_pegawai']);

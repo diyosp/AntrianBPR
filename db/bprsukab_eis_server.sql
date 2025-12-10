@@ -3,9 +3,9 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: localhost:3306
--- Generation Time: Nov 10, 2025 at 09:28 AM
--- Server version: 8.0.30
--- PHP Version: 8.3.13
+-- Generation Time: Dec 09, 2025 at 08:38 PM
+-- Server version: 8.0.37
+-- PHP Version: 7.4.33
 
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
@@ -18,7 +18,7 @@ SET time_zone = "+00:00";
 /*!40101 SET NAMES utf8mb4 */;
 
 --
--- Database: `bprsukab_eis`
+-- Database: `bprsukab_eis_update`
 --
 
 -- --------------------------------------------------------
@@ -150,7 +150,7 @@ CREATE TABLE `cache_locks` (
 
 CREATE TABLE `cuti` (
   `id_cuti` int UNSIGNED NOT NULL,
-  `tipe_record` enum('PENGAJUAN','GRANT','PENYESUAIAN','CARRY_OVER','REVERSAL') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
+  `tipe_record` enum('PENGAJUAN','GRANT','PENYESUAIAN','CARRY_OVER','REVERSAL') COLLATE utf8mb4_general_ci NOT NULL,
   `id_pegawai` varchar(50) CHARACTER SET latin1 COLLATE latin1_swedish_ci NOT NULL,
   `tahun` smallint UNSIGNED NOT NULL,
   `jenis` enum('TAHUNAN','MELAHIRKAN','MENIKAH') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
@@ -158,16 +158,16 @@ CREATE TABLE `cuti` (
   `tgl_mulai` date DEFAULT NULL,
   `tgl_selesai` date DEFAULT NULL,
   `total_hari` decimal(5,2) DEFAULT NULL,
-  `alasan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
-  `lampiran_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `status_pengajuan` enum('draft','diajukan','disetujui','ditolak','diminta_revisi','batal_diminta','dibatalkan') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `dokumen_nomor` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `dokumen_pdf_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `verifikasi_kode` char(36) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `verifikasi_hash` char(64) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `alasan` text COLLATE utf8mb4_general_ci,
+  `lampiran_path` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `status_pengajuan` enum('draft','diajukan','disetujui','ditolak','diminta_revisi','batal_diminta','dibatalkan') COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dokumen_nomor` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `dokumen_pdf_path` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `verifikasi_kode` char(36) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `verifikasi_hash` char(64) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `nilai` decimal(6,2) DEFAULT NULL,
-  `catatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `sumber` varchar(100) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `catatan` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `sumber` varchar(100) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -350,7 +350,8 @@ INSERT INTO `cuti` (`id_cuti`, `tipe_record`, `id_pegawai`, `tahun`, `jenis`, `t
 (177, 'GRANT', '79.088.216', 2025, 'TAHUNAN', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7.00, 'Input jatah tahunan via form', 'FORM', '2025-08-14 12:18:04', '2025-08-14 12:18:04'),
 (180, 'GRANT', '95.019.339', 2025, 'TAHUNAN', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7.00, 'Input jatah tahunan via form', 'FORM', '2025-08-14 12:18:04', '2025-08-14 12:18:04'),
 (181, 'GRANT', '95.018.330', 2025, 'TAHUNAN', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7.00, 'Input jatah tahunan via form', 'FORM', '2025-08-14 12:18:04', '2025-08-14 12:18:04'),
-(182, 'GRANT', '89.013.252', 2025, 'TAHUNAN', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7.00, 'Input jatah tahunan via form', 'FORM', '2025-08-14 12:18:04', '2025-08-14 12:18:04');
+(182, 'GRANT', '89.013.252', 2025, 'TAHUNAN', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, 7.00, 'Input jatah tahunan via form', 'FORM', '2025-08-14 12:18:04', '2025-08-14 12:18:04'),
+(186, 'PENGAJUAN', '93.013.259', 2025, 'TAHUNAN', '2025-11-19 08:13:05', '2025-11-20', '2025-11-20', 1.00, 'Keperluan keluarga', NULL, 'diajukan', NULL, 'storage/cuti/surat/2025/surat-cuti-186.pdf', NULL, NULL, NULL, NULL, NULL, '2025-11-19 01:13:05', '2025-11-19 01:13:28');
 
 -- --------------------------------------------------------
 
@@ -362,18 +363,18 @@ CREATE TABLE `cuti_persetujuan` (
   `id_cuti_persetujuan` int UNSIGNED NOT NULL,
   `id_cuti` int UNSIGNED NOT NULL,
   `no_langkah` tinyint UNSIGNED NOT NULL,
-  `approver_id_pegawai` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `approver_role` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `approver_id_pegawai` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `approver_role` varchar(50) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `approver_id_jabatan` int UNSIGNED DEFAULT NULL,
-  `keputusan` enum('pending','disetujui','ditolak','dilewati') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'pending',
-  `catatan` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `keputusan` enum('pending','disetujui','ditolak','dilewati') COLLATE utf8mb4_general_ci NOT NULL DEFAULT 'pending',
+  `catatan` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `diputuskan_pada` datetime DEFAULT NULL,
   `batas_waktu` datetime DEFAULT NULL,
-  `ttd_mode` enum('gambar','otp_draw','sertifikat') CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `ttd_signature_path` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ttd_mode` enum('gambar','otp_draw','sertifikat') COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ttd_signature_path` varchar(255) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `ttd_otp_waktu` datetime DEFAULT NULL,
-  `ttd_ip` varchar(45) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
-  `ttd_ua` varchar(150) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ttd_ip` varchar(45) COLLATE utf8mb4_general_ci DEFAULT NULL,
+  `ttd_ua` varchar(150) COLLATE utf8mb4_general_ci DEFAULT NULL,
   `stempel_hal` tinyint UNSIGNED DEFAULT NULL,
   `stempel_x` smallint UNSIGNED DEFAULT NULL,
   `stempel_y` smallint UNSIGNED DEFAULT NULL,
@@ -382,6 +383,16 @@ CREATE TABLE `cuti_persetujuan` (
   `created_at` datetime DEFAULT NULL,
   `updated_at` datetime DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `cuti_persetujuan`
+--
+
+INSERT INTO `cuti_persetujuan` (`id_cuti_persetujuan`, `id_cuti`, `no_langkah`, `approver_id_pegawai`, `approver_role`, `approver_id_jabatan`, `keputusan`, `catatan`, `diputuskan_pada`, `batas_waktu`, `ttd_mode`, `ttd_signature_path`, `ttd_otp_waktu`, `ttd_ip`, `ttd_ua`, `stempel_hal`, `stempel_x`, `stempel_y`, `stempel_w`, `stempel_h`, `created_at`, `updated_at`) VALUES
+(6, 186, 1, '89.013.265', NULL, 19, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-19 01:13:27', '2025-11-19 01:13:27'),
+(7, 186, 2, '73.004.156', NULL, 9, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-19 01:13:27', '2025-11-19 01:13:27'),
+(8, 186, 3, '85.018.322', NULL, 11, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-19 01:13:27', '2025-11-19 01:13:27'),
+(9, 186, 4, '1001', NULL, 2, 'pending', NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, NULL, '2025-11-19 01:13:27', '2025-11-19 01:13:27');
 
 -- --------------------------------------------------------
 
@@ -417,7 +428,7 @@ CREATE TABLE `jabatan` (
 
 INSERT INTO `jabatan` (`id_jabatan`, `jabatan`, `sifat_jab`) VALUES
 (1, 'Direktur Utama', 'Direktur Utama'),
-(2, 'Kepala Divisi Umum dan SDM', 'Struktural'),
+(2, 'Kepala Divisi Operasional dan SDM', 'Struktural'),
 (3, 'Kepala Divisi Pemasaran', 'Struktural'),
 (5, 'Kepala Bagian Pemasaran', 'Struktural'),
 (6, 'Kepala Bagian Akuntansi dan Pelaporan', 'Struktural'),
@@ -456,8 +467,7 @@ INSERT INTO `jabatan` (`id_jabatan`, `jabatan`, `sifat_jab`) VALUES
 (42, 'Staff Admin Kredit dan Legal', 'Struktural'),
 (44, 'Staff TI', 'Struktural'),
 (45, 'Kas Kecil', 'Fungsional'),
-(47, 'Kepala Bagian Umum dan SDM', 'Struktural'),
-(48, 'PE Manrisk, Kepatuhan dan APUPPT', 'Struktural'),
+(48, 'PE Manrisk, Kepatuhan dan APUPPT & Perlindungan Konsumen', 'Struktural'),
 (49, 'Staff Operasional Kantor Kas', 'Struktural'),
 (50, 'Security', 'Struktural'),
 (51, 'Driver', 'Struktural'),
@@ -470,7 +480,7 @@ INSERT INTO `jabatan` (`id_jabatan`, `jabatan`, `sifat_jab`) VALUES
 (58, 'Kepala KPO', 'Struktural'),
 (59, 'Kepala Seksi Remedial', 'Struktural'),
 (60, 'Staff Manrisk, Kepatuhan dan APUPPT', 'Struktural'),
-(62, 'Kabag Umum SDM', 'Fungsional'),
+(62, 'Kepala Bagian Operasional & SDM', 'Fungsional'),
 (63, 'Kepala Seksi Analis Kredit', 'Struktural'),
 (66, 'Staff Pemasaran', 'Fungsional'),
 (1001, 'Admin', 'Fungsional'),
@@ -742,12 +752,12 @@ INSERT INTO `keluarga` (`id_keluarga`, `id_pegawai`, `nama_keluarga`, `status`, 
 (307, '76.006.193', 'M. Al Keizi. S', 'Anak', 'Bandung', '2016-08-13', 'Jl. Giri Rahayu II No 13 Rt 002/004 Ujung Berung Bandung', '1', ''),
 (309, '76.006.193', 'Audreyya Keinarra. S', 'Anak', 'Bandung', '2017-12-02', 'Jl. Giri Rahayu II No 13 Rt 002/004 Ujung Berung Bandung', '1', ''),
 (310, '76.006.193', 'Teny Utari', 'Suami/Istri', 'Bandung', '1982-08-11', 'Jl. Giri Rahayu II No 13 Rt 002/004 Ujung Berung Bandung', '6', 'Karyawan Swasta'),
-(311, '71.095.110', 'MIA KUSMIATI', 'Suami/Istri', 'SUKABUMI', '1976-02-26', 'PERUM NIRWANA GRAHA BLOK F4 SEULAEURIH RT 05 RW 07 KEL DAYEUHLUHUR KEC WARUDOYONG', '3', 'IRT'),
-(312, '71.095.110', 'SITI SALFA FILDZAH NURSHADRINA', 'Anak', 'SUKABUMI', '2001-04-24', '', '8', 'SWASTA'),
-(314, '71.095.110', 'MOCH LUTHFAN KHAZIMI', 'Anak', 'SUKABUMI', '2004-04-29', '', '3', 'MAHASISWA'),
+(311, '71.095.110', 'Mia Kusmiati', 'Suami/Istri', 'Sukabumi', '1976-02-26', 'Perum Nirwana Graha Rt 005 Rw 007 Kel. Dayeuhluhur Kec. Warudoyong, Kota Sukabumi, 43134.', '3', 'IRT'),
+(312, '71.095.110', 'Siti Salfa Fildzah N', 'Anak', 'Sukabumi', '2001-04-24', 'Perum Nirwana Graha Rt 005 Rw 007 Kel. Dayeuhluhur Kec. Warudoyong, Kota Sukabumi, 43134.', '8', 'Wiraswasta'),
+(314, '71.095.110', 'Mochamad Lutfhfan K', 'Anak', 'Sukabumi', '2004-04-29', 'Perum Nirwana Graha Rt 005 Rw 007 Kel. Dayeuhluhur Kec. Warudoyong, Kota Sukabumi, 43134.', '3', 'Mahasiswa'),
 (315, '85.013.268', 'KEYSHA ADARA LOVELIA', 'Anak', 'Sukabumi', '2015-06-19', 'Kp Ciandam rt 003/004 Cibeureum Hilir Kota Sukabumi', '1', ''),
 (316, '89.013.265', 'RIYANDI YUDISTIRA', 'Suami/Istri', 'SUKABUMI', '1989-02-22', 'Kp.Cibatu Caringin Rt/Rw.032/005 Desa.Nagrak Kec.Cisaat Kab.Sukabumi', '8', 'Karyawan RSUD R Syamsudin SH'),
-(319, '73.004.156', 'AGUS SUPRAPTO', 'Suami/Istri', 'SUKABUMI', '1976-09-17', 'JL. KASWARI NO 1/39 RT. 06 RW.08 CIKOLE - SELABATU', '8', 'WIRASWATA'),
+(319, '73.004.156', 'Agus Suprapto', 'Suami/Istri', 'Sukabumi', '1976-09-17', 'Jl. Kaswari No 1-39 Rt 006 Rw 008 Kel. Selabatu Kec. Cikole, Kota Sukabumi, 43114.', '8', 'Wiraswasta'),
 (322, '79.098.021', 'Asep Ervan Hermawan', 'Suami/Istri', 'Garut', '1971-11-23', 'Kp.Cibarengkok Rt.002 Rw.10 Desa Cimanggu Kec.Cikembar', '8', 'ASN'),
 (323, '79.098.021', 'Audrea Ervanty Mughis', 'Anak', 'Sukabumi', '2001-07-20', 'Kp.Cibarengkok Rt.002 Rw.10 Desa Cimanggu Kec.Cikembar', '8', 'Honorer'),
 (324, '79.098.021', 'Muhammad Shidqi Musyaffa Hermawan', 'Anak', 'Sukabumi', '2007-08-28', 'Kp.Cibarengkok Rt.002 Rw.010 Desa Cimanggu Kec.Cikembar', '3', 'Pelajar'),
@@ -782,9 +792,9 @@ INSERT INTO `keluarga` (`id_keluarga`, `id_pegawai`, `nama_keluarga`, `status`, 
 (364, '70.095.078', 'Nadea Amanda', 'Anak', 'Sukabumi,24/04/2001', '2001-04-24', 'Perum Griya Karang Tengah Rt 06/08 Ciheulang Tonggoh Cibadak', '8', 'Karyawan Swasta'),
 (365, '70.095.078', 'Defina Hawali', 'Anak', 'Sukabumi ', '2007-12-11', 'Perum Griya Karang Tengah Asri Rt 06/08 Ciheulang Tonggoh Cibadak', '3', 'Pelajar'),
 (367, '92.015.315', 'DIDI MAKSUDI', 'Suami/Istri', 'SUKABUMI', '1992-07-01', 'KP. SLAGOMBONG RT.001/003 DESA CIJANGKAR KEC NYALINDUNG', '8', 'KARYAWAN SWASTA'),
-(368, '73.004.156', 'ATSARINA FILDZAH KHAIRUNA IKRAMINA', 'Anak', 'SUKABUMI', '2003-04-08', 'JL. KASWARI NO. 1 - 39 RT.06 RW. 08 CIKOLE -SELABATU', '8', 'MAHASISWA'),
+(368, '73.004.156', 'Atsarina Fildzah Khairuna Ikramina', 'Anak', 'Sukabumi', '2003-04-08', 'Jl. Kaswari No 1-39 Rt 006 Rw 008 Kel. Selabatu Kec. Cikole, Kota Sukabumi, 43114.', '3', 'Mahasiswa'),
 (369, '92.015.315', 'EMBUN ADZANIA PUTERI', 'Orangtua', 'SUKABUMI', '2017-07-11', 'KP. SLAGOMBONG RT.001/003 DESA CIJANGKAR KEC NYALINDUNG', '1', ''),
-(370, '73.004.156', 'NAJLA KANAKA RAMANIYA GANTARI', 'Anak', 'SUKABUMI', '2008-10-16', 'JL. KASWARI NO. 1-39 RT. 06 RW. 08 CIKOLE - SELABATU', '3', 'PELAJAR'),
+(370, '73.004.156', 'Najla Kanaka Ramaniya Gantari', 'Anak', 'Sukabumi', '2008-10-16', 'Jl. Kaswari No 1-39 Rt 006 Rw 008 Kel. Selabatu Kec. Cikole, Kota Sukabumi, 43114.', '2', 'Pelajar'),
 (372, '92.015.315', 'KEENAN ATTHAYA KHALFANI', 'Anak', 'SUKABUMI', '2022-09-08', 'KP. SLAGOMBONG RT 001/003 DESA CIJANGKAR KEC NYALINDUNG', '11', ''),
 (374, '77.006.187', 'Lela Marlina', 'Suami/Istri', 'Bandung', '1975-04-18', 'Jl.Babakan Pandan Rt/Rw.006/002 Desa.Cimekar Kec.Cileunyi Kab.Bandung', '8', 'IRT'),
 (375, '77.006.187', 'Rameyza Elya Qanita', 'Anak', 'Sukabumi', '2006-07-01', 'Jl.Babakan Pandan Rt/Rw.006/002 Desa.Cimekar Kec.Cileunyi Kab.Bandung', '3', '-'),
@@ -846,10 +856,10 @@ INSERT INTO `keluarga` (`id_keluarga`, `id_pegawai`, `nama_keluarga`, `status`, 
 (450, '76.004.154', 'Fadlan Surya Pratama', 'Anak', 'Sukabumi', '2001-12-22', 'Puri Cibeureum Permai I Blok D No 2-5 RT 002/Rw 012, Desa Cibeureum Hilir, Kec. Cibeureum, Kota Sukabumi', '2', 'Pelajar'),
 (451, '76.004.154', 'Ayesha Dela Cahya', 'Anak', 'Sukabumi', '2006-12-06', 'Puri Cibeureum Permai I Blok D No 2-5 RT 002/Rw 012, Desa Cibeureum Hilir, Kec. Cibeureum, Kota Sukabumi', '1', 'Pelajar'),
 (455, '72.005.174', 'Masliah', 'Suami/Istri', 'Cianjur', '1977-05-12', '', 'Pendidikan Terakhir', ''),
-(456, '75.006.199', 'HEXANIA NURUL ULA', 'Anak', 'SUKABUMI', '2001-08-01', 'Kp.Cikembar Rt/Rw.002/003 Desa.Cikembar Kec.Cikembar', '6', ''),
-(457, '72.005.174', 'Masliah', 'Suami/Istri', 'Cianjur', '1977-05-12', 'Jl RA Kosasih Gg Pangkalan Rt 06 Rw 14 Kel Cisarua Kec Cikole Kota Sukabumi', '1', 'Mengurus Rumahtangga'),
-(458, '75.006.199', 'MUHAMAD DASHA ARDYANTO', 'Anak', 'SUKABUMI', '2010-09-30', 'Kp.Cikembar Rt/Rw.002/003 Desa.Cikembar Kec.Cikembar', '2', '');
+(456, '75.006.199', 'HEXANIA NURUL ULA', 'Anak', 'SUKABUMI', '2001-08-01', 'Kp.Cikembar Rt/Rw.002/003 Desa.Cikembar Kec.Cikembar', '6', '');
 INSERT INTO `keluarga` (`id_keluarga`, `id_pegawai`, `nama_keluarga`, `status`, `tempat_lahir`, `tgl_lahir`, `alamat_keluarga`, `id_pendidikan`, `pekerjaan`) VALUES
+(457, '72.005.174', 'Masliah', 'Suami/Istri', 'Cianjur', '1977-05-12', 'Jl RA Kosasih Gg Pangkalan Rt 06 Rw 14 Kel Cisarua Kec Cikole Kota Sukabumi', '1', 'Mengurus Rumahtangga'),
+(458, '75.006.199', 'MUHAMAD DASHA ARDYANTO', 'Anak', 'SUKABUMI', '2010-09-30', 'Kp.Cikembar Rt/Rw.002/003 Desa.Cikembar Kec.Cikembar', '2', ''),
 (460, '74.096.094', 'AZZAHRA DELIA', 'Anak', 'SUKABUMI', '2002-01-13', 'CIBUNTU RT.01 RW.01 KL.SINDANG PALAY KEC.CIBEUREUM KOTA SUKABUMI', '8', 'MAHASISWA'),
 (463, '80.000.141', 'KARTINI SINAGA', 'Suami/Istri', 'SUKABUMI', '1981-09-02', 'Gg.Karimin Rt/Rw.003/008 Desa.Selabatu Kec.Cikole Kota Sukabumi', '3', 'IBU RUMAH TANGGA'),
 (464, '93.021.350', 'Wini Andriani Sukatmawati, S. Ip', 'Orangtua', 'Sukabumi', '1969-04-04', '', '8', 'Pegawai BUMD'),
@@ -943,7 +953,7 @@ INSERT INTO `keluarga` (`id_keluarga`, `id_pegawai`, `nama_keluarga`, `status`, 
 (567, '89.015.319', 'Arashiqa Naima Nurafriansyah', 'Anak', 'SUKABUMI ', '2019-11-07', '', '10', 'Pelajar'),
 (568, '75.005.175', 'BAGAS SYAHIN GASTIA DIRIZAL', 'Anak', 'SUKABUMI', '2006-06-05', 'KP.CIWATES  RT.04 RW.04 DESA WALURAN KECAMATAN WALURAN', '3', 'PELAJAR'),
 (569, '75.005.175', 'ALBIDZAR GASTIA IRAWAN', 'Anak', 'SUKABUMI', '2016-06-22', 'KP.CIWATES  RT.04 RW.04 DESA WALURAN KECAMATAN WALURAN', '1', 'PELAJAR'),
-(570, '70.098.127', 'E RATNAWATI', 'Suami/Istri', 'CIAMIS', '1971-08-10', 'KP .KADU NENGGANG RT 07 RW 03 KELURAHAN JAMPANGKULON KECAMATAN JAMPANGKULON', '3', 'IBU RUMAH TANGGA'),
+(570, '70.098.127', 'E. Ratnawati', 'Suami/Istri', 'Ciamis', '1971-08-10', 'Kp. Kadu Nenggang Rt 007 Rw 003 Kel. Jampangkulon Kec. Jampangkulon Kab. Sukabumi, 43178.', '3', 'Ibu Rumah Tangga'),
 (571, '76.010.234', 'NOVA YULIA AUGUSTINA', 'Suami/Istri', 'SUKABUMI', '1985-08-18', 'KP. PASIRPULUS RT 24 RW 08 KELURAHAN JAMPANGKULON KECAMATAN JAMPANGKULON', '1', 'IBU RUMAH TANGGA'),
 (572, '76.010.234', 'ILHAM RENDI FADILAH', 'Anak', 'SUKABUMI', '2009-08-23', 'KP. PASIRPULUS RT 24 RW 08 KELURAHAN JAMPANGKULON KECAMATAN JAMPANGKULON', '2', 'PELAJAR'),
 (573, '76.010.234', 'ARSYILA AZZAHRA ALFATHUNNISA', 'Anak', 'SUKABUMI', '2016-12-07', 'KP. PASIRPULUS RT 24 RW 08 KELURAHAN JAMPANGKULON KECAMATAN JAMPANGKULON', '1', 'PELAJAR'),
@@ -998,7 +1008,13 @@ INSERT INTO `keluarga` (`id_keluarga`, `id_pegawai`, `nama_keluarga`, `status`, 
 (626, '74.010.224', 'Yudan Darmawansah', 'Anak', 'Sukabumi', '2010-02-24', 'Kp. Cirumput Rt 005 Rw 004 Des. Selaawi Kec. Sukaraja Kab. Sukabumi, 43192.', '2', 'Pelajar'),
 (627, '74.010.224', 'Delica Darmawan', 'Anak', 'Sukabumi', '2018-12-08', 'Kp. Cirumput Rt 005 Rw 004 Des. Selaawi Kec. Sukaraja Kab. Sukabumi, 43192.', '2', 'Pelajar'),
 (628, '87.013.267', 'Didi Kosyana', 'Bapak', 'Garut', '1967-08-18', 'Kp.Bakti Rt/Rw.003/001 Desa.Cimahi', '3', 'Pensiunan'),
-(629, '87.013.267', 'Yuyun Yuningsih', 'Ibu', 'Sukabumi', '1967-04-11', 'Kp.Bakti Rt/Rw.003/001 Desa.Cimahi', '3', 'Alm.');
+(630, '70.098.127', 'Ariel Gilar Ginanjar', 'Lainnya', 'Sukabumi', '2004-12-16', 'Kp. Kadu Nenggang Rt 007 Rw 003 Kel. Jampangkulon Kec. Jampangkulon Kab. Sukabumi, 43178.', '2', 'Pelajar'),
+(631, '87.013.267', 'tasliani', 'Ibu', 'purwakarta', '1967-04-11', 'kp.bakti Rt.03/01 desa cimahi kec cicantayan', '6', 'alm'),
+(632, '71.092.042', 'Titin Sumartini', 'Suami/Istri', 'Sukabumi', '1975-09-04', 'Kp. Babakansari Rt 005 Rw 004 Des. Parakansalak Kec. Parakansalak Kab. Sukabumi, 43355.', '1', 'Ibu Rumah Tangga'),
+(633, '71.092.042', 'Reza Setiawan Wangsa Diguna', 'Anak', 'Sukabumi', '2003-12-29', 'Kp. Babakansari Rt 005 Rw 004 Des. Parakansalak Kec. Parakansalak Kab. Sukabumi, 43355.', '3', 'Pelajar'),
+(634, '71.092.042', 'Angga Hermawan Wangsa Diguna', 'Anak', 'Sukabumi', '1995-07-29', 'Kp. Babakansari Rt 005 Rw 004 Des. Parakansalak Kec. Parakansalak Kab. Sukabumi, 43355.', '3', 'Wiraswasta'),
+(635, '72.004.155', 'HJ. Edah Jubaedah', 'Ibu', 'Sukabumi', '1951-03-13', 'Jl. Pasir Berkah II No. 20 Rt 001 Rw 006 Kel. Nanggeleng Kec. Citamiang, Kota Sukabumi, 43145.', '1', 'Ibu Rumah Tangga'),
+(636, 'TKK017', 'Farida', 'Suami/Istri', 'sukabumi', '1998-03-19', 'perum bukit gedung putih cicurug sukabumi', '6', 'wiraswasta');
 
 -- --------------------------------------------------------
 
@@ -1068,7 +1084,7 @@ CREATE TABLE `panggol` (
   `judul_sk` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
   `tgl_sk_panggol` date NOT NULL,
   `panggol` varchar(30) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci NOT NULL,
-  `keterangan` text CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci,
+  `keterangan` text COLLATE utf8mb4_general_ci,
   `status_approval_panggol` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL,
   `tgl_approval_panggol` date DEFAULT NULL,
   `upload_sk` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci DEFAULT NULL
@@ -1305,7 +1321,77 @@ INSERT INTO `panggol` (`id_panggol`, `id_pegawai`, `no_sk_panggol`, `judul_sk`, 
 (237, '82.005.169', '010/SK/DIR/I/2017', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2017-01-24', 'Staff Muda, C/I', '-', NULL, NULL, 'upload_sk/1761723152_SK KENAIKAN PATGOL_010.SK.DIR.I.2017.pdf'),
 (238, '82.005.169', '015/SK/DIR/I/2019', 'Kenaikan Gaji Berkala', '2019-01-24', 'Staff Muda, C/I', '-', NULL, NULL, 'upload_sk/1761723344_SK KENAIKAN BERKALA_015.SK.DIR.I.2019.pdf'),
 (239, '82.005.169', '009/SK/DIR/I/2021', 'Kenaikan Pangkat/Golongan Pegawai PERUMDA BPR', '2021-01-20', 'Staff Muda 1, C/II', '-', NULL, NULL, 'upload_sk/1761723460_SK KENAIKAN PATGOL_009.SK.DIR.I.2021_compressed (2).pdf'),
-(240, '82.005.169', '007/SK/DIR/I/2023', 'Kenaikan Gaji Berkala', '2023-01-24', 'Staff Muda 1, C/II', '-', NULL, NULL, 'upload_sk/1761723545_SK KENAIKAN BERKALA_007.SK.DIR.I.2023.pdf');
+(240, '82.005.169', '007/SK/DIR/I/2023', 'Kenaikan Gaji Berkala', '2023-01-24', 'Staff Muda 1, C/II', '-', NULL, NULL, 'upload_sk/1761723545_SK KENAIKAN BERKALA_007.SK.DIR.I.2023.pdf'),
+(241, '70.093.051', '580/SK/900-BKPD/1993', 'Pengukuhan Karyawan BKPD', '1993-12-16', 'II/a', '-', NULL, NULL, 'upload_sk/1762834136_SK PENGANGKATAN KARYAWAN TETAP_580.SK.900-BKPD.1993_compressed.pdf'),
+(242, '70.093.051', '140/Insp.BKPD-LPK/Si/VII/1998', 'Kenaikan Gaji Berkala', '1998-07-27', 'Pelaksana Muda , B/I', '-', NULL, NULL, 'upload_sk/1762834404_SK KENAIKAN BERKALA_140.Insp.BKPD.LPK.Si.VII.1998.pdf'),
+(243, '70.093.051', '72/Sekrt.DP.PD-BPR/2004', 'Kenaikan Gaji Berkala', '2004-05-12', 'Pelaksana Muda, B/II', '-', NULL, NULL, 'upload_sk/1762834518_SK KENAIKAN BERKALA_72.Sekt.DP.PD.BPR.2004.pdf'),
+(244, '70.093.051', '51/Sekrt.DP.PD-BPR/2002', 'Kenaikan Gaji Berkala', '2002-04-27', 'Pelaksana Muda, B/II', '-', NULL, NULL, 'upload_sk/1762834600_SK KENAIKAN BERKALA_051.Sekrt.DP.PD.BPR.2002.pdf'),
+(245, '70.093.051', '07/Um-Um/I/2008', 'Kenaikan Gaji Berkala', '2008-01-21', 'Staff Muda , C/1', '-', NULL, NULL, 'upload_sk/1762834679_SK KENAIKAN BERKALA_07.Um-Um.I.2008.pdf'),
+(246, '70.093.051', '008/SK/DIR/I/2021', 'Kenaikan Gaji Berkala', '2021-01-20', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1762834782_SK KENAIKAN BERKALA_008.SK.DIR.I.2021.pdf'),
+(247, '70.093.051', '007/SK/DIR/I/2023', 'Kenaikan Gaji Berkala', '2023-01-24', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1762834839_SK KENAIKAN BERKALA_007.SK.DIR.I.2023.pdf'),
+(248, '70.093.051', '023/SK/DIR/III/2025', 'Kenaikan Gaji Berkala', '2025-03-18', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1762834881_SK KENAIKAN BERKALA_023.SK.DIR.III.2025.pdf'),
+(249, '70.094.065', '800/SK.BKPD./52-EKON/1995', 'Pengukuhan Karyawan BKPD', '1995-07-30', 'II/a', '-', NULL, NULL, 'upload_sk/1762910059_SK PENGUKUHAN KARYAWAN_800.SK.BKPD.52-EKON.1995_compressed.pdf'),
+(250, '70.094.065', '101/Insp.BKPD-LPK/Si/V/1997', 'Kenaikan Gaji Berkala', '1997-05-17', 'Pelaksana Muda, B/I', '-', NULL, NULL, 'upload_sk/1762910174_SK KENAIKAN BERKALA_101.Insp.BKPD-LPK.Si.V.1997.pdf'),
+(251, '70.094.065', '14/Um-um/XII/2006', 'Kenaikan Gaji Berkala', '2006-05-24', 'Staff Muda , C/1', '-', NULL, NULL, 'upload_sk/1762910241_SK KENAIKAN BERKALA_014.Um-um.XII.2006.pdf'),
+(252, '70.094.065', '27/Um-um/I/2008', 'Kenaikan Gaji Berkala', '2008-01-21', 'Staff Muda , C/1', '-', NULL, NULL, 'upload_sk/1762910280_SK KENAIKAN BERKALA_027.Um-um.I.2008.pdf'),
+(253, '70.094.065', '03.1/SK/DIR/I/2014', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2014-01-28', 'Staff Muda I, C/II', '-', NULL, NULL, 'upload_sk/1762910342_SK KENAIKAN PATGOL_03.1.SK.DIR.I.2014.pdf'),
+(254, '70.094.065', '13/SK/DIR/I/2018', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2018-01-31', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1762910418_SK KENAIKAN PATGOL_013.SK.DIR.I.2018.pdf'),
+(255, '70.094.065', '030/SK/DIR/VII/2020', 'Kenaikan Gaji Berkala', '2020-07-13', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1762910480_SK KENAIKAN BERKALA_030.SK.DIR.VII.2020.pdf'),
+(256, '70.094.065', '028/SK/DIR/VIII/2022', 'Kenaikan Gaji Berkala', '2022-08-12', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1762910659_SK KENAIKAN BERKALA_028.SK.DIR.VIII.2022(1).pdf'),
+(257, '70.094.065', '023/SK/DIR/III/2025', 'Kenaikan Gaji Berkala', '2025-03-18', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1762910727_SK KENAIKAN BERKALA_023.SK.DIR.III.2025(1).pdf'),
+(258, '70.098.127', '075B/PD.BPR-JPK/VI/2000', 'Pengukuhan Karyawan PD. BPR Sukabumi', '2000-06-01', 'B/I', '-', NULL, NULL, 'upload_sk/1763010897_SK PENGANGKATAN KARTAP_075B.PD.BPR-JPK.VI.2000_compressed.pdf');
+INSERT INTO `panggol` (`id_panggol`, `id_pegawai`, `no_sk_panggol`, `judul_sk`, `tgl_sk_panggol`, `panggol`, `keterangan`, `status_approval_panggol`, `tgl_approval_panggol`, `upload_sk`) VALUES
+(259, '70.098.127', '028/SK/DIR/IX/2008', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2008-09-19', 'Staff Muda, C/I', '-', NULL, NULL, 'upload_sk/1763011009_SK KENAIKAN PATGOL_028.SK.DIR.IX.2008.pdf'),
+(260, '70.098.127', '03.1/SK/DIR/I/2014', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2014-01-28', 'Staff, C/III', '-', NULL, NULL, 'upload_sk/1763011068_SK KENAIKAN PATGOL_031.SK.DIR.I.2014.pdf'),
+(261, '70.098.127', '013/SK/DIR/I/2018', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2018-01-31', 'Staff Muda , C/III', '-', NULL, NULL, 'upload_sk/1763011187_SK KENAIKAN PATGOL_013.SK.DIR.I.2018.pdf'),
+(262, '70.098.127', '030/SK/DIR/VII/2020', 'Kenaikan Gaji Berkala', '2020-07-13', 'Staff, C/III', '-', NULL, NULL, 'upload_sk/1763011258_SURAT BERKALA_030.SK.DIR.VII.2020.pdf'),
+(263, '70.098.127', '047/SK/DIR/VII/2025', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2025-07-22', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1763011380_SK KENAIKAN PATGOL_047.SK.DIR.VII.2025_compressed.pdf'),
+(264, '73.004.156', '80/DIR/X/2008', 'Kenaikan Gaji Berkala', '2008-10-24', 'Staff Muda, C/I', '-', NULL, NULL, 'upload_sk/1763105867_SK KENAIKAN BERKALA_80.DIR.X.2008.pdf'),
+(265, '73.004.156', '005/SK/DIR/I/2009', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2009-01-30', 'Staff Muda I, C/II', '-', NULL, NULL, 'upload_sk/1763105926_SK KENAIKAN PATGOL_05.SK.DIR.I.2009.pdf'),
+(266, '73.004.156', '006/Um-Peg/I/2015', 'Kenaikan Gaji Berkala', '2015-01-27', 'Staff C/III', '-', NULL, NULL, 'upload_sk/1763106002_SK KENAIKAN BERKALA_006.Um-Peg.I.2015.pdf'),
+(267, '73.004.156', '009/SK/DIR/II/2013', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2013-02-05', 'Staff, C/III', '-', NULL, NULL, 'upload_sk/1763106143_SK KENAIKAN PATGOL_009.SK.DIR.II.2013_compressed (1).pdf'),
+(268, '73.004.156', '004/Um-um/I/2011', 'Kenaikan Gaji Berkala', '2011-01-24', 'Staf Muda, C/II', '-', NULL, NULL, 'upload_sk/1763106251_SK KENAIKAN BERKALA_004.Um-um.I.2011.pdf'),
+(269, '73.004.156', '004/SK/DIR/I/2017', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2017-01-23', 'Staff Muda I, C/IV', '-', NULL, NULL, 'upload_sk/1763106390_SK KENAIKAN PATGOL_004.SK.DIR.I.2017.pdf'),
+(270, '73.004.156', '015/SK/DIR/I/2019', 'Kenaikan Gaji Berkala', '2019-01-24', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1763106449_SK KENAIKAN BERKALA_015.SK.DIR.I.2019.pdf'),
+(271, '73.004.156', '008/SK/DIR/I/2021', 'Kenaikan Gaji Berkala', '2021-01-20', 'Staf 1, C/IV', '-', NULL, NULL, 'upload_sk/1763106550_SK KENAIKAN BERKALA_008.SK.DIR.I.2021.pdf'),
+(272, '73.004.156', '007/SK/DIR/I/2023', 'Kenaikan Gaji Berkala', '2023-01-24', 'Staf 1, C/IV', '-', NULL, NULL, 'upload_sk/1763106598_SK KENAIKAN BERKALA_007.SK.DIR.I.2023.pdf'),
+(273, '73.004.156', '023/SK/DIR/III/2025', 'Kenaikan Gaji Berkala', '2025-03-18', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1763106671_SK KENAIKAN BERKALA_023.SK.DIR.III.2025.pdf'),
+(274, '70.092.043', '066/SP/Insp.BKPD-LPK/Si/1991', 'Surat Perintah Penugasan', '1991-12-31', 'II/a', '-', NULL, NULL, 'upload_sk/1763438808_SURAT PERINTAH_66.SP.Insp.BKPD-LPK.Si.1991.pdf'),
+(275, '70.092.043', '066/SP/Insp.BKPD-LPK/Si/1995', 'Kenaikan Gaji Berkala', '1995-01-09', 'Pengatur Muda, II/a', '-', NULL, NULL, 'upload_sk/1763438913_SK KENAIKAN BERKALA_66.Insp.BKPD-LPK.Si.1995.pdf'),
+(276, '70.092.043', '50/Insp.BKPD/LPK/Si/1997', 'Kenaikan Gaji Berkala', '1997-02-20', 'Pelaksana Muda, B/I', '-', NULL, NULL, 'upload_sk/1763438974_SK KENAIKAN BERKALA_50.Insp.BKPD.LPK.Si.1997.pdf'),
+(277, '70.092.043', '01/SK.DIR/PD.BPR-KLP/XII/2000', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2000-12-01', 'Pelaksana, B/III', '-', NULL, NULL, 'upload_sk/1763439893_SK KENAIKAN PATGOL_01.SK.DIR.PD.BPR-KLP.XII.2000.pdf'),
+(278, '70.092.043', '014/PD.BPR-KLP/I/2003', 'Kenaikan Gaji Berkala', '2003-01-03', 'Pelaksana Muda, B/III', '-', NULL, NULL, 'upload_sk/1763440406_SK KENAIKAN BERKALA_14.PD.BPR-KLP.I.2003.pdf'),
+(279, '70.092.043', '015/SK/DIR/VIII/2007', 'Kenaikan Pangkat Golongan Pegawai PD. BPR Sukabumi', '2007-08-15', 'Staff Muda, C/I', '-', NULL, NULL, 'upload_sk/1763440510_SK MUTASI_015.SK.DIR.VIII.2007.pdf'),
+(280, '70.092.043', '053/SK/DIR/VII/2012', 'Kenaikan Pangkat/Golongan PD. BPR Sukabumi', '2012-07-23', 'Staff Muda I, C/II', '-', NULL, NULL, 'upload_sk/1763440707_SK KENAIKAN PATGOL_053.SK.DIR.VII.2012(1)_compressed.pdf'),
+(281, '70.092.043', '234/Um-Peg/VII/2014', 'Kenaikan Gaji Berkala', '2014-07-21', 'Staff Muda, I/CII', '-', NULL, NULL, 'upload_sk/1763440797_SK KENAIKAN BERKALA_234.Um-Peg.VII.2014.pdf'),
+(282, '70.092.043', '004/SK/DIR/I/2017', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2017-01-23', 'Staff Muda I, C/III', '-', NULL, NULL, 'upload_sk/1763440917_SK KENAIKAN PATGOL_004.SK.DIR.I.2017.pdf'),
+(283, '70.092.043', '015/SK/DIR/I/2019', 'Kenaikan Gaji Berkala', '2019-01-24', 'Staff, C/III', '-', NULL, NULL, 'upload_sk/1763440986_SK KENAIKAN BERKALA_015.SK.DIR.I.2019.pdf'),
+(284, '70.092.043', '009/SK/DIR/I/2021', 'Kenaikan Pangkat Golongan Pegawai PERUMDA BPR Sukabumi', '2021-01-20', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1763441098_SK KENAIKAN PATGOL_009.SK.DIR.I.2021_compressed (3).pdf'),
+(285, '70.092.043', '007/SK/DIR/I/2023', 'Kenaikan Gaji Berkala', '2023-01-24', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1763441182_SK KENAIKAN BERKALA_007.SK.DIR.I.2023.pdf'),
+(286, '70.092.043', '023/SK/DIR/III/2025', 'Kenaikan Gaji Berkala', '2025-03-18', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1763446084_SK KENAIKAN BERKALA_023.SK.DIR.III.2025.pdf'),
+(287, '71.092.042', '578/SK.513-EKON/1992', 'Pengukuhan Karyawan BKPD', '1992-04-27', 'II/a', '-', NULL, NULL, 'upload_sk/1763538120_SK PENGUKUHAN KARYAWAN_578.SK.513-EKON.1992.pdf'),
+(288, '71.092.042', '26/Insp.BKPD-LPK/Si/V/1994', 'Kenaikan Gaji Berkala', '1994-05-26', 'Pengatur Muda, IIa', '-', NULL, NULL, 'upload_sk/1763538219_SK KENAIKAN BERKALA_026.Insp.BKPD-LPK.Si.V.1994.pdf'),
+(289, '71.092.042', '50/Insp.BKPD/LPK/Si/1997', 'Kenaikan Gaji Berkala', '1997-02-20', 'Pelaksana Muda, B/I', '-', NULL, NULL, 'upload_sk/1763538573_SK KENAIKAN BERKALA_50.Insp.BKPD.LPK.Si.1997.pdf'),
+(290, '71.092.042', '99/Insp.BKPD-LPK/Si/III/1998', 'Kenaikan Gaji Berkala', '1998-03-17', 'Pelaksana Muda, B/I', '-', NULL, NULL, 'upload_sk/1763538729_SK KENAIKAN BERKALA_99.Insp.BKPD-LPK.Si.1998.pdf'),
+(291, '71.092.042', '14/SK.Peg.PD.BPR/1999', 'Pengangkatan Pegawai PD. BPR Kalapanunggal', '1999-01-13', 'Pelaksana Muda, B/II', '-', NULL, NULL, 'upload_sk/1763538879_SK PENGANGKATAN PEGAWAI_014.SK.Peg.PD.BPR.1999_compressed.pdf'),
+(292, '71.092.042', '01/SK.DIR/PD.BPR-KLP/XII/2000', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2000-12-01', 'Pelaksana, B/III', '-', NULL, NULL, 'upload_sk/1763539022_SK_01.SK DIR .PD BPR KLP.XII.2000.pdf'),
+(293, '71.092.042', '76/PD.BPR-KLP/VII/2002', 'Kenaikan Gaji Berkala', '2002-07-01', 'Pelaksana, B/III', '-', NULL, NULL, 'upload_sk/1763539099_SK KENAIKAN BERKALA_076.PD.BPR-KLP.VII.2002.pdf'),
+(294, '71.092.042', '04/SK/DIR/I/2007', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2007-01-25', 'Pelaksana I, B/IV', '-', NULL, NULL, 'upload_sk/1763539155_SK KENAIKAN PATGOL_004.SK.DIR.I.2007.pdf'),
+(295, '71.092.042', '02/SK/DIR/I/2008', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2008-01-21', 'Staff Muda, C/I', '-', NULL, NULL, 'upload_sk/1763539217_SK KENAIKAN PATGOL_002.SK.DIR.I.2008.pdf'),
+(296, '71.092.042', '032/Um-Peg/I/2014', 'Kenaikan Gaji Berkala', '2014-01-28', 'Staff Muda I, C/II', '-', NULL, NULL, 'upload_sk/1763539316_SK KENAIKAN BERKALA_032.Um-Peg.I.2014.pdf'),
+(297, '71.092.042', '009/SK/DIR/II/2020', 'Kenaikan Pangkat/Golongan Pegawai PERUMDA BPR', '2020-02-21', 'Staf 1, C/IV', '-', NULL, NULL, 'upload_sk/1763539394_SK KENAIKAN PATGOL_009.SK.DIR.II.2020.pdf'),
+(298, '71.092.042', '028/SK/DIR/VIII/2022', 'Kenaikan Gaji Berkala', '2022-08-12', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1763539437_SK KENAIKAN BERKALA_028.SK.DIR.VIII.2022.pdf'),
+(299, '71.095.110', '820/SK.155-PD.BPR/1999', 'Pengangkatan Calon Pegawai PD. BPR Sukabumi', '1999-06-14', 'Pelaksana Muda, B/I', '-', NULL, NULL, 'upload_sk/1763619955_SK PENGANGKATAN CAPEG_820.SK.155-PD.BPR.1999.pdf'),
+(300, '71.095.110', '06/SK.Peg.PD.BPR/2000', 'Pengangkatan Pegawai Tetap', '2000-06-01', 'Pelaksana Muda, B/I', '-', NULL, NULL, 'upload_sk/1763620329_SK PENGANGKATAN KARTAP_006.SK.Peg.PD.BPR.2000_compressed.pdf'),
+(301, '71.095.110', '07/PD.BPR/CKB/I/2001', 'Kenaikan Gaji Berkala', '2001-06-01', 'Pelaksana Muda, B/I', '-', NULL, NULL, 'upload_sk/1763620484_SK KENAIKAN BERKALA_007.PD.BPR.CKB.I.2021.pdf'),
+(302, '71.095.110', '17/SK.Peg.PD.BPR/2003', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2003-06-01', 'Pelaksana Muda I, B/II', '-', NULL, NULL, 'upload_sk/1763620890_SK KENAIKAN PATGOL_017.SK.Peg.PD.BPR.VI.2003_compressed.pdf'),
+(303, '71.095.110', '021/SK/DIR/VII/2008', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2008-07-31', 'Staff Muda, C/II', '-', NULL, NULL, 'upload_sk/1763621029_SK KENAIKAN PATGOL_021.SK.DIR.VII.2008.pdf'),
+(304, '71.095.110', '053/SK/DIR/VII/2012', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2012-07-23', 'Staff, C/III', '-', NULL, NULL, 'upload_sk/1763621264_SK KENAIKAN PATGOL_053.SK.DIR.VII.2012_compressed.pdf'),
+(305, '71.095.110', '234/Um-Peg/VII/2014', 'Kenaikan Gaji Berkala', '2014-07-21', 'Staff Muda I, C/III', '-', NULL, NULL, 'upload_sk/1763621363_SK KENAIKAN BERKALA_234.Um-Peg.VII.2014 .pdf'),
+(306, '71.095.110', '004/SK/DIR/I/2017', 'Kenaikan Pangkat/Golongan Pegawai PD. BPR Sukabumi', '2017-01-23', 'Staff Muda, C/IV', '-', NULL, NULL, 'upload_sk/1763621429_SK KENAIKAN PATGOL_004.SK.DIR.I.2017.pdf'),
+(307, '71.095.110', '015/SK/DIR/I/2019', 'Kenaikan Gaji Berkala', '2019-01-24', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1763621553_SK KENAIKAN BERKALA_015.SK.DIR.I.2019.pdf'),
+(308, '71.095.110', '008/SK/DIR/I/2021', 'Kenaikan Gaji Berkala', '2021-01-20', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1763621616_SK KENAIKAN BERKALA_008.SK.DIR.1.2021.pdf'),
+(309, '71.095.110', '023/SK/DIR/III/2025', 'Kenaikan Gaji Berkala', '2025-03-18', 'Staff 1, C/IV', '-', NULL, NULL, 'upload_sk/1763621720_SK KENAIKAN BERKALA_023.SK.DIR.III.2025.pdf');
 
 -- --------------------------------------------------------
 
@@ -1357,33 +1443,33 @@ CREATE TABLE `pegawai` (
 
 INSERT INTO `pegawai` (`id_pegawai`, `kode_cabang`, `password`, `nama`, `id_jabatan`, `tgl_kerja`, `pang_gol`, `id_marital`, `id_pendidikan`, `id_status`, `nik`, `tempat_lahir`, `tgl_lahir`, `npwp`, `agama`, `jk`, `alamat`, `foto_profil`, `no_telp`, `email`, `kode_akses`, `remember_token`, `role_id`) VALUES
 ('00.021.345', '304', '$2y$12$2VPdoppTigspGPAg7QMQZeswbO803dC5U1N/JZJcgcjh5IPnS1T/i', 'Almaida Haerunnisa', '27', '2019-09-25', 'B/I', '1', '3', '1', '3272036504000001', 'Sukabumi', '2000-04-25', '0931600472405000', 'Islam', 'P', 'Babakan Caringin Rt/Rw.005/003 Desa.Citamiang Kec.Citamiang Kota Sukabumi', '68ad7f13c0680.jpeg', '08121884260', 'almaida110@gmail.com', 5, NULL, 9),
-('00.022.361', '305', '$2y$12$Hie7V8MxJRrsL4qvolljm.QiR8gdR//84Jp1nHq7hpF40.PKh.mX2', 'Jihan Safitri', '28', '2000-01-01', 'B/I', '5', '3', '1', '3272025812000001', 'sukabumi', '2000-12-18', '0531307932405000', 'Islam', 'P', 'Perum Taman Asri C 5 Rt 010 Rw 014 Des. Subangjaya Kec. Cikole Kota Sukabumi, 43116.', '68ae6cb72880f.jpeg', '087813579156', 'jihansptr18@gmail.com', 5, NULL, 9),
-('00.024.368', '300', '$2y$12$xZ1ER8q.KnUduftabjJ/fO4nLeRtqNO1hD9RgkoTgRs58Ger7VDG.', 'Indriani Rahfani', '25', '2024-07-26', 'B/II', '1', '6', '2', '3202244705000001', 'Sukabumi', '2000-05-07', '0039947072405000', 'Islam', 'P', 'Kp. Cibarehong Rt 002 Rw 004 Des. Jagamukti, Kec. Surade , Kab. Sukabumi, 43179.', '68aea97517078.jpeg', '087784372844', 'indrianirahfani508@gmail.com', 5, NULL, 9),
-('1001', '300', '$2y$12$ukqcxXzcfwKMJNukJWa9YewssWI/vl0N8Zcqr43qr8uKuEQia.BzS', 'ADMIN', '2', '2020-04-04', 'D4', '1', '8', '1', '3273152003520001', 'Daegu', '1991-03-29', '345345345', 'Islam', 'P', 'Jl. Rumah Kita Daegu', '68ccaf301fc6b.jpg', '345645', 'irene@irene', 3, NULL, 1),
+('00.022.361', '305', '$2y$12$Hie7V8MxJRrsL4qvolljm.QiR8gdR//84Jp1nHq7hpF40.PKh.mX2', 'Jihan Safitri', '27', '2000-01-01', 'B/I', '5', '3', '1', '3272025812000001', 'sukabumi', '2000-12-18', '0531307932405000', 'Islam', 'P', 'Perum Taman Asri C 5 Rt 010 Rw 014 Des. Subangjaya Kec. Cikole Kota Sukabumi, 43116.', '68ae6cb72880f.jpeg', '087813579156', 'jihansptr18@gmail.com', 5, NULL, 9),
+('00.024.368', '300', '$2y$12$eCMVS4aZtmPbHrfVc9LSx.sZnsix7gDdAsNlz3qnAe7npZZuwL4su', 'Indriani Rahfani', '25', '2024-07-26', 'B/II', '1', '6', '2', '3202244705000001', 'Sukabumi', '2000-05-07', '0039947072405000', 'Islam', 'P', 'Kp. Cibarehong Rt 002 Rw 004 Des. Jagamukti, Kec. Surade , Kab. Sukabumi, 43179.', '68aea97517078.jpeg', '087784372844', 'indrianirahfani508@gmail.com', 5, NULL, 9),
+('1001', '300', '$2y$12$ukqcxXzcfwKMJNukJWa9YewssWI/vl0N8Zcqr43qr8uKuEQia.BzS', 'Super Admin', '2', '2020-04-04', 'D4', '1', '8', '1', '3273152003520001', 'Daegu', '1991-03-29', '345345345', 'Islam', 'L', 'Jl Kita Bersama', '68ccaf301fc6b.jpg', '345645', 'admin@admin', 3, NULL, 1),
 ('69.008.212', '310', '$2y$12$L2TU5ld7fauVHll7rgDR5OQUWmY5HCC2oRA3ZT1b8rV.tFUSB9C/i', 'IWAN SETIAWAN', '39', '2000-01-01', 'C/III', '7', '8', '1', '3202241101690004', 'Sukabumi', '1992-09-13', '679393801405000', 'Islam', 'P', 'Kp.Gadog Rt/Rw.003/001 Desa.Buniwangi Kec.Surade Kab.Sukabumi', NULL, '085659200545', 'newiwansetiawan48@gmail.com', 5, NULL, 9),
-('70.006.202', '305', '$2y$12$hScx.L9VJoegKxEVHsYHQ.msUZEzeGT0jnQKUT0CTtYSpLpZTx4Ga', 'ADE SOLIHIN', '50', '2006-01-01', 'B/I', '6', '2', '1', '3202110507700009', 'sukabumi', '1970-07-05', '360933428405000', 'Islam', 'L', 'Kp Ciheulang Hilir Rt 01 Rw 08 Desa Ciheulang Tongok Kec Cibadak Kab Sukabumi\r\n', NULL, '085723308295', 'adesolihinn01@gmail.com', 5, NULL, 9),
-('70.092.043', '312', '$2y$12$KJnLeMgaSCL1qJ2ZmojyQegYtJ/tnGHUno1D3zJVO948sODaLmoWG', 'YAYAH NURASIAH', '9', '1992-01-01', 'C/IV', '7', '8', '1', '3202134610700004', 'Cianjur', '1970-10-06', '679393835405000', 'Islam', 'P', 'Perum Mutiara Bumi Metro Blok D3 No.22 Rt/Rw.002/007 Desa.Parungkuda Kec.Parungkuda Kab.Sukabumi', '68b5220848a75.jpeg', '085720973251', 'yayahnurasiyah6@gmail.com', 1, NULL, 6),
-('70.093.051', '300', '$2y$12$r4r4a75S0iz8WPviQqcykultFWrDiFhJRH7MIUcG.86gLarTrgYIa', 'LINDAWATI', '37', '1993-01-02', 'C/IV', '8', '8', '1', '3202334707700004', 'Sukabumi', '1970-07-07', '497244145405000', 'Islam', 'P', 'Jl.Melati C2 No.35 Perum Gentong Mas Indah Rt/Rw.002/009 Desa.Limbangan Kec.Sukaraja Kab.Sukabumi', NULL, '081314731477', 'lindawsunandar@gmail.com', 1, NULL, 5),
-('70.094.065', '310', '$2y$12$x9FK1PMBxHQCzz.sXGJ6i.piZfp3SwHGwMWJef3YqHpsSLW7BcENi', 'Erviandi', '9', '1994-05-14', 'C/IV', '7', '8', '1', '3202211408720003', 'Sukabumi', '1972-08-14', '079206397405000', 'Islam', 'L', 'Kp.Citamaga Rt/Rw.007/003 Desa.Ciparay Kec.Jampang Kulon Kab.Sukabumi', '6901c9f8860ed.jpeg', '085862451472', 'erviandiervi@gmail.com', 1, NULL, 6),
+('70.006.202', '305', '$2y$12$hScx.L9VJoegKxEVHsYHQ.msUZEzeGT0jnQKUT0CTtYSpLpZTx4Ga', 'ADE SOLIHIN', '50', '2006-01-01', 'B/I', '5', '2', '1', '3202110507700009', 'sukabumi', '1970-07-05', '360933428405000', 'Islam', 'L', 'Kp Ciheulang Hilir Rt 01 Rw 08 Desa Ciheulang Tongok Kec Cibadak Kab Sukabumi', NULL, '085723308295', 'adesolihinn01@gmail.com', 5, NULL, 9),
+('70.092.043', '312', '$2y$12$KJnLeMgaSCL1qJ2ZmojyQegYtJ/tnGHUno1D3zJVO948sODaLmoWG', 'Yayah Nurasiah', '9', '1992-01-01', 'C/IV', '6', '8', '1', '3202134610700004', 'Cianjur', '1970-10-06', '0679393835405000', 'Islam', 'P', 'Perum Mutiara Bumi Metro Blok D3 No.22 Rt/Rw.002/007 Desa.Parungkuda Kec.Parungkuda Kab.Sukabumi', '68b5220848a75.jpeg', '085720973251', 'yayahnurasiyah6@gmail.com', 1, NULL, 6),
+('70.093.051', '300', '$2y$12$r4r4a75S0iz8WPviQqcykultFWrDiFhJRH7MIUcG.86gLarTrgYIa', 'Lindawati', '48', '1993-01-30', 'C/IV', '8', '8', '1', '3202334707700004', 'Sukabumi', '1970-07-07', '0497244145405000', 'Islam', 'P', 'Jl.Melati C2 No.35 Perum Gentong Mas Indah Rt/Rw.002/009 Desa.Limbangan Kec.Sukaraja Kab.Sukabumi.', '6912a243b7b1f.jpeg', '081314731477', 'lindawsunandar@gmail.com', 1, NULL, 5),
+('70.094.065', '310', '$2y$12$x9FK1PMBxHQCzz.sXGJ6i.piZfp3SwHGwMWJef3YqHpsSLW7BcENi', 'Erviandi', '9', '1994-05-14', 'C/IV', '6', '8', '1', '3202211408720003', 'Sukabumi', '1972-08-14', '0079206397405000', 'Islam', 'L', 'Kp.Citamaga Rt/Rw.007/003 Desa.Ciparay Kec.Jampang Kulon Kab.Sukabumi', '6901c9f8860ed.jpeg', '085862451472', 'erviandiervi@gmail.com', 1, NULL, 6),
 ('70.094.076', '311', '$2y$12$r/YnIlug8W/nWCEDASH.0ORDFZl8DIMFr7PehZTz0/UwWB78tb22i', 'DEDE SOPANDI', '9', '1994-06-01', 'C/IV', '7', '8', '1', '3203150308700003', 'Sukabumi', '1970-08-03', '679393827405000', 'Islam', 'L', 'Kp.Sindang Lengp Rt/Rw.033/011 Desa.Sukakersa Kec.Parakan Salak Kab.Sukabumi', NULL, '081319189432', 'nengzia970@gmail.com', 1, NULL, 6),
-('70.095.078', '300', '$2y$12$8nR6Fu68dnfjqhE/jU/pDeh0EXyDJz0Zffn7LfHyv7cDPivQ0doiS', 'Elis Ratna Yulia', '1002', '1995-02-01', 'C/II', '3', '8', '1', '3202114212700004', 'sukabumi', '1970-12-02', '0497321562405000', 'Islam', 'P', 'Perum Griya Karangtengah Asri Rt/Rw.006/008 Desa.Ciheulang Tonggoh Kec.Cibadak Kab.Sukabumi, 43351.', '690032d1a326e.jpg', '081563188398', 'bprelis55@gmail.com', 2, NULL, 7),
-('70.098.127', '310', '$2y$12$oNAWMGJMWXJpbmiSfZISR.38qRkBTeWRXJWYhr6NDXdTizex8pH.6', 'NANA MULYANA', '39', '2000-01-01', 'C/III', '5', '8', '1', '3202210106700001', 'Sukabumi', '1970-01-06', '497243717405000', 'Islam', 'L', 'Kp.Kadu Nenggang Rt/Rw.007/003 Desa.Jampangkulon Kec.Jampangkulon Kab.Sukabumi', NULL, '085793739437', 'mulyana76@gmail.com', 5, NULL, 9),
-('71.092.042', '311', '$2y$12$GltM7xhM2HM6oUQ80vIopeLW5bl.JOgqb9x/xFwkqUcrjVh7NsrGq', 'IRAWAN WANGSA DIGUNA', '39', '2000-01-01', 'C/IV', '7', '8', '1', '3202150202710001', 'Sukabumi', '1992-09-13', '361797095405000', 'Islam', 'P', 'Kp.Babakansari Rt/Rw.001/004 Desa.Parakan Salak Kec.Parakan Salak Kab.Sukabumi', NULL, '081546780698', 'iwanirawan02021971@gmail.com', 5, NULL, 9),
-('71.095.110', '300', '$2y$12$SGbWoFTzogd/He/.TQNmuefJKtIGT4kS7DUpZgYjrV6ziXZjOKR8y', 'GOGO BAETUL MAZNUR', '62', '1995-11-01', 'C/IV', '7', '8', '1', '3272041003710002', 'Lebak', '1971-03-10', '497243741405000', 'Islam', 'L', 'Perum Nirwana Graha Rt/Rw.005/007 Desa.Dayeuhluhur Kec.Warundoyong Kota.Sukabumi', NULL, '085863219012', 'gogomazn10@gmail.com', 1, NULL, 5),
+('70.095.078', '300', '$2y$12$8nR6Fu68dnfjqhE/jU/pDeh0EXyDJz0Zffn7LfHyv7cDPivQ0doiS', 'Elis Ratna Yulia', '1002', '1995-02-01', 'C/II', '2', '8', '1', '3202114212700004', 'sukabumi', '1970-12-02', '0497321562405000', 'Islam', 'P', 'Perum Griya Karangtengah Asri Rt/Rw.006/008 Desa.Ciheulang Tonggoh Kec.Cibadak Kab.Sukabumi, 43351.', '690032d1a326e.jpg', '081563188398', 'bprelis55@gmail.com', 2, NULL, 7),
+('70.098.127', '310', '$2y$12$oNAWMGJMWXJpbmiSfZISR.38qRkBTeWRXJWYhr6NDXdTizex8pH.6', 'Nana Mulyana', '39', '1998-01-01', 'C/IV', '5', '8', '1', '3202210106700001', 'Sukabumi', '1970-01-06', '0497243717405000', 'Islam', 'L', 'Kp.Kadu Nenggang Rt/Rw.007/003 Desa.Jampangkulon Kec.Jampangkulon Kab.Sukabumi, 43178.', '69155e4d4b21a.jpeg', '085793739437', 'mulyana76@gmail.com', 5, NULL, 9),
+('71.092.042', '311', '$2y$12$GltM7xhM2HM6oUQ80vIopeLW5bl.JOgqb9x/xFwkqUcrjVh7NsrGq', 'Irawan Wangsa Diguna', '39', '1992-04-01', 'C/IV', '6', '8', '1', '3202150202710001', 'Sukabumi', '1971-02-02', '0361797095405000', 'Islam', 'L', 'Kp. Babakansari Rt 005 Rw 004 Des. Parakansalak Kec. Parakansalak Kab. Sukabumi, 43355.', '6916f41a65bca.jpeg', '081546780698', 'iwanirawan02021971@gmail.com', 5, NULL, 9),
+('71.095.110', '300', '$2y$12$SGbWoFTzogd/He/.TQNmuefJKtIGT4kS7DUpZgYjrV6ziXZjOKR8y', 'Gogo Baetul Maznur', '62', '1995-11-15', 'C/IV', '7', '8', '1', '3272041003710002', 'Lebak', '1971-03-10', '0497243741405000', 'Islam', 'L', 'Perum Nirwana Graha Rt/Rw.005/007 Desa.Dayeuhluhur Kec.Warundoyong Kota.Sukabumi, 43134.', '691e6e9b6e331.jpeg', '085863219012', 'gogomazn10@gmail.com', 1, NULL, 5),
 ('71.096.081', '308', '$2y$12$utDOrHRxEm6zKqrJFuGkIeEGSn8A6X0lyiMEdacPwiWj92.QTO5P2', 'Dede Suhendi', '21', '1996-07-12', 'C/IV', '2', '8', '1', '3272051010710002', 'sukabumi', '1971-10-10', '0497243766405000', 'Islam', 'L', 'Jl.Nilam 4 No.143 Blok 5 Perum Baros Kencana Rt/Rw.004/015 Desa Baro kec.Baros Kota Sukabumi', '68f5f62a18cec.jpg', '085723110666', 'dede28666@gmail.com', 2, NULL, 9),
 ('72.001.143', '300', '$2y$12$J.Os3yq5iANtkbGFS4TOeOHacpZE1AUL1FlWUPoB17FtlJfW/mjOG', 'Yetti Rusmiati', '2', '2000-07-31', 'D/I', '7', '8', '1', '3272024606720922', 'Sukabumi', '1972-06-06', '0679393314405000', 'Islam', 'P', 'Jl.Ciaul Baru No.17 Rt/Rw.001/007 Desa.Subangjaya Kec.Cikole Kota.Sukabumi,43116.', '68b52298e192c.jpeg', '085860022287', 'yetisukabumi4@gmail.com', 7, NULL, 3),
-('72.004.155', '306', '$2y$12$RzBY1Boje4059MVKrJeJF.KSFvcfceR1BasGF6YXMP9vjRbC5nuhy', 'HJ.DIAN ANDRIANI, SE', '19', '2004-03-05', 'C/IV', '1', '8', '1', '3272034503720001', 'sukabumi', '1972-03-05', '497243790405000', 'Islam', 'P', 'Jl.Pasir Berkah II No.20 Rt/Rw.001/006 Desa.Nanggeleng Kec.Citamiang Kota.Sukabumi', NULL, '081563148095', 'dianandriani121202@gmail.com', 2, NULL, 7),
-('72.005.174', '301', '$2y$12$UdFN8OY93EcTJnvlfEnYbeuTFnxdkk6YmtNaktA57kyS7.Op4M0F6', 'Ali Sadikin', '39', '2003-01-29', 'B/IV', '7', '3', '1', '3272021211720003', 'Cianjur', '1972-11-12', '0360933030405000', 'Islam', 'L', 'Jl. RA Kosasih GG.Pangkalan Rt/Rw.006/014 Kel.Cisarua Kec.Cikole Kota Sukabumi, 43115.', '68ecb3d3ecf75.jpeg', '085724932220', 'raffamusik3@gmail.com', 5, NULL, 9),
+('72.004.155', '306', '$2y$12$RzBY1Boje4059MVKrJeJF.KSFvcfceR1BasGF6YXMP9vjRbC5nuhy', 'Dian Andriani', '19', '2004-01-21', 'C/IV', '1', '8', '1', '3272034503720001', 'sukabumi', '1972-03-05', '0497243790405000', 'Islam', 'P', 'Jl.Pasir Berkah II No.20 Rt/Rw.001/006 Desa.Nanggeleng Kec.Citamiang Kota.Sukabumi, 43145.', '691ec1429667e.jpeg', '081563148095', 'dianandriani121202@gmail.com', 2, NULL, 7),
+('72.005.174', '301', '$2y$12$znBFw3FXshQDZrKUtOgoXOzj5eUTx.Pu7Thlj356OWU9.twahrvji', 'Ali Sadikin', '39', '2003-01-29', 'B/IV', '7', '3', '1', '3272021211720003', 'Cianjur', '1972-11-12', '0360933030405000', 'Islam', 'L', 'Jl. RA Kosasih GG.Pangkalan Rt/Rw.006/014 Kel.Cisarua Kec.Cikole Kota Sukabumi, 43115.', '68ecb3d3ecf75.jpeg', '085724932220', 'raffamusik3@gmail.com', 5, NULL, 9),
 ('72.006.190', '300', '$2y$12$7j8B9K1FXxLIGpOXY0JFluQGcxidRn8RnezBvuiTvil7DU76QjDqi', 'Ade Ari Hermawan', '51', '2005-01-03', 'B/IV', '6', '3', '1', '3202112910720002', 'sukabumi', '1972-10-29', '0365317098405000', 'Islam', 'L', 'Kp.Kebon Randu Rt/Rw.001/022 Desa.Cibadak Kec.Cibadak Kab.Sukabumi', '68c78b05902c7.jpg', '085723000214', 'adeariaajaa@gmail.com', 5, NULL, 9),
-('72.093.056', '312', '$2y$12$j/NiFuKJ1Tf/Zkh3Nc59ne8GGF4k2HKROmIl54DLbWg2M99Zo62Ra', 'RANI ARIESTIYANTI', '21', '1993-01-01', 'C/IV', '6', '8', '1', '3272066904720001', 'Sukabumi', '1972-04-29', '497243758405000', 'Islam', 'P', 'Warung Kalapa Rt/Rw.003/001 Desa.Situmekar Kec.Lembursitu Kota.Sukabumi', NULL, '08164213361', 'raniariestiyanti79@gmail.com', 2, NULL, 8),
+('72.093.056', '312', '$2y$12$j/NiFuKJ1Tf/Zkh3Nc59ne8GGF4k2HKROmIl54DLbWg2M99Zo62Ra', 'RANI ARIESTIYANTI', '21', '1993-01-01', 'C/IV', '6', '8', '1', '3272066904720001', 'Sukabumi', '1972-04-29', '497243758405000', 'Islam', 'P', 'Warung Kalapa Rt/Rw.003/001 Desa.Situmekar Kec.Lembursitu Kota.Sukabumi', '6938d2331e10f.jpeg', '08164213361', 'raniariestiyanti79@gmail.com', 2, NULL, 8),
 ('72.095.090', '307', '$2y$12$WjGhG3LSKZ7LTdisJuW9IOWKGfr3K6CdepvSEZzC8HYlVjG6tXjDm', 'SAMSU, SE', '19', '1995-01-01', 'C/III', '7', '8', '1', '3202211509720001', 'kuningan', '1972-09-15', '679393777405000', 'Islam', 'L', 'Kp.Warungtagog Rt/Rw.002/001 Desa.Nagraksari Kec.Jampangkulon Kab.Sukabumi', NULL, '081563405275', 'pasamsu.090@gmail.com', 2, NULL, 7),
-('73.004.156', '304', '$2y$12$nXfuUFbg2/YHrMjbzoSXcuxlfCrBdR4Op.9Z5Eh412EHkIB3.1ONq', 'YANYAN WIDASARI', '9', '2003-10-07', 'C/IV', '7', '8', '1', '3272026801730001', 'Sukabumi', '1973-01-28', '772983375405000', 'Islam', 'P', 'Jl.Kaswari No.1-39 Rt/Rw.006/008 Desa.Selabatu Kec.Cikole Kota.Sukabumi', NULL, '08161623626', 'ayank280173@gmail.com', 1, NULL, 6),
+('73.004.156', '304', '$2y$12$nXfuUFbg2/YHrMjbzoSXcuxlfCrBdR4Op.9Z5Eh412EHkIB3.1ONq', 'Yanyan Widasari', '9', '2004-10-07', 'C/IV', '7', '8', '1', '3272026801730001', 'Sukabumi', '1973-01-28', '0772983375405000', 'Islam', 'P', 'Jl.Kaswari No.1-39 Rt/Rw.006/008 Desa.Selabatu Kec.Cikole Kota.Sukabumi, 43114.', '69158305a4cfa.jpeg', '08161623626', 'ayank280173@gmail.com', 1, NULL, 6),
 ('73.010.229', '312', '$2y$12$6C3dsXLR3zXyRYcI7bzQge5Yu0qluEH/TiIcA3Sw9/BIV7WC4O.aG', 'PEPEN SUPENDI', '50', '2000-01-01', 'B/III', '6', '3', '1', '3272051509730001', 'sukabumi', '1973-09-15', '444694921405000', 'Islam', 'L', 'Kp.Cilaksana Rt/Rw 001/001 Desa Bojongkembar Kec.CIkembar', NULL, '081573872339', 'pepensupendi871@yahoo.com', 5, NULL, 9),
 ('73.094.071', '307', '$2y$12$sqzJ21f8XpohrJeW2UZ2eeh4KKca2dJIq.Qbdt5fSMiXgVx9gPD3.', 'JAMALUDIN HILAL MULADHAN', '21', '1994-01-01', 'C/IV', '8', '8', '1', '3202051503740007', 'Sukabumi', '1973-03-15', '497243873405000', 'Islam', 'L', 'Kp.Cisolok Rt/Rw.001/002 Desa.Cisolok Kec.Cisolok Kab.Sukabumi', NULL, '081563101834', 'jamaludinmuladad@gmail.com', 2, NULL, 9),
 ('74.003.151', '307', '$2y$12$qoCQ2F5PIS7jbq.2Xzh1ju60JystgBB05N0oUpTePy.xjrOu2yARO', 'HERDIYANA', '39', '2003-01-01', 'B/IV', '8', '3', '1', '3272060108740899', 'sukabumi', '1974-08-01', '344034681405000', 'Islam', 'L', 'KP CIREUNDEU RT 004 RW 001 DESA CIREUNDEU KEC CILOGRANG', NULL, '085703480645', 'yana_herdy74@yahoo.com', 5, NULL, 9),
 ('74.004.198', '300', '$2y$12$MjMPqYZ1qc9B0k9CAUZXeO2ABzZrB7JwsLKy6rzA1DnIKkrST8OL.', 'SOHIB', '55', '2004-01-01', 'B/III', '7', '3', '1', '3202370208750001', 'Sukabumi', '1974-02-03', '354720195405000', 'Islam', 'L', 'Jl.Selabintana Gg.Cimanggah No.2 Rt/Rw.003/002 Desa.Cikole Kec.Cikole Kota.Sukabumi', NULL, '081646960775', 'sohibbprsmi@gmail.com', 5, NULL, 9),
 ('74.010.224', '308', '$2y$12$kkfmTJBn2iLzBEzFuTloVenwz6lH7ksM6YCWKTbvvvka14UbCA3ha', 'Budi Dermawan', '50', '2010-01-01', 'B/III', '7', '3', '1', '3202332007740003', 'jakarta', '1974-07-20', '0362464984405000', 'Islam', 'L', 'Kp.Cirumput Rt/Rw.005/004 Desa.Selaawi Kec.Sukaraja Kab.Sukabumi', '68d4c48fca3c1.jpeg', '085659993611', 'darmanbudi416@gmail.com', 5, NULL, 9),
-('74.013.263', '313', '$2y$12$WLbdlOeFO6FM1o66yBF7e.POsmOS1OXwX/AibBY2J0JTgvNGM4Q7m', 'PUJI UTAMI, S.SOS', '27', '2013-05-16', 'C/III', '7', '8', '1', '3272025301740899', 'pandeglang', '1974-01-13', '475681029405000', 'Islam', 'P', 'Jl.Veteran I No 16-14 Rt/Rw.001/003 Desa.Gunungparang Kec.Cikole Kota.Sukabumi', NULL, '081282240230', 'pujiutami130174@gmail.com', 5, NULL, 9),
+('74.013.263', '306', '$2y$12$WLbdlOeFO6FM1o66yBF7e.POsmOS1OXwX/AibBY2J0JTgvNGM4Q7m', 'PUJI UTAMI, S.SOS', '38', '2013-05-16', 'C/III', '7', '8', '1', '3272025301740899', 'pandeglang', '1974-01-13', '475681029405000', 'Islam', 'P', 'Jl.Veteran I No 16-14 Rt/Rw.001/003 Desa.Gunungparang Kec.Cikole Kota.Sukabumi', NULL, '081282240230', 'pujiutami130174@gmail.com', 5, NULL, 9),
 ('74.093.058', '304', '$2y$12$WmtVm4.ENSv0oZDrst.T0.kAwdziWe7WSwr8js3KKm3yoC0DptGuC', 'TITIM PATIMAH', '24', '1993-01-01', 'C/II', '7', '8', '1', '3202215504740001', 'sukabumi', '1974-04-15', '679393744405000', 'Islam', 'P', 'Kp.Setiahati Rt/Rw.013/005 Desa.Jampangkulon Kec.Jampangkulon Kab.Sukabumi', NULL, '085659446254', 'titimpatimah1504@gmail.com', 5, NULL, 9),
 ('74.096.094', '305', '$2y$12$NBgPx.cQJpcUBKckRshOSe.hkM/AWMosSJ.R2/98XMbVtsMwfdd1C', 'DANI MULYADI R', '21', '1996-07-18', 'C/IV', '8', '8', '1', '3272071310740899', 'Sukabumi', '1974-10-13', '497243949405000', 'Islam', 'L', 'Cibuntu Rt/Rw.001/001 kelurahan Sindangpalay Kec.Cibeureum Kota.Sukabumi', NULL, '081564804657', 'danimulyadiramdan@gmail.com', 2, NULL, 9),
 ('74.096.096', '301', '$2y$12$5Tlvg9pVYPwibgPzBy9Oze8faUgqi9lIcS78Y/H7qXv98oUYydFYS', 'TIEN KARTINI, SE', '21', '1996-09-25', 'C/IV', '7', '8', '1', '3202116104740001', 'BOGOR', '1974-04-21', '681703203405000', 'Islam', 'P', 'Kp.Kaumkaler Rt/Rw.004/001 Desa..Karang Tengah Kec.Cibadak Kab.Sukabumi', NULL, '081563625457', 'karikartien58@gmail.com', 2, NULL, 9),
@@ -1407,15 +1493,15 @@ INSERT INTO `pegawai` (`id_pegawai`, `kode_cabang`, `password`, `nama`, `id_jaba
 ('77.000.135', '308', '$2y$12$Nlfqm4XJagG7lXQFfgCrG.IER77KLriKTF5HR7N2bqPshSuoUzWcy', 'IWAN RAHMAN HERMAWAN', '39', '2000-01-01', 'C/I', '7', '6', '1', '3272031208770899', 'sukabumi', '1977-08-12', '497321604405000', 'Islam', 'L', 'Cipoho Babakan Rt/Rw.004/007 Desa.Cikondang Kec.Citamiang Kota Sukabumi', NULL, '81563851075', 'iwanrahmanhermawan@gmail.com', 5, NULL, 9),
 ('77.000.137', '301', '$2y$12$qtPugSdX95JJuJxbKEFxZe40ZxZexhO.iC8P9TSkCtMvqLR7dNaUK', 'Dedi Indra Dinata', '9', '2000-09-30', 'D/I', '8', '8', '1', '3272073006770001', 'Bandung', '1977-06-30', '0497321521405000', 'Islam', 'L', 'Jl.Gunung Guntur Blok N 02 PCP 1 Rt/Rw.002/012 Desa.Cibeureum Hilir Kec.Cibeureum Kota Sukabumi', '68f7316565159.jpeg', '085759362700', 'odhets77@gmail.com', 1, NULL, 6),
 ('77.000.140', '301', '$2y$12$xb/bcbyLNglg8303gm0NoeGORMg7LmqeeYP8HGX5GsOlq4.jyqmbu', 'YENI KURNIASIH, SE', '21', '2000-01-03', 'C/IV', '7', '8', '1', '3272054206770899', 'Sukabumi', '1977-06-02', '497243956405000', 'Islam', 'P', 'Sudajaya Rt/Rw.001/003 Desa.Jayaraksa Kec.Baros Kota.Sukabumi', NULL, '085723033310', 'kurniasihyeni10@gmail.com', 2, NULL, 8),
-('77.006.187', '302', '$2y$12$cgt897UkncR9ppAjOWCKd.gtyYGT67fcOAxeVcQCIv0JV1GVn29he', 'YUDA KAMAJAYA, SE', '39', '2005-04-05', 'C/III', '7', '8', '1', '3272021405770043', 'Garut', '1977-05-14', '448937540405000', 'Islam', 'L', 'Jl.Babakan Pandan Rt/Rw.006/002 Desa.Cimekar Kec.Cileunyi Kab.Bandung', NULL, '085280021679', 'yudaamadjaya@gmail.com', 5, NULL, 9),
+('77.006.187', '301', '$2y$12$cgt897UkncR9ppAjOWCKd.gtyYGT67fcOAxeVcQCIv0JV1GVn29he', 'YUDA KAMAJAYA, SE', '39', '2005-04-05', 'C/III', '7', '8', '1', '3272021405770043', 'Garut', '1977-05-14', '448937540405000', 'Islam', 'L', 'Jl.Babakan Pandan Rt/Rw.006/002 Desa.Cimekar Kec.Cileunyi Kab.Bandung', NULL, '085280021679', 'yudaamadjaya@gmail.com', 5, NULL, 9),
 ('77.006.194', '305', '$2y$12$PEQLGStLqi0hhCJiEtWho.hxnvNeEcF66X/LE1HkVpRHeZ20pcdI.', 'RINNA SITI ARYANI, S.IP', '38', '2020-04-08', 'C/IV', '7', '8', '1', '3202114704770005', 'Sukabumi', '1970-01-01', '497244004405000', 'Islam', 'P', 'Kp.Cikembang Rt/Rw.004/004 Desa.Cimanggu Kec.Cikembar Kab.Sukabumi ', NULL, '085862091929', 'rinnasitiaryani123@gmail.com', 5, NULL, 9),
 ('77.006.201', '312', '$2y$12$grcBT5MBQh2mcttr3drqEO3Klbzfn7vRQK/NBcw8FeLsgtCUt2huK', 'SUPRIATNA', '39', '2005-05-26', 'B/IV', '7', '3', '1', '3202112505770002', 'Sukabumi', '1977-05-25', '772983342405000', 'Islam', 'L', 'Kp.Sekarwangi Rt/Rw.003/028 Desa.Cibadak Kec.Cibadak Kab.Sukabumi', NULL, '081564839758', 'okesupriatna@gmail.com', 5, NULL, 9),
-('77.008.219', '303', '$2y$12$nR72bnEBFvoWkq6oAk3CT.KWJ4TQsaU/lSx3w2gtZSAS6GU55/sFW', 'R.DIAN PUSPITASARI, SE', '19', '2006-08-25', 'C/IV', '7', '8', '1', '3202106404770007', 'Sukabumi', '1977-04-24', '67.939.338.9-405.000', 'Islam', 'P', 'Perum Bumi Tando Pratama Blok B2 No.1 Rt/Rw.001/013 Desa.Pasirhalang Kec.Sukaraja Kab.Sukabumi', NULL, '085863059735', 'dianpuspitasari2477@gmail.com', 2, NULL, 7),
+('77.008.219', '300', '$2y$12$nR72bnEBFvoWkq6oAk3CT.KWJ4TQsaU/lSx3w2gtZSAS6GU55/sFW', 'R.DIAN PUSPITASARI, SE', '1002', '2006-08-25', 'C/IV', '7', '8', '1', '3202106404770007', 'Sukabumi', '1977-04-24', '67.939.338.9-405.000', 'Islam', 'P', 'Perum Bumi Tando Pratama Blok B2 No.1 Rt/Rw.001/013 Desa.Pasirhalang Kec.Sukaraja Kab.Sukabumi', NULL, '085863059735', 'dianpuspitasari2477@gmail.com', 2, NULL, 7),
 ('77.096.093', '311', '$2y$12$AcMjlVPJa5O5eCzGh/25e.y7T/9f4.Vf194HuqMpN6HieYrohj/US', 'SUSAN IRAWATI', '19', '1996-09-23', 'C/IV', '7', '8', '1', '3202154206770001', 'Sukabumi', '1977-06-02', '679393843405000', 'Islam', 'P', 'Kp.Babakan Rt/Rw.004/001 Desa.Parakan Salak Kec.Parakan Salak Kab.Sukabumi', NULL, '081282744911', 'irawatisusan353@gmail.com', 2, NULL, 7),
 ('78.010.239', '303', '$2y$12$rR8hqXoVGwdo9zCYK91e0e.ZpE1tY1Z0awiFLx/qs998SLLJaBpsa', 'ASEP SUHENDI', '39', '2000-01-01', 'B/III', '7', '3', '1', '3272032402690001', 'Sukabumi', '1969-02-24', '362001273405000', 'Islam', 'L', 'Jl.Tipar gg Amarta II RT/Rw.007/006 Desa.Tipar Kec.Citamiang Kota.Sukabumi', NULL, '085659587531', 'asepsuhendi24021969@gmail.com', 5, NULL, 9),
 ('78.097.074', '300', '$2y$12$AZPjSgz1IL0qb6E2x80aa.bNk.PK2iv6oM6j.qa.CaJwulbbPJ09K', 'Wendi Nurdiandi', '57', '1997-08-26', 'Madya, D/I', '6', '8', '1', '3202102805780002', 'Lebak', '1978-05-28', '0497243774405000', 'Islam', 'L', 'Kp.Cikembar Rt/Rw.001/004 Des. Cikembar Kec. Cikembar Kab.Sukabumi, 43157.', '68b67131e0469.jpg', '085860602677', 'awenks_gue@yahoo.com', 1, NULL, 6),
 ('78.098.018', '305', '$2y$12$iVQpMChdowS3qZtsfRaYE.d9JSAsvM5tXJv.3a3Dk/5kH2qqZ3UIC', 'Rian Hendriana, SE', '9', '2000-01-01', 'C/IV', '7', '8', '1', '3202331702780001', 'Lebak Banten', '1978-02-17', '497244020405000', 'Islam', 'L', 'Kp.Tanjakan Sukaraja Rt/Rw.001/009 Desa.Pasirhalang Kec.Sukaraja Kab.Sukabumi', NULL, '085282583068', 'hendrianarian78@gmail.com', 1, NULL, 6),
-('79.000.139', '307', '$2y$12$zkJWJRcQ5jX/8jQfrHxtDe1lkP8j1bPkLLN2qsAe1rYeHhLEf6S4q', 'RIAN HENDRIANA', '22', '2000-01-01', 'C/III', '7', '8', '1', '3272071505790041', 'sukabumi', '1979-05-15', '497244020405000', 'Islam', 'L', 'Kp.Cisarua Girang Rt/Rw.007/002 Desa Warnasari Kec.Sukabumi Kab.Sukabumi', NULL, '085888417104', 'Rianherdiana44@yahoo.com', 2, NULL, 9),
+('79.000.139', '307', '$2y$12$zkJWJRcQ5jX/8jQfrHxtDe1lkP8j1bPkLLN2qsAe1rYeHhLEf6S4q', 'RIAN HENDRIANA', '21', '2000-01-01', 'C/III', '7', '8', '1', '3272071505790041', 'sukabumi', '1979-05-15', '497244020405000', 'Islam', 'L', 'Kp.Cisarua Girang Rt/Rw.007/002 Desa Warnasari Kec.Sukabumi Kab.Sukabumi', NULL, '085888417104', 'Rianherdiana44@yahoo.com', 2, NULL, 9),
 ('79.003.152', '305', '$2y$12$/eTRY/u32upS2rjh7wd/b.VqueLDIl3xg9oDnlHsxfw8dkWD/HHOK', 'JUJUN JUNAEDI, SE', '21', '2000-01-01', 'C/IV', '7', '8', '1', '3202132206790000', 'cianjur', '2000-01-01', '681703146405000', 'Islam', 'L', 'Gg.Metro Rt/Rw.001/003 Desa.Parungkuda Kec.Parungkuda Kab.Sukabumi', NULL, '085659706530', 'jujun22068@gmail.com', 2, NULL, 8),
 ('79.005.166', '301', '$2y$12$60slaCgBwRvlx.gnBgsOhuvTel11MWFDs8Ue3uQ/6X0IFXPxfXoK6', 'DEWI RATNA NINGRUM', '49', '2000-01-01', 'C/IV', '7', '8', '1', '3272074907800001', 'sukabumi', '1980-07-09', '679393348405000', 'Islam', 'P', 'Jl.Parahta Nugraha Rt/Rw.002/004 Desa.Limusnunggal Kec.Cibeureum Kota.Sukabumi', NULL, '081563415545', 'dratnanungrum048@gmail.com', 5, NULL, 9),
 ('79.008.214', '305', '$2y$12$cU3sXJ3DXLx/8Dg2ABdBr..UBFu.rCH07FClxpNHzkot5hp48BbEe', 'SUTAN RIZHAM SIREGAR', '18', '2006-01-01', 'C/II', '7', '8', '1', '3273231308790003', 'Bandung', '1979-08-13', '354720708405000', 'Islam', 'L', 'Jl.Sindang Sari II No.6 Rt/Rw.003/011 Desa.Cipadung Kulon Kec.Panyileukan Kota.Bandung 40614.', NULL, '081322696240', 'sutanrizhamsiregar@gmail.com', 5, NULL, 9),
@@ -1425,24 +1511,24 @@ INSERT INTO `pegawai` (`id_pegawai`, `kode_cabang`, `password`, `nama`, `id_jaba
 ('79.098.021', '312', '$2y$12$7W9OO8TCZbikbk.DYHBSjOQ0Pzw3KAQEbgfatst.hYB4IA/2TE6/S', 'YANTI SUSANTI', '19', '2000-01-02', 'C/II', '5', '3', '1', '3202106710790001', 'Sukabumi', '1979-10-27', '497243782405000', 'Islam', 'P', 'Kp.Cibarengkok Rt/Rw.002/010 Desa.Cimanggu Kec.Cikembar Kab.Sukabumi', NULL, '085624550247', 'susantiyanti13@gmail.com', 2, NULL, 7),
 ('80.000.141', '304', '$2y$12$s4yPPDjmhWaLcNcupWrjDODiAd/8ilZtD5meWwLx83bgSbvIs1Vnu', 'MOCH ZOHAN NURMANSYAH', '39', '2000-01-01', 'B/IV', '7', '3', '1', '3272020409800102', 'Sukabumi', '1980-09-04', '497243964405000', 'Islam', 'L', 'Gg.Karimin Rt/Rw.003/008 Desa.Selabatu Kec.Cikole Kota Sukabumi', NULL, '085846157459', 'johannurmansyah878@gmail.com', 5, NULL, 9),
 ('80.005.176', '308', '$2y$12$3cOQL9Ahvvibn/5wHU6g1eVD/OtraQKivX5GisS8bgrbis91Ob5Ra', 'RACHMAT HIDAYAT', '51', '2003-10-10', 'B/II', '8', '3', '1', '3202101504800009', 'Bogor', '1980-04-15', '497243808405000', 'Islam', 'L', 'Kp.Sudajaya 004/001 No,34 Jayaraksa Baros Sukabumi', NULL, '085721300384', 'rachmat8080@gmail.com', 5, NULL, 9),
-('80.008.210', '305', '$2y$12$SXy1ZkoyKqSf8gE4pS5Z1O0ITPBtkpjsKkNdvzUb.UDkUYBZJJRXa', 'WIDYA BHAKTI', '17', '2000-01-01', 'C/III', '7', '8', '1', '3272010407800062', 'Sukabumi', '2000-01-01', '679393470405000', 'Islam', 'L', 'PRM,TJ.Sari Permai Jl.Gladiul Rt/Rw.005/014 Desa.Karangtengah Kec.Gunung Puyuh Kota.Sukabumi', NULL, '085694952828', 'widya.bhakti@yahoo.com', 2, NULL, 8),
-('80.010.230', '313', '$2y$12$9YI8/46QbBd8YyIABPz19Ot9t6cuEtNU1E4GnLRPJPJFDGXYmUv5m', 'HIMAWAN', '39', '2010-06-01', 'C/I', '7', '8', '1', '3272041605800081', 'Sukabumi', '1980-05-16', '588176529405000', 'Islam', 'L', 'Jl.Otista Cijangkar Rt/Rw.006/009 Desa.Naggeleng Kec.Citamiang Kota.Sukabumi', NULL, '085724983446', 'himawanmawan7303@gmail.com', 5, NULL, 9),
+('80.008.210', '301', '$2y$12$SXy1ZkoyKqSf8gE4pS5Z1O0ITPBtkpjsKkNdvzUb.UDkUYBZJJRXa', 'WIDYA BHAKTI', '21', '2000-01-01', 'C/III', '7', '8', '1', '3272010407800062', 'Sukabumi', '1980-07-04', '679393470405000', 'Islam', 'L', 'PRM,TJ.Sari Permai Jl.Gladiul Rt/Rw.005/014 Desa.Karangtengah Kec.Gunung Puyuh Kota.Sukabumi', NULL, '085694952828', 'widya.bhakti@yahoo.com', 2, NULL, 8),
+('80.010.230', '305', '$2y$12$9YI8/46QbBd8YyIABPz19Ot9t6cuEtNU1E4GnLRPJPJFDGXYmUv5m', 'HIMAWAN', '39', '2010-06-01', 'C/I', '7', '8', '1', '3272041605800081', 'Sukabumi', '1980-05-16', '588176529405000', 'Islam', 'L', 'Jl.Otista Cijangkar Rt/Rw.006/009 Desa.Naggeleng Kec.Citamiang Kota.Sukabumi', NULL, '085724983446', 'himawanmawan7303@gmail.com', 5, NULL, 9),
 ('80.010.240', '300', '$2y$12$wshqG5HwGX0HJEHW3V8DCurnPYOOhrmMItqxeG7DjDr/oFNRZtKzW', 'JALALUDIN', '59', '2010-01-01', 'B/IV', '7', '8', '1', '3202410405800002', 'Sukabumi', '1980-05-04', '361797566405000', 'Islam', 'L', 'Kp.Cimanggu Rt.Rw.002/001 Desa.Puncak Manggis Kec.Sagaranten Kab.Sukabumi', NULL, '085703224912', 'jalal504@gmail.com', 2, NULL, 7),
-('80.015.309', '303', '$2y$12$J61LA5sgKQzqDnOjI99j9O76.kcKbpAi.G2P9rFOrhv.qFrXjB0MC', 'HILMAN YULHANSYAH', '23', '2015-01-01', 'B/III', '7', '6', '1', '3272052903800001', 'Sukabumi', '1980-03-29', '81.387.713.1-405.000', 'Islam', 'L', 'Gg.Alhuda No.8 Rt/Rw.005/003 Desa.Selabatu Kec.Cikole Kota Sukabumi', NULL, '085798715515', 'hilman.yulhansyah@gmail.com', 5, NULL, 9),
+('80.015.309', '301', '$2y$12$J61LA5sgKQzqDnOjI99j9O76.kcKbpAi.G2P9rFOrhv.qFrXjB0MC', 'HILMAN YULHANSYAH', '38', '2015-01-01', 'B/III', '7', '6', '1', '3272052903800001', 'Sukabumi', '1980-03-29', '81.387.713.1-405.000', 'Islam', 'L', 'Gg.Alhuda No.8 Rt/Rw.005/003 Desa.Selabatu Kec.Cikole Kota Sukabumi', NULL, '085798715515', 'hilman.yulhansyah@gmail.com', 5, NULL, 9),
 ('81.006.200', '302', '$2y$12$PivHc.3m9lvsbRAac6dalOF1/LaP8GkrfKypEXGsjVkzg7jtvwrWe', 'PERI NURYADI', '50', '2003-02-03', 'B/III', '7', '3', '1', '3202320510810003', 'sukabumi', '1981-10-05', '092396738405000', 'Islam', 'L', 'Kp.Panjalu Rt/Rw.002/008 Desa.Parungseah Kec.Sukabumi Kab.Sukabumi', NULL, '085797220447', 'perinuryadi8@gmail.com', 5, NULL, 9),
 ('81.006.208', '307', '$2y$12$mq4RfFLfa8PiYuSCKJ.YCu5CnxtnPztHy.O4Cp7mePEZZZ2EcXlyy', 'Asep Ramdhan Andriana', '23', '2008-01-23', 'C/IV', '6', '8', '1', '3202051807810001', 'Sukabumi', '1981-07-18', '0679393850405000', 'Islam', 'L', 'Kp. Cikondang Rt/rw.005/001 Desa.Wangunsari Kec.Cisolok Kab.Sukabumi, 43366.', '68cbafba4b77a.jpeg', '081296969981', 'andriana.mpe@gmail.com', 5, NULL, 9),
 ('81.010.235', '310', '$2y$12$3Q7PAd6pqNUhylL2P1qFmOfjOgjsFR9/OcjVE.jkvWlPOgQ6FOU4i', 'UJANG SAEPULOH', '39', '2000-01-01', 'A/III', '6', '3', '1', '3202212905870002', 'Sukabumi', '1987-05-29', '361797418405000', 'Islam', 'L', 'Kp.Cibarusah Rt/Rw.002/004 Desa.Tanjung Kec.Jampangkulon Kab.Sukabumi', NULL, '085862744559', 'ujangsaepulloh81@gmail.com', 5, NULL, 9),
-('81.010.243', '313', '$2y$12$8iRkiBzpAgfYB19uUPWeo.D91Er.wIsFapC8P9MNr2x1jO79CrDKS', 'ROMAN', '39', '2010-06-15', 'B/III', '6', '8', '1', '3202152612810001', 'Cianjur', '1981-12-26', '362842742405000', 'Islam', 'L', 'Perum Griya Pesona Lestari Blok B 1 No.07 Rt/Rw.025/008 Desa.Cijalingan Kec.Cicantayan Kab.Sukabumi ', NULL, '085724591981', 'romanzaenal32@gmail.com', 5, NULL, 9),
+('81.010.243', '305', '$2y$12$8iRkiBzpAgfYB19uUPWeo.D91Er.wIsFapC8P9MNr2x1jO79CrDKS', 'ROMAN', '39', '2010-06-15', 'B/III', '6', '8', '1', '3202152612810001', 'Cianjur', '1981-12-26', '362842742405000', 'Islam', 'L', 'Perum Griya Pesona Lestari Blok B 1 No.07 Rt/Rw.025/008 Desa.Cijalingan Kec.Cicantayan Kab.Sukabumi', NULL, '085724591981', 'romanzaenal32@gmail.com', 5, NULL, 9),
 ('81.013.249', '306', '$2y$12$s4knCC7YrwNIuLj.ApuAQejzOW/lsZ1R6FgCuEveHvq3ayoBHmGWO', 'Deni Rusmana', '18', '2013-01-01', 'C/II', '7', '8', '1', '3272011610810001', 'Sukabumi', '1981-10-16', '0553549817405000', 'Islam', 'L', 'Jl.Karamat No.43 Rt/Rw.001/003 Desa Keramat Kec.Gunung Puyuh Kota Sukabumi, 43122.', '68edb5a3c75ec.jpeg', '085659991511', 'rusmanadeni909@gmail.com', 5, NULL, 9),
 ('81.013.266', '301', '$2y$12$TZS8C46hU6dLIz4mJ/RyqOrfeR9leDTPGIhQUatCTR4XxzhY.EDBi', 'Faizal noor agfa', '39', '2013-03-13', 'C/II', '7', '8', '1', '3217022008810001', 'Bandung', '1981-08-20', '0553549551405000', 'Islam', 'L', 'Puri Cibereum Permai I Jl.Gunung Agung Blok U No.1 Rt/Rw.004/012 Desa.Cibereum Hilir Kec.Cibeureum Kota.Sukabumi', NULL, '089691547766', 'faizalnoor20881@gmail.com', 5, NULL, 9),
-('82.005.167', '302', '$2y$12$sRX04meyQKdK9tWkcjIdCeLC/ZeNl9w96lkIW62HFRkUhSAX8FtMS', 'MIRANTY', '17', '2004-07-11', 'C/IV', '7', '8', '1', '3272046612820004', 'Sukabumi', '1982-12-26', '679393439405000', 'Islam', 'P', 'Jl.Sawahbera Rt/Rw.003/003 Desa.Dayeuhluhur Kec.Warudoyong Kota.Sukabumi', NULL, '085659601235', 'mirantyrhamanda@gmail.com', 2, NULL, 8),
+('82.005.167', '300', '$2y$12$sRX04meyQKdK9tWkcjIdCeLC/ZeNl9w96lkIW62HFRkUhSAX8FtMS', 'MIRANTY', '63', '2004-07-11', 'C/IV', '7', '8', '1', '3272046612820004', 'Sukabumi', '1982-12-26', '679393439405000', 'Islam', 'P', 'Jl.Sawahbera Rt/Rw.003/003 Desa.Dayeuhluhur Kec.Warudoyong Kota.Sukabumi', NULL, '085659601235', 'mirantyrhamanda@gmail.com', 2, NULL, 8),
 ('82.005.169', '300', '$2y$12$J6qmPrw9bjgK810WvLZQBeRQa.veSiNeZEMM/Vx24wEp1sTCqwAOm', 'Endri', '31', '2005-03-22', 'C/II', '3', '8', '1', '3202112012820002', 'Sukabumi', '1982-12-20', '0679393587405000', 'Islam', 'L', 'Kp.Cikiwul Lebak Rt.001/002 Desa.Sekarwangi Kec.Cibadak Kab.Sukabumi', '69016a2872fc7.jpeg', '081290640706', 'ebboots@gmail.com', 5, NULL, 9),
 ('82.005.178', '300', '$2y$12$4gS1RkSQ/OJ302ijuycWDOcuMh38AZQTBzZ6N2j62DODWtRS.NpmK', 'ADI IRAWAN', '31', '2005-01-01', 'C/II', '7', '8', '1', '3272021403820001', 'Sukabumi', '1982-03-14', '679393447405000', 'Islam', 'L', 'Jl.RA.Kosasih gg.Pangkalan Rt/Rw.006/014 Desa.Cisarua Kec.Cikole Kota Sukabumi', NULL, '085846175195', 'adiearas14@gmail.com', 5, NULL, 9),
 ('82.010.233', '308', '$2y$12$kaIjy9cMbFsBaWjJZhjZcOmTotEY7jlDQrlF35BQ/xuyvCOR7B7Uu', 'DEDE HERMAWAN', '50', '1982-12-19', 'B/II', '1', '3', '1', '32024112098200001', 'sukabumi', '1982-12-19', '592685549405000', 'Islam', 'L', 'Kp.Malangbong Rt/Rw.004/004 Desa.Pasanggrahan Kec.Sagaranten Kab.Sukabumi', NULL, '081917996154', 'korompisbeatry@gmail.com', 5, NULL, 9),
-('82.010.245', '300', '$2y$12$FoP8S4FUrWwvOJRR033lSezJgRN9o9dNYt90v30RwI55.dBbbY1mS', 'Asep Hermawan', '39', '2010-07-01', 'B/IV', '7', '3', '1', '3202330803820003', 'Sukabumi', '1982-03-08', '0360743744405000', 'Islam', 'L', 'Kp.Legok Astana Genteng RT/Rw.003/016 Desa.Sukaraja Kec.Sukaraja Kab.Sukabumi, 43192.', '68cb6b74c9434.jpeg', '085720725750', 'asephermawan6969@gmail.com', 5, NULL, 9),
+('82.010.245', '301', '$2y$12$FoP8S4FUrWwvOJRR033lSezJgRN9o9dNYt90v30RwI55.dBbbY1mS', 'Asep Hermawan', '39', '2010-07-01', 'B/IV', '7', '3', '1', '3202330803820003', 'Sukabumi', '1982-03-08', '0360743744405000', 'Islam', 'L', 'Kp.Legok Astana Genteng RT/Rw.003/016 Desa.Sukaraja Kec.Sukaraja Kab.Sukabumi, 43192.', '68cb6b74c9434.jpeg', '085720725750', 'asephermawan6969@gmail.com', 5, NULL, 9),
 ('82.013.273', '308', '$2y$12$SLtjIwQmyg1451GouUk8x.4lIEvck5WJHeq2myjSiGniVcUjPzqhC', 'MAULANA YUSUP', '21', '2013-03-13', 'C/I', '7', '8', '1', '3272010602820001', 'Sukabumi', '1982-02-06', '553554445405000', 'Islam', 'L', 'PERUM SAKURA GARDENIA Blok.K Jl.Koi no.20 Rt.041/010 Cisaat Sukabumi ', NULL, '085217089341', 'lexzild@gmail.com', 2, NULL, 9),
 ('83.006.180', '311', '$2y$12$fg6aRGXfnq8PW5P/mVRUZOnWJr/9bH1uoE7h/iQHCjxmgV5189HZu', 'Devi Ariani', '28', '2006-01-30', 'C/II', '1', '8', '1', '3202295912830004', 'Sukabumi', '1983-12-19', '0679393660405000', 'Islam', 'P', 'Kp.Rambay Rt 004 Rw 001 Des. Sukamanah Kec. Cisaat Kab. Sukabumi,', '68fafba42a8aa.jpeg', '081563349666', 'arianidevi987@gmail.com', 5, NULL, 9),
-('83.008.220', '303', '$2y$12$4YFszTCwQIWXIh5KYAenZOmHccWwLBvMBr3lOWvf0pbWI504vIrIS', 'NELI VERA INDRIANI', '38', '2006-12-08', 'C/III', '7', '8', '1', '3202324501830002', 'Sukabumi', '1983-01-05', '679393496405000', 'Islam', 'P', 'Jl.Cemerlang No.5 Rt/Rw.001/004 Desa.Sukakarya Kec.Warudoyong', NULL, '081563421115', 'neliveraindri@gmail.com', 5, NULL, 9),
+('83.008.220', '301', '$2y$12$4YFszTCwQIWXIh5KYAenZOmHccWwLBvMBr3lOWvf0pbWI504vIrIS', 'NELI VERA INDRIANI', '38', '2006-12-08', 'C/III', '7', '8', '1', '3202324501830002', 'Sukabumi', '1983-01-05', '679393496405000', 'Islam', 'P', 'Jl.Cemerlang No.5 Rt/Rw.001/004 Desa.Sukakarya Kec.Warudoyong', NULL, '081563421115', 'neliveraindri@gmail.com', 5, NULL, 9),
 ('83.013.254', '311', '$2y$12$LgnMsJpUR9y0ZkN5azW2deiRL5FGZ3lSTl5lgAR2tzEkJctAT/oZG', 'RIZKY ANUGRAH PERDANA', '17', '2013-07-01', 'C/III', '8', '8', '1', '3217020203830016', 'SUKABUMI', '1983-03-02', '553554130405000', 'Islam', 'L', 'Jl.Pramuka Rt/Rw.001/009 Desa.Cikondang Kec.Citamiang Kota.Sukabumi', NULL, '083896481973', 'rizkyperdana.anugrah@gmail.com', 2, NULL, 8),
 ('83.015.308', '304', '$2y$12$gdyz06nnSfhY4cCG0ZC4N.OxHelLq4wSItfmFAevzugTYP8j6UhBe', 'VIKI ADI KRESNA', '23', '2015-01-01', 'C/II', '7', '8', '1', '3272050303830903', 'Sukabumi', '1983-03-03', '886154848405000', 'Islam', 'L', 'Kp.Loa Copong Rt/Rw.002/021 Desa.Lembursitu Kec.Lembursitu Kota.Sukabumi', NULL, '085659851213', 'v.adikresna@gmail.com', 5, NULL, 9),
 ('84.010.041', '311', '$2y$12$IR8TLpDCcpaWH08JEDaHMe4g0zMvrAj6YzAn0IeETa5LyVyQ5SN0u', 'ENTUS SUPRIADI', '38', '2020-04-14', 'C/I', '6', '8', '1', '3202080308840005', 'Sukabumi', '1970-01-01', '353107485405000', 'Islam', 'P', 'Perumahan Nirwana Graha Blok E No.23 Rt/Rw.003/010 Desa.Dayeuhluhur Kec.Warudoyong Kota.Sukabumi', NULL, '085624435440', 'ntoesfulgentius@gmail.com', 5, NULL, 9),
@@ -1452,7 +1538,7 @@ INSERT INTO `pegawai` (`id_pegawai`, `kode_cabang`, `password`, `nama`, `id_jaba
 ('85.008.217', '310', '$2y$12$y9ZmrdDYlDDqfI3XwiWDk.WW4xBf0CeyxRsIv4j1JhKH2xQfkMHbu', 'ROSSY NATASARI', '38', '2006-11-15', 'C/II', '7', '8', '1', '3202215508850001', 'Sukabumi', '1985-08-15', '679393819405000', 'Islam', 'P', 'Kp.Kadu 1 Rt/Rw.007/003 Kel.Jampangkulon Kec.Jampangkulon Kab.Sukabumi', NULL, '085860586868', 'sisynatasya15@gmail.com', 5, NULL, 9),
 ('85.010.244', '312', '$2y$12$oRzWvMIcVbuAgaMehuloRON7KKc1Wpth9SWbuZH8kZs7cTyTU6Pla', 'Beben Benyamin', '23', '2010-07-01', 'C/III', '7', '8', '1', '3272071711850023', 'Sukabumi', '1985-01-17', '0356527713405000', 'Islam', 'L', 'Kp.Cikiray Rambay Rt/Rw.002/009 Desa.Sukamanah Kec.Cisaat Kab.Sukabumi, 43152.', '68d35b0d1be63.jpeg', '085720117894', 'benz844@gmail.com', 5, NULL, 9),
 ('85.013.268', '308', '$2y$12$RkSwdPgQb4l3XJPKaU3l4.llXoIwDEavq4yXCoTWl3FX0DqQxOkTK', 'RADEN WACHYU WARDHANA, SH', '17', '2013-03-13', 'C/III', '7', '8', '1', '3202320109850002', 'Sukabumi', '1985-09-01', '553554015405000', 'Islam', 'L', 'Kp Ciandam Rt 03/ Cibeureum Hilir Kota Sukabumi', '68f5b234939a7.jpeg', '08571706111', 'wachyu1985@gmail.com', 2, NULL, 8),
-('85.018.322', '300', '$2y$10$S5csAAGbeGlIp0.J8H0xEeZe2fDFoqy8YSkejelD3PDn6rzW8xxm6', 'IRAWATI INDRIANA PRIBADI', '11', '2018-05-17', 'C/II', '7', '8', '1', '3272065903850001', 'Sukabumi', '1985-03-19', '680910189405000', 'Islam', 'P', 'Perumahan Selagedang No.9 Rt/Rw.002/004   Kel. Lembursitu Kec.Lembursitu Kota.Sukabumi', '68c78e18d07d7.jpg', '089504217089', 'irawati.indriana@gmail.com', 2, NULL, 7),
+('85.018.322', '300', '$2y$12$gsn2SUUDSf74Ygf3ky60q.FjCak7ivCXnc6Q9oaCE8DdSD7.U4iKa', 'IRAWATI INDRIANA PRIBADI', '11', '2018-05-17', 'C/II', '7', '8', '1', '3272065903850001', 'Sukabumi', '1985-03-19', '680910189405000', 'Islam', 'P', 'Perumahan Selagedang No.9 Rt/Rw.002/004   Kel. Lembursitu Kec.Lembursitu Kota.Sukabumi', '68c78e18d07d7.jpg', '089504217089', 'irawati.indriana@gmail.com', 2, NULL, 7),
 ('86.013.255', '308', '$2y$12$LF2CvkrwVoMGMI/LIQodUufzWlZYN/vSsQe2reA6XJVb1Ftk/lace', 'FIKRI NURCAHYA RAMDANI, ST', '39', '2013-03-18', 'C/III', '6', '8', '1', '3272041805860001', 'sukabumi', '1986-05-18', '0553555921405000', 'Islam', 'L', 'Jl.Pasundan gg.Dahlia 1 Rt/Rw.001/007 Desa.Nyomplong Kec.Warudoyong Kota Sukabumi', NULL, '081295856788', 'fikramdani@yahoo.com', 5, NULL, 9),
 ('86.018.321', '301', '$2y$12$AaaksjewPUFxyojfZzY02ur9UmaLG0kizDQXPAnr9l3c3IyY5exbi', 'RD.HASANAH RATNAPURI,S.IP', '22', '2019-01-01', 'C/II', '7', '8', '1', '3273265902860003', 'Bandung', '1986-02-19', '446162729429000', 'Islam', 'P', 'Perum Al-Hijrah Blok A No.42 Rt/Rw.002/004 Desa.Pasirhalang Kec.Sukaraja Kab.Sukabumi', '68ede9fc0f92a.jpeg', '085720020286', 'hasanah.ratnapuri@gmail.com', 5, NULL, 9),
 ('86.022.357', '300', '$2y$12$11KoLXiimSecGOb8R3eF4uKo2kPcqNBuatl6xwe4UNk/RZbJ3KS7a', 'Pian Lisandi', '39', '2014-01-01', 'B/I', '7', '3', '1', '3272030905860899', 'Sukabumi', '1986-05-09', '260080833405000', 'Islam', 'P', 'Jl.Tipar gg Amarta II RT/Rw.001/006 Desa.Tipar Kec.Citamiang Kota.Sukabumi', NULL, '085723258686', 'pianlisandi8686@gmail.com', 5, NULL, 9),
@@ -1462,44 +1548,44 @@ INSERT INTO `pegawai` (`id_pegawai`, `kode_cabang`, `password`, `nama`, `id_jaba
 ('89.013.252', '306', '$2y$12$1/MrqEVVPqG7j6WlUp5lv.3zU...0GaikixdezItDIE52syIRJrOC', 'YUSTIANA RAMLAH', '27', '2013-05-01', 'C/II', '2', '8', '1', '3272054612890001', 'Sukabumi', '1989-12-06', '553542879405000', 'Islam', 'P', 'PERUM KANIGARA GARDEN BLOK H 11 JL WIDYAKARMA BALANDONGAN RT 04 RW 05 KEL SUDAJAYA HILIR KEC BAROS KOTA SUKABUMI', NULL, '082321563884', 'yustia06@gmail.com', 5, NULL, 9),
 ('89.013.257', '308', '$2y$12$I9p86NxseDBBfl3IGKtDqev2edhmjsf16CS8ItUD6bm/825J1pX0y', 'Dety Agustri Romantir', '19', '2013-04-15', 'C/II', '2', '8', '1', '3202295808890010', 'Sukabumi', '1989-08-18', '0447257908405000', 'Islam', 'P', 'Kp. Cibatu Caringin Rt 029 Rw 005 Kel. Nagrak Kec. Cisaat Kab. Sukabumi,', '68f9d353256a5.jpg', '085212510512', 'dettyromantir88@gmail.com', 2, NULL, 7),
 ('89.013.265', '304', '$2y$12$c3NYBxGIZq/OKSVeCxPoZesXRS2lyqN4pP/WL7jbj8hDLzp9.HgWS', 'LAELI SITI NURAENI, S.IP', '19', '2013-04-01', 'C/III', '6', '8', '1', '3202296606890004', 'Sukabumi', '1989-06-25', '553554734405000', 'Islam', 'P', 'Kp.Cibatu Caringin Rt/Rw.032/005 Desa.Nagrak Kec.Cisaat Kab.Sukabumi ', NULL, '085659545427', 'yudistiralaely@gmail.com', 2, NULL, 7),
-('89.013.271', '301', '$2y$12$oAV3mp0jlqlteDatYZXy9eDL.z88ydFIpaQsyYC7nVDG90mMnGghG', 'INEU INDAHWATI', '38', '2013-05-16', 'C/I', '7', '8', '1', '3272024109890001', 'Sukabumi', '1989-09-01', '553543232405000', 'Islam', 'P', 'Jl.Otista BLK Gg.Pembangunan No.39 Rt/Rw.004/001 Desa.Nanggeleng Kec.Citamiang Kota.Sukabumi', NULL, '085603926997', 'ineu.indahwati@gmail.com', 5, NULL, 9),
+('89.013.271', '304', '$2y$12$oAV3mp0jlqlteDatYZXy9eDL.z88ydFIpaQsyYC7nVDG90mMnGghG', 'INEU INDAHWATI', '38', '2013-05-16', 'C/I', '7', '8', '1', '3272024109890001', 'Sukabumi', '1989-09-01', '553543232405000', 'Islam', 'P', 'Jl.Otista BLK Gg.Pembangunan No.39 Rt/Rw.004/001 Desa.Nanggeleng Kec.Citamiang Kota.Sukabumi', NULL, '085603926997', 'ineu.indahwati@gmail.com', 5, NULL, 9),
 ('89.015.314', '301', '$2y$12$/7oEN/ZtD222IZCrlTMWS.0bl0PbtcTeGyg62iCWIgLNpVXJoqUla', 'IKSAN HASSAN SAPUTRA', '17', '2015-01-01', 'C/II', '8', '8', '1', '3272030304890001', 'Sukabumi', '1989-04-03', '449082247405000', 'Islam', 'L', 'JL ASSALAM DUA 001/003 BABAKAN BANDUNG NANGGELENG KEC CITAMIANG KOTA SUKABUMI', NULL, '081310782017', 'iksanhassan14@gmail.com', 2, NULL, 8),
 ('89.015.319', '305', '$2y$12$Wd7Z0WCl/pKcOyz5p/9LrOSeNI0xQolHBGtQM5Z3p5Ze763OMk8Wq', 'Dona Afriansyah', '23', '2015-01-26', 'B/II', '7', '3', '1', '3203070304890010', 'Cianjur', '1989-04-03', '0254906852406000', 'Islam', 'L', 'Babakan Limusnunggal Rt/Rw.002/001 Desa.Cibeureum Hilir Kec.Cibeureum Kota.Sukabumi, 43165.', '68ff31392a422.jpg', '085723778663', 'dona.afriansyah@gmail.com', 5, NULL, 9),
 ('89.017.320', '300', '$2y$12$eBJdjwKV4GAH7UHLphkFDOa.y6wT0YR8alY5ZqXqP0NjSfqjQZK1e', 'YOGA JATNIKA', '8', '2017-03-01', 'C/II', '6', '8', '1', '3207311310890001', 'Ciamis', '1989-10-13', '815944582405000', 'Islam', 'L', 'Perum Gracias Baru Rt/Rw.005/003 Desa.Cikundul Kec.Lembursitu Kota.Sukabumi', NULL, '081547524034', 'gagajatnika13@gmail.com', 2, NULL, 7),
-('90.013.277', '302', '$2y$12$u70qAJ9AcO9LuZ.blaOLG.yKesfbd6FAemM9ZoRwMijbWl2EuPq1G', 'SRI NITIASARI NURHAPIDZ, SE', '38', '2013-05-16', 'C/III', '6', '8', '1', '3272045604900001', 'Sukabumi', '1990-04-16', '443732045405000', 'Islam', 'P', 'Jl.Pasundan Gg.Anggrek 23-28 Rt/Rw.001/007 Kel.Nyomplong Kec.Warudoyong', NULL, '089690313241', 'tiashapidz@gmail.com', 5, NULL, 9),
+('90.013.277', '300', '$2y$12$yJjOSZAccjbFx26hn8waher5OaKR3ALQwEGefNyfl38.o8/Y68Fqa', 'SRI NITIASARI NURHAPIDZ, SE', '40', '2013-05-16', 'C/III', '6', '8', '1', '3272045604900001', 'Sukabumi', '1990-04-16', '443732045405000', 'Islam', 'P', 'Jl.Pasundan Gg.Anggrek 23-28 Rt/Rw.001/007 Kel.Nyomplong Kec.Warudoyong', NULL, '089690313241', 'tiashapidz@gmail.com', 5, NULL, 9),
 ('90.018.328', '312', '$2y$12$nNaC.AfQtZ/8pIdQAqq1H.tsp.W9E.sYJaA5PTVE2KalBExquYGMm', 'YUDA PRAWIRA, SE', '39', '2017-05-05', 'C/I', '7', '8', '1', '3202331905900003', 'Sukabumi', '1990-05-19', '448937540405000', 'Islam', 'L', 'Perum Nungky Residence Hill Blok A 1 No.9 Rt/Rw.002/015  Desa.Langensari  Kec.Sukaraja Kab.Sukabumi', '69031a5a6f75e.jpg', '085723349099', 'yudaprawira4444@gmail.com', 5, NULL, 9),
 ('91.013.253', '300', '$2y$12$TObwishPf9dZzKqDt.B0XuO9aGFvLOy8uEFaH9YOhk4o4hVbKBOG.', 'Anggar Kusumah Dinata', '66', '2013-05-16', 'B/II', '6', '3', '1', '3202212608910002', 'Sukabumi', '1991-08-26', '0553556085405000', 'Islam', 'L', 'Perum Bukit Cidahu Asri Blok D15 Rt 024 Rw 008 Desa.Pondokkaso Tonggoh Kec.Cidahu Kab.Sukabumi, 43358.', '68c7ba9ad65f9.jpg', '081316975107', 'anggarkusumahdinata@gmail.com', 5, NULL, 9),
 ('91.013.272', '300', '$2y$12$01Ap0kcj3DxJtc61g4ZjfejHQtvgJrFGoaoTXUcT7bKKPFuB8uhnS', 'MOCHAMAD RAMDHAN MAULANA', '37', '2013-01-11', 'C/III', '7', '8', '1', '3202281903910003', 'Sukabumi', '1991-03-19', '553541756405000', 'Islam', 'L', 'Kp.Babakan Tipar Rt/Rw.004/013 Desa.Cimahi Kec.Cicantayan Kab.Sukabumi', NULL, '085603441090', 'muhammadramdanmaulana@gmail.com', 1, NULL, 6),
-('91.013.274', '301', '$2y$12$oXYTBFqLC2clQlT3T/m.TuOfEJMQUV9ZcUsocnsXVZ/FDZYKCmIFe', 'VINNA MELITA', '28', '2013-01-05', 'C/II', '3', '8', '1', '3202336709910005', 'sukabumi', '1991-09-27', '553554312405000', 'Islam', 'P', 'Jl.RA.Kosasih Gg.Intikarya Rt/Rw.002/007 Desa.Subangjaya Kec.Cikole Kota.Sukabumi', NULL, '085772000392', 'vinamelita303@gmail.com', 5, NULL, 9),
+('91.013.274', '301', '$2y$12$oXYTBFqLC2clQlT3T/m.TuOfEJMQUV9ZcUsocnsXVZ/FDZYKCmIFe', 'VINNA MELITA', '1003', '2013-01-05', 'C/II', '3', '8', '1', '3202336709910005', 'sukabumi', '1991-09-27', '0553554312405000', 'Islam', 'P', 'Jl.RA.Kosasih Gg.Intikarya Rt/Rw.002/007 Desa.Subangjaya Kec.Cikole Kota.Sukabumi', NULL, '085772000392', 'vinamelita303@gmail.com', 5, NULL, 9),
 ('91.013.275', '300', '$2y$12$yKtLXoCznRag8v14aqud9OmNQJ7gYhUtzVXIems48YNdv/xbiTZ7S', 'MELLYDA PURNAMASARI', '40', '2013-07-01', 'C/I', '7', '8', '1', '3202336705910003', 'Bandung', '1991-05-27', '553553827405000', 'Islam', 'P', 'Kp.Sukaraja Rt/Rw.002/001 Desa.Sukaraja Kec.Sukaraja Kab.Sukabumi', NULL, '085756249465', 'mellyda_purnamasari@yahoo.com', 5, NULL, 9),
-('91.015.305', '306', '$2y$12$3tewI63yXxxg7qrJNVjTpuNlAr4MptOfFpFUjMGvhvCeRw3ZlwI/i', 'ROSITA NOPIANTI', '28', '2000-01-01', 'C/II', '7', '8', '1', '3202166811910007', 'sukabumi', '1991-10-28', '722201316405000', 'Islam', 'P', 'Kp.Nyalindung Rt/Rw.003/004 Desa.Ccurug Kec.Cicurug Kab.Sukabumi', NULL, '081291254834', 'rositanopianti@gmail.com', 5, NULL, 9),
-('91.015.307', '311', '$2y$12$6GQyKQbJfxRW1lRXf79RYO1vHiSr1bdnTWUEJQHv0zCjpaf1rgovi', 'IRMA HERDIANA', '28', '2010-01-01', 'B/II', '1', '3', '1', '3202154110910002', 'Sukabumi', '1991-10-01', '172.224.302.9-405.000', 'Islam', 'P', 'Bukit Dago BDU No 115 Rt.01/17 Rawakalong Gunungsindur kab.sukabumi', NULL, '08562277776', 'Irmaherdiana91@gmail.com', 5, NULL, 9),
+('91.015.305', '305', '$2y$12$3tewI63yXxxg7qrJNVjTpuNlAr4MptOfFpFUjMGvhvCeRw3ZlwI/i', 'ROSITA NOPIANTI', '28', '2000-01-01', 'C/II', '7', '8', '1', '3202166811910007', 'sukabumi', '1991-10-28', '722201316405000', 'Islam', 'P', 'Kp.Nyalindung Rt/Rw.003/004 Desa.Ccurug Kec.Cicurug Kab.Sukabumi', NULL, '081291254834', 'rositanopianti@gmail.com', 5, NULL, 9),
+('91.015.307', '312', '$2y$12$6GQyKQbJfxRW1lRXf79RYO1vHiSr1bdnTWUEJQHv0zCjpaf1rgovi', 'IRMA HERDIANA', '28', '2010-01-01', 'B/II', '1', '3', '1', '3202154110910002', 'Sukabumi', '1991-10-01', '172.224.302.9-405.000', 'Islam', 'P', 'Bukit Dago BDU No 115 Rt.01/17 Rawakalong Gunungsindur kab.sukabumi', NULL, '08562277776', 'Irmaherdiana91@gmail.com', 5, NULL, 9),
 ('91.021.343', '306', '$2y$12$mAILljPjcTgUMYLonLKr.ukGJfoL3LdnF4RB4PK0B/6PG.ZfkfPby', 'SANDI INDRA PERMANA', '23', '2018-06-08', 'C/I', '5', '8', '1', '3272023112910940', 'Purworejo', '1991-12-31', '838759736405000', 'Islam', 'L', 'Kp Lebaksiuh RT 015 RW 005 Desa Sukakersa kecamatan Parakansalak Kabupaten Sukabumi', NULL, '082114541516', 'sandiindra844@gmail.com', 5, NULL, 9),
 ('91.021.347', '306', '$2y$12$K.Gq3r4PTOlMOYFhOWchoeZrvFodhGOLmi870HC5nwTuPkTHcXqz2', 'RIA ARIANAWATI', '28', '2000-01-01', 'C/I', '7', '8', '1', '3202166301910001', 'Sukabumi', '1991-01-23', '892577255405000', 'Islam', 'P', 'Kp.Kaum Kindul Rt/Rw.002/003 Desa.Cicurug Kec.Cicurug Kab.Sukabumi ', NULL, '085217366096', 'riaarianawati@yahoo.com', 5, NULL, 9),
 ('91.022.353', '301', '$2y$12$liBJjcUcKew7uXrPsL7Ay.U1vjFYo3yFEIj3RMFbI6y3mFlrmWcV2', 'Muchamad Iqsan Anugrah N', '23', '2021-01-01', 'C/I', '5', '8', '1', '3272052411910000', 'Sukabumi', '1991-11-24', '752422477405000', 'Islam', 'L', 'BTN Jayaraksa Perum Pepabri Rt/Rw.003/007 Desa.Jayaraksa Kec.Baros Kota.Sukabumi', NULL, '085863148141', 'muhamadiqsan7@gmail.com', 5, NULL, 9),
 ('92.013.261', '301', '$2y$12$LnFeJ7ddUiBwNvMarSAfSeNhDpB7RKd68vebmlTp1j0/G8Q25Tna.', 'Cici Nurani, SE', '19', '2013-04-15', 'C/II', '7', '8', '1', '3272015310920021', 'Sukabumi', '1992-10-13', '0553551714405000', 'Islam', 'P', 'Jl.Gotong Royong gg.Nirwana No.10 Rt/Rw.001/012 Desa.Gunung Puyuh Kec.Gunung Puyuh Kota.Sukabumi', '68d4effa22a1f.jpeg', '082124062300', 'cicinurani1392@gmail.com', 2, NULL, 7),
-('92.013.269', '311', '$2y$12$UUdiWJA2dDGXVjwsAs27cuIy6aYFLeGfroYTIzeroAKdiEr39mDTS', 'INDRA ADITIA RUKMANA', '17', '2013-05-16', 'C/I', '7', '8', '1', '3272020311920001', 'Sukabumi', '1992-11-03', '553554981405000', 'Islam', 'L', 'Jl. Selabintana Gg.Cimanggah No.75 Rt/Rw.004/002 Kel.Cikole Kec.Cikole Kota.Sukabumi', '68f87a920abd1.jpg', '085795888090', 'indraaditia03@gmail.com', 2, NULL, 8),
+('92.013.269', '304', '$2y$12$UUdiWJA2dDGXVjwsAs27cuIy6aYFLeGfroYTIzeroAKdiEr39mDTS', 'INDRA ADITIA RUKMANA', '17', '2013-05-16', 'C/I', '7', '8', '1', '3272020311920001', 'Sukabumi', '1992-11-03', '553554981405000', 'Islam', 'L', 'Jl. Selabintana Gg.Cimanggah No.75 Rt/Rw.004/002 Kel.Cikole Kec.Cikole Kota.Sukabumi', '68f87a920abd1.jpg', '085795888090', 'indraaditia03@gmail.com', 2, NULL, 8),
 ('92.015.315', '308', '$2y$12$MHWxF/DODjUS.sDV9W.PseLF1AzToTyneboAjWi/kEPI25l9M2BQa', 'MIA NURMALASARI', '28', '2015-01-25', 'B/II', '6', '3', '1', '3202394507920003', 'sukabumi', '1992-07-05', '722202207405000', 'Islam', 'P', 'Kp.Slagombong Rt/Rw.002/003 Desa.Cijangkar Kec.Nyalindung Kab.Sukabumi', NULL, '085624691434', 'mian41025@gmail.com', 5, NULL, 9),
 ('92.018.326', '312', '$2y$12$3Bt8ChJbHAJWAnWDuqH0C.vgeopRlgogUxy3LJ4CY3bt2.zKUuJQa', 'Debby Chyntia Putri', '28', '2017-05-02', 'C/II', '3', '8', '1', '3272017112920001', 'sukabumi', '1992-12-31', '0823898788405000', 'Islam', 'P', 'Perumahan Karang Kencana Blok 22 No 6 Rt.004 Rw.006 Kel Karang Tengah Kec Gunung Puyuh Kota Sukabumi, 431224.', '68d5f5ee25686.jpg', '085797322015', 'debbychyntia04@gmail.com', 5, NULL, 9),
 ('92.019.341', '304', '$2y$12$sRQyk/XE2xFQzOIcPsYOFuCAPW3quGPE.jvBf71TaxpZcyAEdD1RC', 'Aldi Septian Pujantara', '66', '2018-06-25', 'C/II', '7', '8', '1', '3272021309920001', 'Sukabumi', '1992-09-13', '0855030409405000', 'Islam', 'L', 'Jl. RA Kosasih, Jl Samsi No. 21 Rt 002 Rw 016 Des. Cisarua, Kec. Cikole, Kota Sukabumi, 43115.', '68c77b6bda003.jpeg', '085811979790', 'septianaldie6@gmail.com', 5, NULL, 9),
-('92.022.352', '300', '$2y$12$CpnCsqthcTG8HPyEjaO2iOdz6pUDKZ3iZMQ94ayT/JHjLZZvCes3u', 'NOVITA BERI', '40', '2022-01-01', 'C/I', '5', '8', '1', '32022766119200004', 'Sukabumi', '1992-11-26', '492918152405000', 'Islam', 'P', 'Kp.Cipeundeuy Rt/Rw.005/005 Desa.Mangkalaya Kec.Gunugguruh, Kab.Sukabumi', NULL, '085282956669', 'noberbey@gmail.com', 5, NULL, 9),
+('92.022.352', '300', '$2y$12$CpnCsqthcTG8HPyEjaO2iOdz6pUDKZ3iZMQ94ayT/JHjLZZvCes3u', 'NOVITA BERI', '31', '2022-01-01', 'C/I', '5', '8', '1', '32022766119200004', 'Sukabumi', '1992-11-26', '492918152405000', 'Islam', 'P', 'Kp.Cipeundeuy Rt/Rw.005/005 Desa.Mangkalaya Kec.Gunugguruh, Kab.Sukabumi', '691fc373630be.jpeg', '085282956669', 'noberbey@gmail.com', 5, NULL, 9),
 ('93.013.259', '304', '$2y$12$QGAciBhpelOYsOVRqUXdVO3PW4vl9eiET.RE0zh.DjAqB5vTlBJny', 'NURI MEIDIANAWATI', '28', '2013-05-16', 'C/I', '6', '8', '1', '3272035705930001', 'sukabumi', '1993-05-17', '553551334405000', 'Islam', 'P', 'Jl.Pelda RE Suryanta Rt/Rw.004/005 Desa.Nanggelang Kec.Citamiang Kota.Sukabumi', NULL, '085721669330', 'nurimemey71@gmail.com', 5, NULL, 9),
-('93.015.302', '301', '$2y$12$vjc54XbP6Z3Dkdu950bUoeWrB.RbCJB.jGhLg3FCUtOz9ZputpTkC', 'RINI NOVIYANTI', '28', '2015-01-05', 'C/I', '6', '8', '1', '3272024311930001', 'Sukabumi', '1993-11-03', '722242708405000', 'Islam', 'P', 'JL Samsi Babakan Jampang RT 001/019 Kelurahan Cisarua Kecamatan Cikole', NULL, '081320616541', 'riniink1993@gmail.com', 5, NULL, 9),
+('93.015.302', '301', '$2y$12$vjc54XbP6Z3Dkdu950bUoeWrB.RbCJB.jGhLg3FCUtOz9ZputpTkC', 'RINI NOVIYANTI', '1003', '2015-01-05', 'C/I', '6', '8', '1', '3272024311930001', 'Sukabumi', '1993-11-03', '722242708405000', 'Islam', 'P', 'JL Samsi Babakan Jampang RT 001/019 Kelurahan Cisarua Kecamatan Cikole', NULL, '081320616541', 'riniink1993@gmail.com', 5, NULL, 9),
 ('93.019.332', '307', '$2y$12$dSZvMg9A21iPVIf0PNAjbe8OuNMZ2Ky/RJNYXFeC9a6CsoakikgAC', 'R.M.MUFQI ZULFIKAR ESTU PUTRA, SE', '39', '2017-08-08', 'C/I', '6', '8', '1', '320201100893006', 'Sukabumi', '1992-09-13', '766846950405000', 'Islam', 'L', 'Kp.Cempakaputih Rt/Rw.002/011 Desa.Pelabuhanratu Kec.Pelabuhanratu Kab.Sukabumi', NULL, '085720001599', 'zmufqi@gmail.com', 5, NULL, 9),
 ('93.019.333', '308', '$2y$12$wRq21Q7hr.w/S3yMlkmxzuVF7k4XFll/.xmmJqLAnw9umbHEVho9u', 'HANDI ELBA PRANATA', '23', '2000-01-01', 'B/II', '6', '6', '1', '3202272505930001', 'sukabumi', '1993-05-25', '839192168405000', 'Islam', 'L', 'Kp.Selaawi Rt/Rw.005/002 Desa.Cisaat Kec.Cisaat Kab.Sukabumi', NULL, '085659550255', 'handielba.pranata@gmail.com', 5, NULL, 9),
-('93.021.350', '305', '$2y$12$0TPpENYLeVh3CAawGuY6/OzA3xvHAaIkc2HDlAmQEwobG8EfULPmW', 'MUHAMMAD SATRIA DARMAWAN, S T.', '23', '2019-07-01', 'C/I', '2', '8', '1', '3202291102930001', 'Sukabumi', '1993-02-11', '761433358405000', 'Islam', 'L', 'Kp Cikaroya Kidul 019/003 Desa Gunung Jaya Kecamatan Cisaat Kabupaten Sukabumi - 41352', NULL, '085793976664', 'msatriadarmawan777@gmail.com', 5, NULL, 9),
-('93.023.363', '307', '$2y$12$9WNhyKkRb0IdxUIIWLBiwePtLqhpva13DBCpOKOlcrmKryi7o/tre', 'RISTA RIZKI ASRI TRIAN', '28', '2022-05-11', '-', '2', '8', '2', '3202155701930002', 'BOGOR', '1993-01-17', '653391862405000', 'Islam', 'P', 'Kp.Parakansalak Rt/Rw.002/002 Desa.Parakansalak Kec.Parakansalak Kab.Sukabumi', NULL, '081563407928', 'ristatrian93@gmail.com', 5, NULL, 9);
+('93.021.350', '305', '$2y$12$0TPpENYLeVh3CAawGuY6/OzA3xvHAaIkc2HDlAmQEwobG8EfULPmW', 'MUHAMMAD SATRIA DARMAWAN, S T.', '23', '2019-07-01', 'C/I', '2', '8', '1', '3202291102930001', 'Sukabumi', '1993-02-11', '761433358405000', 'Islam', 'L', 'Kp Cikaroya Kidul 019/003 Desa Gunung Jaya Kecamatan Cisaat Kabupaten Sukabumi - 41352', NULL, '085793976664', 'msatriadarmawan777@gmail.com', 5, NULL, 9);
 INSERT INTO `pegawai` (`id_pegawai`, `kode_cabang`, `password`, `nama`, `id_jabatan`, `tgl_kerja`, `pang_gol`, `id_marital`, `id_pendidikan`, `id_status`, `nik`, `tempat_lahir`, `tgl_lahir`, `npwp`, `agama`, `jk`, `alamat`, `foto_profil`, `no_telp`, `email`, `kode_akses`, `remember_token`, `role_id`) VALUES
+('93.023.363', '307', '$2y$12$9WNhyKkRb0IdxUIIWLBiwePtLqhpva13DBCpOKOlcrmKryi7o/tre', 'RISTA RIZKI ASRI TRIAN', '28', '2022-05-11', '-', '2', '8', '2', '3202155701930002', 'BOGOR', '1993-01-17', '653391862405000', 'Islam', 'P', 'Kp.Parakansalak Rt/Rw.002/002 Desa.Parakansalak Kec.Parakansalak Kab.Sukabumi', NULL, '081563407928', 'ristatrian93@gmail.com', 5, NULL, 9),
 ('94.013.262', '300', '$2y$12$bp4Qet5s3V1bKzEHo9edQ.hGv/jZaB7CFSWKfHPEhh7TqmSFiGKqa', 'SITI ROMLAH MAESAROH', '16', '2013-07-01', 'C/I', '6', '8', '1', '3272035604940021', 'Sukabumi', '1994-04-16', '553555723405000', 'Islam', 'P', 'Jl.Pasir Berkah II No 11 Rt/Rw.001/006 Desa.Nanggeleng Kec.Citamiang Kota Sukabumi', NULL, '085723325221', 'sitiromlahmaesaroh331@gmail.com', 5, NULL, 9),
 ('94.015.303', '308', '$2y$12$7xlgkWSoxfYKKLDp1QkZyu7abSt9Syvuju3EHiKsDVj8arFNmxX/e', 'FEBI FEBRIANI', '28', '2015-01-12', 'B/IV', '7', '6', '1', '3202344402940002', 'Sukabumi', '1994-02-04', '0722243227405000', 'Islam', 'P', 'Kp.Babakan Rt/Rw.001/004 Desa.Jambenenggang Kec.Kebonpedes Kab.Sukabumi', NULL, '085762956126', 'febrianifee94@gmail.com', 5, NULL, 9),
 ('94.018.327', '301', '$2y$12$jkoaDJ9rUVgLgIeoAdm0/uBgKIXzbDCcWgBQwj.bsBivTmqtlJPxO', 'FUNGKI TASIA SUCIANTI, S.Ab', '28', '2000-01-01', 'C/II', '6', '8', '1', '3202335810940007', 'sukabumi', '1994-10-18', '0825808892405000', 'Islam', 'P', 'Jl.Pembangunan-Cikaret Rt/Rw.005/006 Desa.Babakan Kec.Cibeureum Kota.Sukabumi', NULL, '085793929735', 'fungki.TS@gmail.com', 5, NULL, 9),
-('94.019.335', '300', '$2y$12$QKJOvkc3NlCPaEm9BCNrAePGuiATf8qBBHBmu5RX80wy27Zv4uuKe', 'TAUPIK HARTANTO', '16', '2019-01-01', 'C/I', '7', '9', '1', '3202292709940006', 'Sukabumi', '1994-09-27', '854184843405000', 'Islam', 'L', 'Perum baros kencana blok 5, no 3, kelurahan baros, kecamatan baros, kota sukabumi', NULL, '085798697583', 'divpem27@gmail.com', 5, NULL, 7),
+('94.019.335', '300', '$2y$12$EgE0K/2l5xhIIsJfVeyPxOpF5O3Xst51wAaPRMsX3y.4RvDaEUPeu', 'TAUPIK HARTANTO', '59', '2019-01-01', 'C/I', '7', '9', '1', '3202292709940006', 'Sukabumi', '1994-09-27', '854184843405000', 'Islam', 'L', 'Perum baros kencana blok 5, no 3, kelurahan baros, kecamatan baros, kota sukabumi', NULL, '085798697583', 'divpem27@gmail.com', 5, NULL, 7),
 ('94.022.358', '310', '$2y$12$7EvGeQ.OvZJK0.etxLjgR.Xht/xGbxYQl1bDNIp5Gw23XnqfyNZnC', 'Saepul Ahmad', '23', '2021-01-02', 'C/I', '6', '8', '1', '3202272307940001', 'Sukabumi', '1994-07-23', '412800542405000', 'Islam', 'L', 'Tegal Panjang Rt/Rw.003/002 Desa.Cikundul Kec.Lembursitu Kota Sukabumi', NULL, '081386089553', 'saepulahmad1994@gmail.com', 5, NULL, 9),
 ('95.015.318', '311', '$2y$12$3z6QYVQzy2I9O9Nciiyp9OfUDwMhrxKHU5GJH/Un9F.Z3tz4S6Lka', 'RIFKY JANUAR PRATAMA', '23', '2015-04-01', 'B/II', '5', '6', '1', '3202161701950007', 'Sukabumi', '1995-01-17', '722201597405000', 'Islam', 'L', 'Bumi Pakuwon Regency Blok Tulip 3 No 12 Desa Sundawenang Kecamatan Parungkuda', NULL, '082116267379', 'rifkyjanuarpratama1@gmail.com', 5, NULL, 9),
-('95.018.324', '300', '$2y$10$Wt.zBhZkB9YS3Iu7TAlDC.w32T7EDgzqsXWB8HDkvFCsSuWztdYAG', 'NINA RISTANTI', '41', '2018-05-18', 'B/III', '1', '6', '1', '3202366950001', 'Sukabumi', '1995-12-26', '00002222', 'Islam', 'P', 'Puri Cibeureum Permai I Blok VIII No 14 Cibeureum Kota Sukabumi', NULL, '081381591941', 'ninaristanti45@gmail.com', 2, NULL, 9),
-('95.018.330', '300', '$2y$12$VKM3Cq0Gi8iUzaVVe/odbOIea6ysTjTH4CiFoFI0zaJYGR.dmzZlC', 'YUNI SARAH', '27', '2018-05-01', 'B/I', '6', '3', '1', '3272056806950899', 'Sukabumi', '2019-08-20', '804965069405000', 'Islam', 'P', 'Sudajaya Rt/Rw.002/002 Desa.Jayaraksa Kec.Baros Kota Sukabumi', NULL, '085172488518', 'yunisarah0302@gmail.com', 5, NULL, 9),
-('95.019.337', '313', '$2y$12$stjUAIKtHBNVdUpi64dPbeMU/eK8uVTQz53CibdSIZCcRVfPInVSa', 'INDRI YULIA', '28', '2018-07-02', 'B/II', '6', '6', '1', '3202126107950002', 'Sukabumi', '1995-07-21', '844223859405000', 'Islam', 'P', 'Kp.Nagrak Rt/Rw.003/006 Desa.Nagrak Selatan Kec.Nagrak Kab.Sukabumi', NULL, '081314767861', 'yuliaindri2195@gmail.com', 5, NULL, 9),
-('95.019.339', '302', '$2y$12$lZ1rIWHekop.brhvmoUck.e3wO/9oToiprmpPvjhs70PC0j6dVVvC', 'YULI WULANDARI', '27', '2018-06-20', 'C/I', '6', '8', '1', '3202336801950003', 'Sukabumi', '1995-07-28', '849859350405000', 'Islam', 'P', 'Jl pasir sejahtera no 100 rt 004/008 kel nanggeleng Kec citamiang kota sukabumi', NULL, '0816877647', 'yuliw161@gmail.com', 5, NULL, 9),
+('95.018.324', '300', '$2y$12$5e9ph3aAehCYIxs2T5vd4O.QLP5insYDLvqKyNimG98.rFHfLhiSm', 'NINA RISTANTI', '41', '2018-05-18', 'B/III', '1', '6', '1', '3202366950001', 'Sukabumi', '1995-12-26', '00002222', 'Islam', 'P', 'Puri Cibeureum Permai I Blok VIII No 14 Cibeureum Kota Sukabumi', NULL, '081381591941', 'ninaristanti45@gmail.com', 2, NULL, 9),
+('95.018.330', '300', '$2y$12$VKM3Cq0Gi8iUzaVVe/odbOIea6ysTjTH4CiFoFI0zaJYGR.dmzZlC', 'YUNI SARAH', '60', '2018-05-01', 'B/I', '6', '3', '1', '3272056806950899', 'Sukabumi', '1995-06-28', '804965069405000', 'Islam', 'P', 'Sudajaya Rt/Rw.002/002 Desa.Jayaraksa Kec.Baros Kota Sukabumi', NULL, '085172488518', 'yunisarah0302@gmail.com', 5, NULL, 9),
+('95.019.337', '305', '$2y$12$stjUAIKtHBNVdUpi64dPbeMU/eK8uVTQz53CibdSIZCcRVfPInVSa', 'INDRI YULIA', '28', '2018-07-02', 'B/II', '6', '6', '1', '3202126107950002', 'Sukabumi', '1995-07-21', '844223859405000', 'Islam', 'P', 'Kp.Nagrak Rt/Rw.003/006 Desa.Nagrak Selatan Kec.Nagrak Kab.Sukabumi', NULL, '081314767861', 'yuliaindri2195@gmail.com', 5, NULL, 9),
+('95.019.339', '301', '$2y$12$lZ1rIWHekop.brhvmoUck.e3wO/9oToiprmpPvjhs70PC0j6dVVvC', 'YULI WULANDARI', '1003', '2018-06-20', 'C/I', '6', '8', '1', '3202336801950003', 'Sukabumi', '1995-07-28', '849859350405000', 'Islam', 'P', 'Jl pasir sejahtera no 100 rt 004/008 kel nanggeleng Kec citamiang kota sukabumi', NULL, '0816877647', 'yuliw161@gmail.com', 5, NULL, 9),
 ('96.019.340', '304', '$2y$12$Vw9QgXtmWVzGYrcELyfOhOMkqZuA1H2R9oPSIuE5Se4mK0F6vzb2u', 'Aldi Risaldi', '39', '2018-06-25', 'B/I', '5', '3', '1', '3202101709960006', 'Sukabumi', '1996-09-17', '0855031167405000', 'Islam', 'L', 'Perum Cikembar Residence Blok B1 No. 37 Rt 001 Rw 016 Des. Cikembar Kec. Cikembar Kab. Sukabumi.', '68c69085a2d63.jpeg', '085871122434', 'didyrisaldy17@gmail.com', 5, NULL, 9),
 ('96.021.349', '307', '$2y$12$nfQDcAxqHnvmB8fn1uDIZudz7U/LFFFD8frCBko/YNFxDcOZF6l1i', 'Ardi Restu Fauzi Mardiani', '38', '2019-12-03', 'B/II', '6', '6', '1', '3202131703960003', 'Sukabumi', '1996-03-17', '0704553379405000', 'Islam', 'L', 'Kp.Cibeuncoy Rt/Rw.001/001 Desa.Mangkalaya Kec.Gunungguruh Kab.Sukabumi,43156.', '68ca0a4526ff2.jpeg', '081357666647', 'ardirestufauzimardiani@gmail.com', 5, NULL, 9),
 ('96.022.355', '312', '$2y$12$WqtH93ujyR1d/K8HiWsr0OVkAkhh/WKe4KWP.843p67TWwAUWd/Ke', 'Eva Purnamasari', '27', '2020-12-28', 'C/I', '6', '8', '1', '3203055202960003', 'Sukabumi', '1996-02-12', '0923226500406000', 'Islam', 'P', 'Kp.Pasanggrahan  Rt/Rw.002/001 Desa.Ciranjang Kec.Ciranjang  Cianjur', NULL, '085880504939', 'purnamasarieva12@gmail.com', 5, NULL, 9),
@@ -1514,7 +1600,7 @@ INSERT INTO `pegawai` (`id_pegawai`, `kode_cabang`, `password`, `nama`, `id_jaba
 ('98.025.370', '300', '$2y$12$OcLBRVIyY2OWNNwioPK1CO9l40i25Zn3ju1CFMOwoY4Pw4Lkl4tA2', 'Astrie Khaerannisa', '36', '2023-05-23', 'C/I', '1', '8', '3', '3202356106980002', 'Sukabumi', '1998-06-21', '0639293836405000', 'Islam', 'P', 'Kp. Gandasoli RT 002 RW 010 Des. Cipurut Kec. Cireunghas Kab. Sukabumi, 43193.', '68ccad8389f69.jpg', '081282408198', 'astrie.kh@gmail.com', 5, NULL, 9),
 ('99.021.346', '311', '$2y$12$qYyKELb0JFLZv6evcvC7n.C9gRiem/2evZZXSiuHq0gjhjS2aXv.e', 'FERDY PUTRA DEWANA', '39', '2021-01-01', 'B/I', '1', '3', '1', '3202101202990001', 'Sukabumi', '1999-02-02', '0931348346405000', 'Islam', 'L', 'KPR BTN Parakanlima Rt/Rw.002/010 Desa.Kertaraharja Kec.Cikembar Kab.Sukabumi', NULL, '087716901279', 'ferdyxdfiction@gmail.com', 5, NULL, 9),
 ('99.022.356', '305', '$2y$12$bco2gZ9XZdPKOHBxIGNzbuvs3vzNfuQbgDy.qF8JgVFO4PT8ellfi', 'INDAH CANDRA', '38', '2021-01-01', 'B/I', '1', '8', '1', '3202114404990007', 'Sukabumi', '1999-04-04', '413115254405000', 'Islam', 'P', 'Kp.Pasar Rt/Rw.004/003 Desa.Karangtengah Kec.Cibadak Kab.Sukabumi', NULL, '081296725276', 'indahchandra78@gmail.com', 5, NULL, 9),
-('99.025.369', '300', '$2y$12$54eWQEBXJiyaO0BMg0dY1.31TofJ3K.oaAvHHhzXX5AE9Es/EC1lS', 'Diyo Sukma Pradana', '44', '2023-05-25', 'C/I', '1', '8', '3', '3202100707990001', 'Sukabumi', '1999-07-07', '0402817068405000', 'Islam', 'L', 'KP SUKAMANTRI RT.004 RW. 008 DESA CIKEMBAR KEC. CIKEMBAR', '68fb35b6628d1.jpg', '082299714523', 'diyosukmapradana@gmail.com', 5, NULL, 9),
+('99.025.369', '300', '$2y$12$LdgIJhrxr1Oo9EsQeXYJg.iPeuG3oCuUK7fxUxoOg/M/CqR1l7TWS', 'Diyo Sukma Pradana', '44', '2023-05-25', 'C/I', '1', '8', '3', '3202100707990001', 'Sukabumi', '1999-07-07', '0402817068405000', 'Islam', 'L', 'KP SUKAMANTRI RT.004 RW. 008 DESA CIKEMBAR KEC. CIKEMBAR', '68fb35b6628d1.jpg', '082299714523', 'diyosukmapradana@gmail.com', 5, NULL, 9),
 ('D1', '300', '$2y$12$c2TeFbr3Yd/KzifN4.d1HOVthKhxjGpUeZOTnXk9Th1gBZXZXKpGe', 'UDUNG', '1', '2024-01-01', '-', '8', '8', '3', '3202150108720001', 'Tasikmalaya', '1972-08-01', '497244186405000', 'Islam', 'L', 'Kp.Pajagan Rt/Rw.001/003 Desa.Parakansalak Kec.Parakansalak Kab.Sukabumi', NULL, '085776312520', 'udungtsm@gmail.com', 3, NULL, 2),
 ('D2', '300', '$2y$12$61mCjx9b1Ox1x3.hO.ciF.Nuw.1aOYZOMcpTg6f3mKV5RigoyAF8K', 'EKA JATNIKA', '52', '2024-09-01', '-', '6', '8', '3', '3272070312720001', 'Sukabumi', '1971-02-03', '079220430405000', 'Islam', 'L', 'Puri Cibeureum Permai Blok IX No.18 RT/Rw.002/010 Desa.Cibeureum Hilir Kec.Cibeureum Kota Sukabumi', NULL, '085860677621', 'ekajatnika1@gmail.com', 3, NULL, 2),
 ('TKK002', '300', '$2y$12$zxto/TR/hX1ef04rEWg3YOuRkiy2ELLy9gWJUaDXOAgYMwV8aEKxy', 'Adjeng Nuzulmi', '26', '2023-05-23', '-', '1', '6', '3', '3202295312950005', 'Sukabumi', '1995-12-13', '037278298405000', 'Islam', 'P', 'PERUM CIGUNUNG INDAH  051/022 Desa Sukaresmi Kec Cisaat', '68c6308080645.jpeg', '081563100779', 'anzulmi13@gmail.com', 5, NULL, 9),
@@ -1528,7 +1614,9 @@ INSERT INTO `pegawai` (`id_pegawai`, `kode_cabang`, `password`, `nama`, `id_jaba
 ('TKK012', '300', '$2y$12$5UcIaExQmJSRtERPOzV7/eA/FJZMaJ7q6ZcASVSGCAGrJTfXnEr7q', 'Lailly Siti Awaliyah', '42', '2023-05-25', '-', '1', '8', '3', '3202124803990004', 'Sukabumi', '1999-03-08', '934217589405000', 'Islam', 'P', 'KP. CIBODAS', NULL, '081296495153', 'laillysawal@gmail.com', 5, NULL, 9),
 ('TKK013', '312', '$2y$12$U09XO/58OeCXH2YuHoOi.u7JpbL12xEl0wz5ZkgAzxkT4ll9XCQOC', 'Rio Subradinata', '39', '2000-01-13', '-', '5', '3', '3', '3202290904980003', 'Sukabumi', '1998-04-09', '854901154405000', 'Islam', 'L', 'KP. Rambay Wetan Rt/Rw 017/006 Desa Sukamantri Kec.Cisaat Kab.Sukabumi', NULL, '081382786851', 'riosubradinata9@gmail.com', 5, NULL, 9),
 ('TKK014', '308', '$2y$12$PcQvVhC2IZodERGtG.IOV.4QvHk3dZhdtdhZ4dWpGn4M2NU8nMAka', 'Tresna Gumilar', '39', '2023-05-23', '-', '5', '3', '3', '3202320203990001', 'Sukabumi', '1999-03-02', '855298022405000', 'Islam', 'L', 'KP.KARAWANG WETAN RT 002 RW 002 DESA KARAWANG KEC KARAWANG KAB SUKABUMI 43151', NULL, '087869688543', 'tresnagumilar420@gmail.com', 5, NULL, 9),
-('TKK015', '307', '$2y$12$QBd4t6.VsCajzo.d70fUVu4AnSHsMG1cNDS2KOGT/RVqXrzfywEF2', 'Vira Febriani Safitri', '27', '2023-05-25', '-', '6', '8', '3', '3272035902000002', 'Sukabumi', '2000-02-19', '909721565405000', 'Islam', 'P', 'PERUM PURI SEKARWANGI BLOK C4 NO 15 CIBADAK', NULL, '087734693008', 'virafs170@gmail.com', 5, NULL, 9);
+('TKK015', '307', '$2y$12$QBd4t6.VsCajzo.d70fUVu4AnSHsMG1cNDS2KOGT/RVqXrzfywEF2', 'Vira Febriani Safitri', '27', '2023-05-25', '-', '6', '8', '3', '3272035902000002', 'Sukabumi', '2000-02-19', '909721565405000', 'Islam', 'P', 'PERUM PURI SEKARWANGI BLOK C4 NO 15 CIBADAK', NULL, '087734693008', 'virafs170@gmail.com', 5, NULL, 9),
+('TKK016', '300', '$2y$12$y.uWModUDpX.J6rgrZnJ8OYIyvlhQdnjXdSIH1wlFwEIyEn0sUETe', 'Irlan Fazryana Rahman', '44', '2025-08-28', '-', '1', '8', '3', '3202322311990001', 'Sukabumi', '1999-11-23', '320232231190001', 'Islam', 'L', 'Kp. Selaawi Rt 014 Rw 004 Des. Warnasari Kec. Sukabumi, Kab. Sukabumi.', NULL, '089603928744', 'irlanfazrayanatax23@gmail.com', NULL, NULL, 9),
+('TKK017', '300', '$2y$12$./Mkfd8bj6G8J82lN1RL3OMVu9o1WEDDZCAqffPz3sFFtvwuLtExu', 'Rafli Tri Suhendar', '36', '2025-08-28', '-', '6', '6', '3', '3202163004940003', 'Sukabumi', '1994-04-30', '0805364742405000', 'Islam', 'L', 'Perum Bukit Gedung Putih Rt 005 Rw 005 Des. Purwasari Kec. Cicurug Kab. Sukabumi.', '692e4231b2313.jpeg', '081617590180', 'raflitrisuhendar123@gmail.com', NULL, NULL, 9);
 
 -- --------------------------------------------------------
 
@@ -1652,7 +1740,7 @@ INSERT INTO `pekerjaan` (`id_pekerjaan`, `id_pegawai`, `nama_instansi`, `jabatan
 (151, 'TKK014', 'PT HOME CREDIT INDONESIA', 'CLUSTER SUPERVISOR', 'SUKABUMI', '2018', '2019', 'eksternal', NULL, NULL),
 (152, 'TKK014', 'PT PRUDENTIAL LIFE INSSURANCE', 'CALL CENTER', 'JAKARTA', '2019', '2020', 'eksternal', NULL, NULL),
 (153, 'TKK014', 'PT BANK MEGA SYARIAH', 'CALL CENTER', 'JAKARTA', '2020', '2022', 'eksternal', NULL, NULL),
-(154, '96.023.362', 'PERUMDA BPR Sukabumi', 'Staff Dana/ Funding officer ', 'Cab.Baros', '2024', '2024', 'internal', NULL, NULL),
+(154, '96.023.362', 'PERUMDA BPR Sukabumi', 'Staff Dana/ Funding officer', 'Cab.Baros', '2024', '2025', 'internal', NULL, NULL),
 (155, '91.022.353', 'PERUMDA BPR SUKABUMI', 'STAFF ANALIS KREDIT', 'SUKABUMI', '2021', '', 'internal', NULL, NULL),
 (156, '91.022.353', '', '', '', '', '', 'eksternal', NULL, NULL),
 (159, '95.018.324', 'PERUMDA BPR SUKABUMI', 'Staff Administrasi Div. Pemasaran', 'Sukabumi', '2018', '2022', 'internal', NULL, NULL),
@@ -1727,7 +1815,7 @@ INSERT INTO `pekerjaan` (`id_pekerjaan`, `id_pegawai`, `nama_instansi`, `jabatan
 (270, '93.019.332', 'Perumda BPR Sukabumi', 'AO', 'Cisolok', '2017', '2024', 'internal', NULL, NULL),
 (271, 'TKK015', 'PERUMDA BPR SUKABUMI', 'CUSTOMER SERVICE', 'BPR CISOLOK', '2023', '2024', 'internal', NULL, NULL),
 (272, 'TKK015', 'PERUMDA BPR SUKABUMI', 'CUSTOMER SERVICE', 'BPR CISOLOK', '2023', '2024', 'internal', NULL, NULL),
-(273, '93.013.259', 'PERUMDA BPR SUKABUMI', 'STAF ( TELLER )', 'CABANG BAROS', '2023', '2024', 'internal', NULL, NULL),
+(273, '93.013.259', 'PERUMDA BPR SUKABUMI', 'STAF ( TELLER )', 'CABANG BAROS', '2023', '2025', 'internal', NULL, NULL),
 (275, '82.013.273', 'PT. BERSAMA  LEMINDO ABADI', 'Kabag Ekspedisi', 'BOGOR', '2003', '2008', 'eksternal', NULL, NULL),
 (276, '82.013.273', 'PT. SINAR SAKTI JAYA', 'Plan Production & Inventory Control', 'BOGOR', '2010', '2012', 'eksternal', NULL, NULL),
 (277, '82.013.273', 'PT. BARKAH JAYA MANDIRI', 'Inventory Control', 'SUKABUMI', '2012', '2013', 'eksternal', NULL, NULL),
@@ -1786,12 +1874,12 @@ INSERT INTO `pekerjaan` (`id_pekerjaan`, `id_pegawai`, `nama_instansi`, `jabatan
 (356, '89.015.319', 'PERUMDA BPR Sukabumi Cabang Nyalindung', 'Staff', 'Nyalindung', '2019', '2020', 'internal', 'SK MUTASI Nomor : 040/SK/DIR/VIII/2019', '690024512e194_1761616977.pdf'),
 (357, '89.015.319', 'PERUMDA BPR Sukabumi Cabang Cicurug', 'Account Officer', 'Cicurug', '2020', '2022', 'internal', 'SK MUTASI Nomor : 012/SK/DIR/II/2020', '6900248e364a3_1761617038.pdf'),
 (359, '91.013.272', 'PT. COLUMBIA', 'Kepala Counter', 'Sukabumi', '2010', '2011', 'eksternal', NULL, NULL),
-(361, '73.004.156', 'PD. BPR. SUKABUMI', 'KEPALA KANTOR KAS', 'KANTOR CABANG SUKABUMI', '2008', '2011', 'eksternal', NULL, NULL),
-(362, '73.004.156', 'PD. BPR. SUKABUMI', 'KEPALA KANTOR KAS CARINGIN', 'KANTOR CABANG CIBADAK', '2011', '2015', 'eksternal', NULL, NULL),
-(363, '73.004.156', 'PD. BPR. SUKABUMI', 'KEPALA KANTOR KAS PELITA', 'KANTOR CABANG SUKABUMI', '2015', '2015', 'eksternal', NULL, NULL),
-(364, '73.004.156', 'PD. BPR. SUKABUMI', 'KASIE ADM DAN UMUM', 'KANTOR CABANG CIKEMBAR', '2015', '2019', 'eksternal', NULL, NULL),
-(365, '73.004.156', 'PERUMDA BPR SUKABUMI', 'KASIE PEMASARAN', 'KANTOR PUSAT OPERASIONAL', '2019', '2022', 'internal', NULL, NULL),
-(367, '73.004.156', 'PERUMDA BPR SUKABUMI', 'PLT KANTOR CABANG NYALINDUNG', 'KANTOR CABANG NYALINDUNG', '2023', '2024', 'internal', NULL, NULL),
+(361, '73.004.156', 'PD BPR Sukabumi Kantor Unit Operasional', 'Kepala Kantor Kas Selabintana', 'Sukabumi', '2010', '2011', 'internal', 'SK MUTASI Nomor : 006/SK/DIR/I/2010', '6916d7e6cc8bd_1763104742.pdf'),
+(362, '73.004.156', 'PD. BPR Sukabumi  Kantor Cabang Cibadak', 'Kepala Kantor Kas Caringin', 'Cibadak', '2011', '2015', 'internal', 'SK MUTASI Nomor : 042/SK/DIR/IX/2011', '6916d9a8d8156_1763105192.pdf'),
+(363, '73.004.156', 'PD. BPR Sukabumi KantorUnit Operasional', 'Kepala Kantor Kas Pelita', 'Sukabumi', '2015', '2015', 'internal', 'SK MUTASI Nomor : 012/SK/DIR/II/2015', '6916d8e3975cd_1763104995.pdf'),
+(364, '73.004.156', 'PD. BPR Sukabumi Cabang Cikembar', 'Kepala Seksi Adm. Umum & Keuangan', 'Cikembar', '2015', '2019', 'internal', 'SK MUTASI Nomor : 022/SK/DIR/VI/2015', '6916d9451c403_1763105093.pdf'),
+(365, '73.004.156', 'PD. BPR Sukabumi Cabang Cikembar', 'Kepala Seksi Pemasaran', 'Cikembar', '2018', '2019', 'internal', 'SK MUTASI Nomor : 031/SK/DIR/VII/2018', '6916da386ccf4_1763105336.pdf'),
+(367, '73.004.156', 'PERUMDA BPR Sukabumi Cabang Nyalindung', 'Plt. Kepala Kantor Cabang', 'Nyalindung', '2023', '2024', 'internal', 'SK PENUNJUKAN Nomor : 014/SK/DIR/II/2023', '6916db8f26cca_1763105679.pdf'),
 (369, '92.015.315', 'PT GUNUNG SALAK', 'QC FINISHING', 'GARMEN', '2011', '2011', 'eksternal', NULL, NULL),
 (370, '92.015.315', 'TOSERBA YOGYA CIANJUR', 'SPG', 'TOKO ', '2011', '2012', 'eksternal', NULL, NULL),
 (372, '92.015.315', 'PERUMDA BPR SUKABUMI', 'STAFF', 'SUKABUMI', '2015', '2024', 'internal', NULL, NULL),
@@ -1819,11 +1907,11 @@ INSERT INTO `pekerjaan` (`id_pekerjaan`, `id_pegawai`, `nama_instansi`, `jabatan
 (430, '85.010.244', 'PERUMDA BPR SUKABUMI', 'AO', 'CABANG CIKEMBAR', '2020', '', 'internal', NULL, NULL),
 (431, '85.010.244', 'PELANGI', 'FREELANCE', 'SUKABUMI', '2005', '2006', 'eksternal', NULL, NULL),
 (432, '85.010.244', 'PELANGI', 'FREELANCE', 'SUKABUMI', '2005', '2006', 'eksternal', NULL, NULL),
-(433, '71.095.110', 'INSPEKTORAK BKPD/LPK SUKABUMI', 'STAF', 'ISNPEKTORAT BKPD/LPK', '1995', '1998', 'eksternal', NULL, NULL),
-(435, '71.095.110', 'PD BPR SUKABUMI ', 'KASI PEMASARAN', 'CABANG CIKEMBAR', '1998', '2010', 'internal', NULL, NULL),
-(436, '71.095.110', 'PD BPR SUKABUMI', 'KASI PEMASARAN', 'KANTOR UNIT OPERASIONAL', '2010', '2013', 'internal', NULL, NULL),
-(437, '71.095.110', 'PD BPR SUKABUMI ', 'KASI PEMASARAN', 'CABANG CIBADAK', '2013', '2019', 'internal', NULL, NULL),
-(439, '71.095.110', 'PERUMDA BPR SUKABUMI', 'KEPALA CABANG', 'CABANG SAGARANTEN', '2020', '2023', 'internal', NULL, NULL),
+(433, '71.095.110', 'Sekretariat Dewan Pengawas PD.BPR Sukabumi', 'Staff', 'Sukabumi', '1995', '1999', 'internal', 'Surat Perjanjian Kontrak Nomor : 800/243/Insp.BKPD-LPK/Si/XI/1995', '691e83b0d201b_1763607472.pdf'),
+(435, '71.095.110', 'PD. BPR Sukabumi Cabang Cikembar', 'Staff', 'Cikembar', '1999', '2004', 'internal', 'SURAT PERINTAH Nomor : 256/DP-PD.BPR/1999', '691e9907b0db6_1763612935.pdf'),
+(436, '71.095.110', 'PD. BPR Sukabumi Cabang Cikembar', 'Admin Kredit', 'Cikembar', '2004', '2007', 'internal', 'SK Nomor : 01/SK/DIR/X/2004', '691e9999870d4_1763613081.pdf'),
+(437, '71.095.110', 'PD. BPR Sukabumi Cabang Cikembar', 'Kepala Seksi Pemasaran', 'Cikembar', '2007', '2012', 'internal', 'SK Nomor : 015/SK/DIR/VIII/2007', '691e9cedceccc_1763613933.pdf'),
+(439, '71.095.110', 'PD. BPR Sukabumi Cabang Cibadak', 'Kepala Seksi Pemasaran', 'Cibadak', '2013', '2019', 'internal', 'SK Mutasi Nomor : 043/SK/DIR/VIII/2013', '691ead57b074b_1763618135.pdf'),
 (442, '75.096.097', 'BKPD Kec. Parungkuda (BPR Sukabumi Cabang Parungkuda)', 'Staff', 'Parungkuda', '1996', '2004', 'internal', 'SURAT PERINTAH Nomor : 186/SP.Insp.BKPD-LPK/Si/IX/1996', '68ff1988d418f_1761548680.pdf'),
 (443, '75.096.097', 'BPR Sukabumi Cabang Parungkuda', 'Kasie. Operasional', 'Sukabumi', '2004', '2010', 'internal', NULL, NULL),
 (444, '75.096.097', 'BPR Sukabumi Cabang Sukaraja', 'Kasie. Umum', 'Sukabumi', '2010', '2011', 'internal', NULL, NULL),
@@ -1942,14 +2030,14 @@ INSERT INTO `pekerjaan` (`id_pekerjaan`, `id_pegawai`, `nama_instansi`, `jabatan
 (605, 'TKK002', 'PERUMDA BPR SUKABUMI', 'SEKRETARIS', 'SUKABUMI', '2023', '2023', 'internal', NULL, NULL),
 (606, '77.000.135', 'PD BPR CISAAT', 'STAF DÃ€NA', 'CISAAT', '2000', '2004', 'eksternal', NULL, NULL),
 (607, '77.000.135', 'PD BPR SUKABUMI CABANG CISAAT', 'STAF ADM DANA', 'CISAAT', '2004', '2009', 'internal', NULL, NULL),
-(608, '77.000.135', 'PD BPR SUKABUMI CABANG SAGARANTEN', 'STAF', 'SAGARANTEN', '2009', '2014', 'internal', NULL, NULL),
+(608, '77.000.135', 'PD BPR SUKABUMI CABANG SAGARANTEN', 'STAF', 'SAGARANTEN', '2009', '2014', 'internal', NULL, NULL);
+INSERT INTO `pekerjaan` (`id_pekerjaan`, `id_pegawai`, `nama_instansi`, `jabatan`, `tempat_kerja`, `tahun_mulai_kerja`, `tahun_akhir_kerja`, `jenis_pekerjaan`, `keterangan`, `upload_dokumen`) VALUES
 (609, '77.000.135', 'PD BPR SUKABUMI CABANG SAGARANTEN', 'KA KAS CURUGKEMBAR', 'SAGARANTEN', '2014', '2015', 'internal', NULL, NULL),
 (610, '77.000.135', 'PD BPR SUKABUMI CABANG SAGARANTEN', 'KASIE PEMASARAN', 'SAGARANTEN', '2015', '2015', 'internal', NULL, NULL),
 (611, '77.000.135', 'PD BPR SUKABUMI CABANG SAGARANTEN', 'KA KAS PABUARAN', 'SAGARANTEN', '2015', '2023', 'internal', NULL, NULL),
 (612, '77.000.135', 'PD BPR SUKABUMI CABANG SAGARANTEN', 'KASIE ADM & UMUM', 'SAGARANTEN', '2023', '2023', 'internal', NULL, NULL),
 (613, '92.018.326', 'PT.BIBA MULTIJAYA ', 'SPG', 'YOGYA DEPT STORE', '2011', '2017', 'eksternal', NULL, NULL),
-(614, '92.018.326', 'PERUMDA BPR SUKABUMI', 'CUSTOMER SERVICE ', 'CABANG CICURUG', '2017', '2018', 'internal', NULL, NULL);
-INSERT INTO `pekerjaan` (`id_pekerjaan`, `id_pegawai`, `nama_instansi`, `jabatan`, `tempat_kerja`, `tahun_mulai_kerja`, `tahun_akhir_kerja`, `jenis_pekerjaan`, `keterangan`, `upload_dokumen`) VALUES
+(614, '92.018.326', 'PERUMDA BPR SUKABUMI', 'CUSTOMER SERVICE ', 'CABANG CICURUG', '2017', '2018', 'internal', NULL, NULL),
 (615, '92.018.326', 'PD. BPR Sukabumi Cabang Cibadak', 'Customer Service', 'Cibadak', '2018', '2020', 'internal', 'SURAT TUGAS NO. 002/Div-Umum/ST/TKK/I/2018', '68d5fdbd60735_1758854589.pdf'),
 (616, '92.018.326', 'PERUMDA BPR Sukabumi Cabang Cikembar', 'Teller', 'Cikembar', '2020', '2025', 'internal', 'SK MUTASI NO. 012/SK.DIR/II/2020', '68d5fefa9cf5e_1758854906.pdf'),
 (617, '77.006.187', 'CV. Bintang Utama Karya', 'Surveyor', 'Bandung', '2001', '2005', 'eksternal', NULL, NULL),
@@ -2012,8 +2100,8 @@ INSERT INTO `pekerjaan` (`id_pekerjaan`, `id_pegawai`, `nama_instansi`, `jabatan
 (678, '75.008.203', 'PERUMDA BPR SUKABUMI', 'STAFF MANRISK, KEPATUHAN, DAN APU PPT', 'KPNO', '2024', '2024', 'internal', NULL, NULL),
 (679, '95.018.330', 'BTPN SYARIAH ', 'Community Officer', 'NYALINDUNG,KAB SUKABUMI', '2016', '2016', 'eksternal', NULL, NULL),
 (680, '89.013.271', 'PERUMDA BPR SUKABUMI', 'STAF', 'JL SURYAKENCANA SUKABUMI', '2013', '2024', 'internal', NULL, NULL),
-(681, '70.093.051', 'BKPD Sagaranten', 'Bagian Kredit', 'Sagaranten', '1991', '1997', 'eksternal', NULL, NULL),
-(682, '70.093.051', 'Sekretariat Dewan Pengawas BPR Sukabumi', 'Kaur Umum dan Perencanaan', ' Jalan Ciaul Baru No. 26  Sukabumi', '1997', '2004', 'internal', NULL, NULL),
+(681, '70.093.051', 'BKPD Kec. Sagaranten (BPR Sukabumi Cabang Sagaranten)', 'Bagian Kredit', 'Sagaranten', '1993', '1998', 'internal', 'SURAT PERINTAH Nomor : 814/76/Ins.BKPD-LPK/Si/I/1993', '6912a9d85d481_1762830808.pdf'),
+(682, '70.093.051', 'Sekretariat Dewan Pengawas BPR Sukabumi', 'Kepala Urusan Umum dan Perencanaan', 'Sukabumi', '1999', '2004', 'internal', 'SK MUTASI Nomor : 820/SK.154/PD.BPR/1999', '6912ab0c21277_1762831116.pdf'),
 (683, '70.093.051', 'PD BPR Sukabumi', 'Kepala Bagian SDM', 'Jalan Suryakencana No. 51 Kota Sukabumi', '2004', '2009', 'internal', NULL, NULL),
 (685, '74.096.096', 'PERUMDA BPR SUKABUMI', 'KEPALA KANTOR KAS DEGUNG', 'KPO', '1996', '2024', 'internal', NULL, NULL),
 (686, '82.005.178', 'PD BPR SUKABUMI', 'staf', 'SUKABUMI', '2004', '2012', 'internal', NULL, NULL),
@@ -2035,10 +2123,10 @@ INSERT INTO `pekerjaan` (`id_pekerjaan`, `id_pegawai`, `nama_instansi`, `jabatan
 (703, '87.013.267', 'Pt.Cosmo Technology', 'Staff PPIC', 'Sukabumi', '2010', '2013', 'eksternal', NULL, NULL),
 (704, '86.022.357', 'BPR SUKABUMI', 'STAF REMEDIAL', 'KANTOR PUSAT ', '2023', '2024', 'internal', NULL, NULL),
 (705, '75.005.175', 'PERUMDA BPR SUKABUMI', 'KASIE PEMASARAN', 'CABANG JAMPANGKULON', '2019', '2024', 'internal', NULL, NULL),
-(706, '70.093.051', 'PD BPR Sukabumi Cabang Sagaranten', 'Pimpinan Cabang', 'Jalan Raya Sagaranten Sukabumi', '2009', '2018', 'internal', NULL, NULL),
-(707, '70.098.127', 'PERUMDA BPR SUKABUMI', 'ACCOUNT OFFICER', 'CABANG JAMPANGKULON', '2000', '2024', 'internal', NULL, NULL),
-(708, '70.093.051', 'PD BPR Sukabumi', 'Kepala UKK', 'Kantor pusat', '2018', '2024', 'internal', NULL, NULL),
-(709, '70.093.051', 'Perumda BPR Sukabumi', 'PE Remedial', 'Kantor Pusat', '2024', '2024', 'internal', NULL, NULL),
+(706, '70.093.051', 'PD BPR Sukabumi Cabang Sagaranten', 'Kepala Cabang', 'Sagaranten', '2009', '2018', 'internal', 'SK MUTASI Nomor : 30/SK/DIR/XII/2009', '6912ada5b8698_1762831781.pdf'),
+(707, '70.098.127', 'PD. BPR Sukabumi Cabang Jampangkulon', 'Account Officer', 'Jampangkulon', '2000', '2004', 'internal', 'SK Nomor : 075B/PD.BPR-JPK/IV/2000', '691562fa1be40_1763009274.pdf'),
+(708, '70.093.051', 'PD. BPR Sukabumi Kantor Pusat Non Operasional', 'Kepala UKK pada MR', 'Sukabumi', '2018', '2024', 'internal', 'SK MUTASI Nomor : 32/SK/DIR/VII/2018', '6912ae833896c_1762832003.pdf'),
+(709, '70.093.051', 'PERUMDA BPR Sukabumi Kantor Pusat Non Operasional', 'PE Remedial', 'Sukabumi', '2024', '2025', 'internal', 'SK MUTASI Nomor : 028/SK/DIR/VII/2024', '6912aed33a7fa_1762832083.pdf'),
 (712, '80.015.309', 'BPR SUKABUMI', 'STAF', 'KANTOR  PUSAT OPERASIONAL', '2015', '2024', 'internal', NULL, NULL),
 (713, '80.015.309', 'BPR SUKABUMI', 'ANALIS', 'KANTOR CABANG CIKEMBAR', '2024', '2024', 'internal', NULL, NULL),
 (715, '80.015.309', 'BPR SUKABUMI', 'ANALIS', 'KANTOR CABANG BAROS', '2024', '2024', 'internal', NULL, NULL),
@@ -2171,7 +2259,46 @@ INSERT INTO `pekerjaan` (`id_pekerjaan`, `id_pegawai`, `nama_instansi`, `jabatan
 (859, '82.005.169', 'PERUMDA BPR Sukabumi Kantor Pusat Non Operasional', 'Staff Remdial Hapus Buku & 3R', 'Sukabumi', '2025', '2025', 'internal', 'SK MUTASI Nomor 018/SK/DIR/III/2025', '6901a4b2f217f_1761715378.pdf'),
 (860, '88.015.301', 'BPR SUKABUMI', 'ACCOUNT OFFICER', 'CABANG SUKARAJA', '2014', '2020', 'internal', NULL, NULL),
 (861, '88.015.301', 'BPR SUKABUMI', 'ANALIS', 'CABANG PARUNGKUDA', '2020', '2021', 'internal', NULL, NULL),
-(862, '88.015.301', 'BPR SUKABUMI', 'KEPALA SEKSI OPERASIONAL DAN KEPATUHAN', 'CABANG JAMPANGKULON', '2021', '2025', 'internal', NULL, NULL);
+(862, '88.015.301', 'BPR SUKABUMI', 'KEPALA SEKSI OPERASIONAL DAN KEPATUHAN', 'CABANG JAMPANGKULON', '2021', '2025', 'internal', NULL, NULL),
+(863, '70.093.051', 'PERUMDA BPR Sukabumi Kantor Pusat Non Operasional', 'PE Manrisk, Kepatuhan, APU PPT & Perlindungan Konsumen', 'Sukabumi', '2025', '2025', 'internal', 'SK MUTASI Nomor : 060/SK/DIR/IX/2025', '6912b1d2d14b6_1762832850.pdf'),
+(864, '70.094.065', 'BKPD Kec. Jampangkulon (BPR Sukabumi Cabang Jampangkulon)', 'Staff', 'Jampangkulon', '1994', '1999', 'internal', 'SURAT PERINTAH Nomor : 132/SP.Insp.BKPD-LPK/Si/1994', '6912f4f5c04b9_1762850037.pdf'),
+(865, '70.094.065', 'PD. BPR Sukabumi Cabang Jampangkulon', 'Kepala Kantor Kas Surade', 'Surade', '2014', '2022', 'internal', 'SK MUTASI Nomor : 050/SK/DIR/XII/2014', '6912f5712f823_1762850161.pdf'),
+(866, '70.094.065', 'PERUMDA BPR Sukabumi Cabang Jampangkulon', 'Kasie Administrasi Umum & Keuangan', 'Surade', '2022', '2022', 'internal', 'SK MUTASI Nomor : 018/SK/DIR/V/2022', '6912f5c43a822_1762850244.pdf'),
+(867, '70.094.065', 'PERUMDA BPR Sukabumi Cabang Jampangkulon', 'Plt. kepala Cabang', 'Jampanngkulon', '2022', '2023', 'internal', 'SK Nomor : 020/SK/DIR/VI/2022', '6912f61b1ccb4_1762850331.pdf'),
+(868, '70.094.065', 'PERUMDA BPR Sukabumi Cabang Jampangkulon', 'Kepala Cabang', 'Jampangkulon', '2023', '2025', 'internal', 'SK MUTASI Nomor : 057/SK/DIR/X/2023', '6912f67bb28c7_1762850427.pdf'),
+(869, '70.098.127', 'PD. BPR Sukabumi Cabang Jampanngkulon', 'Supervisi', 'Jampangkulon', '2004', '2008', 'internal', 'SK MUTASI Nomor : 01/SK/DIR/2004', '691563c3616b2_1763009475.pdf'),
+(870, '70.098.127', 'PERUMDA BPR Sukabumi Cabang Jampangkulon', 'Account Officer', 'Jampangkulon', '2018', '2025', 'internal', 'SURAT TUGAS Nomor : 179/BPR/JPK/IX/2018', '6915647a4f259_1763009658.pdf'),
+(871, '70.098.127', 'PD. BPR Sukabumi Cabang Jampangkulon', 'Analis Kredit', 'Jampangkulon', '2008', '2018', 'internal', '-', NULL),
+(872, '73.004.156', 'Sekretariat Dewan Pengawas PD.BPR Sukabumi', 'Staff', 'Sukabumi', '2003', '2004', 'internal', 'SURAT PERINTAH Nomor : 20/Sekrt.DP.PD.BPR/2003', '6916d70201b0a_1763104514.pdf'),
+(873, '73.004.156', 'PD. BPR Sukabumi Kantor Unit Operasional', 'Kepala Seksi Pemasaran', 'Sukabumi', '2019', '2022', 'internal', 'SK MUTASI Nomor : 026/SK/DIR/III/2019', '6916da91bb336_1763105425.pdf'),
+(874, '73.004.156', 'PERUMDA BPR Sukabumi Cabang Cisaat', 'Kepala Seksi Pemasaran', 'Cisaat', '2022', '2023', 'internal', 'SK MUTASI Nomor : 025/SK/DIR/VII/2022', '6916dae53c5de_1763105509.pdf'),
+(875, '73.004.156', 'PERUMDA BPR Sukabumi Cabang Nyalindung', 'Kepala Seksi Pemasaran', 'Nyalindung', '2023', '2023', 'internal', 'SK MUTASI Nomor : 011/SK/DIR/II/2023', '6916db3463cb7_1763105588.pdf'),
+(876, '73.004.156', 'PERUMDA BPR Sukabumi Cabang Sagaranten', 'Kepala Cabang', 'Sagaranten', '2024', '2025', 'internal', 'SK MUTASI Nomor : 007/SK/DIR/I/2024', '6916dbd266085_1763105746.pdf'),
+(877, '73.004.156', 'PERUMDA BPR Sukabumi Cabang Cisaat', 'Kepala Cabang', 'Cisaat', '2025', '2025', 'internal', 'SK MUTASI Nomor : 018/SK/DIR/III/2025', '6916dc0636ab1_1763105798.pdf'),
+(878, '70.092.043', 'BKPD Kec. Kalapanunggal (BPR Sukabumi Cabang Kalapanunggal)', 'Staff BKPD', 'Kalapanunggal', '1991', '1999', 'internal', 'SURAT PERINTAH Nomor : 066/SP/Insp.BKPD-LPK/Si/1991', '691bd9ab25602_1763432875.pdf'),
+(879, '93.013.259', 'PERUMDA BPR SUKABUMI', 'Staf (Teller)', 'Cabang Cisaat', '2025', '2025', 'internal', NULL, NULL),
+(880, '70.092.043', 'PD. BPR Sukabumi Cabang Kalapanunggal', 'Kepala Seksi Operasional', 'Kalapanunggal', '2007', '2013', 'internal', 'SK MUTASI Nomor : 015/SK/DIR/VIII/2007', '691bdfff19095_1763434495.pdf'),
+(881, '70.092.043', 'PD. BPR Sukabumi cabang Kalapanunggal', 'Kepala Seksi Operasional', 'Kalapanunggal', '2013', '2021', 'internal', 'SK MUTASI Nomor : 043/SK/DIR/VIII/2013', '691be16a023d5_1763434858.pdf'),
+(882, '70.092.043', 'PERUMDA BPR Sukabumi Cabang Kalapanunggal', 'Kepala Seksi Pemasaran', 'Kalapanunggal', '2021', '2022', 'internal', 'SK MUTASI Nomor : 044/SK/DIR/VII/2021', '691be1f5ba1c1_1763434997.pdf'),
+(883, '70.092.043', 'PERUMDA BPR Sukabumi Kantor Pusat Non Operasional', 'Kepala Bagian Dana', 'Sukabumi', '2022', '2023', 'internal', 'SK MUTASI Nomor : 025/SK/DIR/VII/2022', '691be23f454f5_1763435071.pdf'),
+(884, '70.092.043', 'PERUMDA BPR Sukabumi Cabang Cisolok', 'Plt. Kepala Cabang', 'Cisolok', '2023', '2023', 'internal', 'SK PENUNJUKAN Nomor : 004.1/SK/DIR/I/2023', '691be2c8df426_1763435208.pdf'),
+(885, '70.092.043', 'PERUMDA BPR Sukabumi Cabang Cicurug', 'Plt. Kepala Cabang', 'Cicurug', '2023', '2023', 'internal', 'SK MUTASI Nomor : 027/SK/DIR/III/2023', '691be47053df7_1763435632.pdf'),
+(886, '70.092.043', 'PERUMDA BPR Sukabumi Cabang Cicurug', 'Kepala Cabang', 'Cicurug', '2023', '2025', 'internal', 'SK MUTASI & PROMOSI Nomor : 039/SK/DIR/VII/2023', '691be4e779055_1763435751.pdf'),
+(887, '70.092.043', 'PERUMDA BPR Sukabumi Cabang Cikembar', 'Kepala Cabang', 'Cikembar', '2025', '2025', 'internal', 'SK MUTASI Nomor : 018/SK/DIR/III/2025', '691be526372be_1763435814.pdf'),
+(888, '70.092.043', 'PD. BPR Sukabumi Cabang Kalapanunggal', 'Kepala Bagian Kas', 'Kalapanunggal', '1999', '2007', 'internal', 'SK MUTASI Nomor : 14/SK.Peg.PD.BBPR/1999', '691bf223eaa1d_1763439139.pdf'),
+(889, '71.092.042', 'BKPD Kec. Kalapanunggal (BPR Sukabumi Cabang Kalapanunggal)', 'Staff Bagian Kredit', 'Kalapanunggal', '1992', '1999', 'internal', 'SK Pengukuhan Nomor : 578/SK.513-Ekon/1992', '691d66ee268e9_1763534574.pdf'),
+(890, '71.092.042', 'PD. BPR Sukabumi Cabang Kalapanunggal', 'Kepala Bagian Kredit', 'Kalapanunggal', '1999', '2000', 'internal', 'SK Nomor : 14/SK.Peg.PD.BPR/1999', '691d69b865e42_1763535288.pdf'),
+(891, '71.092.042', 'PD. BPR Sukabumi Cabang Kalapanunggal', 'Kabag Umum', 'Kalapanunggal', '2000', '2007', 'internal', 'SK MUTASI Nomor : 01/SK.Peg.PD.BPR/2000', '691d6c6f9bac8_1763535983.pdf'),
+(892, '71.092.042', 'PD. BPR Sukabumi Cabang Kalapanunggal', 'Staff', 'Kalapanunggal', '2007', '2024', 'internal', '-', NULL),
+(893, '71.092.042', 'PERUMDA BPR Sukabumi Cabang Cibadak', 'Staff Kantor Kas Nagrak', 'Cibadak', '2024', '2025', 'internal', 'SK MUTASI Nomor :041/SK/DIR/IX/2024', '691d727c4d540_1763537532.pdf'),
+(894, '71.092.042', 'PERUMDA BPR Sukabumi Cabang Kalapanunggal', 'Account Officer', 'Kalapanunggal', '2025', '2025', 'internal', 'SK MUTASI Nomor : 018/SK/DIR/III/2025', '691d72e47fccc_1763537636.pdf'),
+(895, '71.095.110', 'PD. BPR Sukabumi Cabang Cicurug', 'Kepala Cabang', 'Cicurug', '2019', '2020', 'internal', 'SK MUTASI Nomor : 026/SK/DIR/III/2019', '691eaeacd2c1c_1763618476.pdf'),
+(896, '71.095.110', 'PD. BPR Sukabumi Cabang Sagaranten', 'Kepala Cabang', 'Sagaranten', '2020', '2023', 'internal', 'SK MUTASI Nomor : 012/SK/DIR/II/2020', '691eaf2e33f7e_1763618606.pdf'),
+(897, '71.095.110', 'PERUMDA BPR Sukabumi Kantor Pusat Non Operasional', 'Pejabat Fungsional Pengembangan, Penelitian & Legal Office', 'Sukabumi', '2023', '2023', 'internal', 'SK Mutasi Nomor : 011/SK/DIR/II/2023', '691eafcd9128f_1763618765.pdf'),
+(898, '71.095.110', 'PERUMDA BPR Sukabumi Kantor Pusat Non Operasional', 'Plt. Kepala Bagian EDP & TI', 'Sukabumi', '2023', '2024', 'internal', 'SK Mutasi Nomor : 039/SK/DIR/VII/2023', '691eb143743f1_1763619139.pdf'),
+(899, '71.095.110', 'PERUMDA BPR Sukabumi Kantor Pusat Non Operasional', 'Kepala Bagiian EDP & TI', 'Sukabumi', '2024', '2025', 'internal', 'SK MUTASI Nomor : 017/SK/DIR/III/2024', '691eb1ae391c6_1763619246.pdf'),
+(900, '71.095.110', 'PERUMDA BPR Sukabumi Kantor Pusat Non Operasional', 'Kepala Bagian Operasional & SDM', 'Sukabumi', '2025', '2025', 'internal', 'SK MUTASI Nomor :060/SK/DIR/IX/2025', '691eb3207f404_1763619616.pdf'),
+(901, 'TKK017', 'Perumda BPR Sukabumi', 'EDP', 'KPNO', '2025', '2025', 'internal', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -2226,7 +2353,7 @@ INSERT INTO `pelatihan` (`id_pelatihan`, `tgl_pelatihan`, `pelatihan`, `kategori
 (40, '2025-04-17', 'Persiapan Laporan Penyediaan Modal Min (KPMP) BPR & Pemenuhan Modal Inti Min sesuai SEOJK 02/2025', NULL),
 (41, '2008-12-13', 'Penyelesaian Kredit Bermasalah', 'IHT'),
 (42, '2010-10-14', 'Tata Cara Pengisian & Pelaporan SPT Tahunan PPh WP Badan & SPT Tahunan PPh WP Orang Pribadi untuk tahun 2010', 'PUB'),
-(43, '2010-07-13', 'Pelatihan Pengembangan Sikap Mental Pegawai dalam Rangka Pengembangan Budaya Kerja Perusahaan', 'IHT'),
+(43, '2010-06-13', 'Pelatihan Pengembangan Sikap Mental Pegawai dalam Rangka Pengembangan Budaya Kerja Perusahaan', 'IHT'),
 (44, '2014-03-02', 'Perlindungan Konsumen, Revisi Perjanjian Kredit & Penyusunan SOP Perlindungan Konsumen PD BPR Sukabumi', 'IHT'),
 (45, '2016-02-17', 'Analisa Kredit Konsumtif untuk BPR Angkatan 1', 'IHT'),
 (46, '2012-12-29', 'Program Jarak Jauh Analisis Kredit Angkatan ke-19', 'IHT'),
@@ -2248,7 +2375,12 @@ INSERT INTO `pelatihan` (`id_pelatihan`, `tgl_pelatihan`, `pelatihan`, `kategori
 (62, '2021-02-25', 'Melaksanakan Fungsi Kepatuhan BPR/S dan Mnyiapkan Laporan Kepatuhan & Tata Kelola sesuai SEOJK 06/2016 dan 24/2020', 'IHT'),
 (63, '2007-05-27', 'Pelatihan Manajemen Dana (Tabungan) bagi Pegawai PD. BPR Sukabumi', 'IHT'),
 (64, '2018-08-05', 'Soft Skill (Kemampuan Perilaku SDM)', 'IHT'),
-(65, '2007-09-03', 'Manajemen Bank Perkreditan Rakyat Angkatan ke-45', 'IHT');
+(65, '2007-09-03', 'Manajemen Bank Perkreditan Rakyat Angkatan ke-45', 'IHT'),
+(66, '2023-08-03', 'Waspada Modus Penipuan Gaya Baru', 'PUB'),
+(67, '2023-11-13', 'Pelaksanakan APU PPT Unit2 Kerja BPR-S Kaitan CDD,EDD,RBA,NRA, SRA, P3SPM dan G.R.C (Governance Risk Mngt, Compliance)', 'IHT'),
+(68, '2023-08-09', 'Penerapan POJK 08/2023 tentang APU PPT & P3SPM Unit2 Kerja BPR-S', 'IHT'),
+(69, '2008-12-14', 'Pelatihan Prinsip Mengenal Nasabah (KYC)', 'IHT'),
+(70, '2006-06-12', 'Pelatihan Akuntansi BPR', 'IHT');
 
 -- --------------------------------------------------------
 
@@ -2502,6 +2634,61 @@ INSERT INTO `pelatihan_relasi` (`id_pelRelasi`, `id_pegawai`, `id_pelatihan`, `s
 (245, '82.005.169', '49', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_49_pegawai_82.005.169_fc031ccd-f13e-42bd-9b55-7c5970532d18.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Penerapan Sistem Informasi Akuntansi & Penajaman Analisa Kredit .pdf\",\"uploaded_at\":\"2025-10-29 07:49:56\"}'),
 (246, '82.005.169', '44', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_44_pegawai_82.005.169_063f5ede-3ec5-42af-a1ff-81e40c7e3ed1.pdf\",\"original_name\":\"SERTFIKAT PELATIHAN_Perlindungan Konsumen, Revisis Perjanjian Kredit, & Penyusunan SOP.pdf\",\"uploaded_at\":\"2025-10-29 07:50:25\"}'),
 (247, '82.005.169', '23', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_23_pegawai_82.005.169_62725584-f1b2-42a0-a396-de129534ce78.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_TIPIBANK & TIPIKOR.pdf\",\"uploaded_at\":\"2025-10-29 07:50:53\"}');
+INSERT INTO `pelatihan_relasi` (`id_pelRelasi`, `id_pegawai`, `id_pelatihan`, `sertifikat`) VALUES
+(248, '70.093.051', '66', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_66_pegawai_70.093.051_ed5b8ae2-5147-4a58-b47a-555e56adfbe1.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Waspada Modus Penipuan Gaya Baru .pdf\",\"uploaded_at\":\"2025-11-11 04:23:10\"}'),
+(249, '70.093.051', '67', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_67_pegawai_70.093.051_b63684eb-a904-4995-b1ee-1f280bea983a.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Pelaksanaan APU PPT Unit2 Kerja BPR-S Kaitan CDD, EDD,RBA, NRA, P3SPM, & GRC.pdf\",\"uploaded_at\":\"2025-11-11 04:32:57\"}'),
+(250, '70.093.051', '68', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_68_pegawai_70.093.051_ec931488-64db-471a-b0be-6054dd8e6bec.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Penerapan POJK 08.2023 tentang APU PPT & PPPSPM Unit2 Kerja BPR-S.pdf\",\"uploaded_at\":\"2025-11-11 04:34:51\"}'),
+(251, '70.093.051', '19', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_19_pegawai_70.093.051_003b4aed-f87e-40ed-a58d-9f09cb540ff1.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Kepemimpinan dan Motivasi Menuju Stabilitas Perusahaan .pdf\",\"uploaded_at\":\"2025-11-11 04:36:09\"}'),
+(252, '70.093.051', '34', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_34_pegawai_70.093.051_a0c501c7-a210-481a-bc69-37458a64af31.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Implementation & Audit Produce of ISO 27001;2022 Information Security .pdf\",\"uploaded_at\":\"2025-11-11 04:37:04\"}'),
+(253, '70.093.051', '20', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_20_pegawai_70.093.051_4b9f89cb-ec21-44b8-98e3-b29917072830.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Effective Leadership untuk Karyawan BPR.pdf\",\"uploaded_at\":\"2025-11-11 04:37:54\"}'),
+(254, '70.093.051', '26', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_26_pegawai_70.093.051_e55f9ddf-d14f-4b50-88ae-dfd093482dfc.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Audit Internal Penyelenggaraan Teknologi Informasi BPR.pdf\",\"uploaded_at\":\"2025-11-11 04:38:28\"}'),
+(255, '70.093.051', '56', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_56_pegawai_70.093.051_39f1e83a-97d1-445d-83ba-e73bbf833d6b.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Strategi Penyusunan Rencana Kerja Anggaran Tahun 2014 PD. BPR Sukabumi .pdf\",\"uploaded_at\":\"2025-11-11 04:39:14\"}'),
+(256, '70.093.051', '69', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_69_pegawai_70.093.051_ac1293c7-7b24-4e18-b239-a47bc8240cc9.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Prinsip Mengenal Nasabah (KYC).pdf\",\"uploaded_at\":\"2025-11-11 04:40:23\"}'),
+(257, '70.093.051', '41', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_41_pegawai_70.093.051_01a70316-692b-4d66-b517-0d4b8b987a47.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Penyelesaian Kredit Bermasalah .pdf\",\"uploaded_at\":\"2025-11-11 04:41:14\"}'),
+(258, '70.093.051', '23', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_23_pegawai_70.093.051_7baa049c-8efd-4845-9be1-6bf0a4ddd06b.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_TIPIKOR 7 TIPIBANK .pdf\",\"uploaded_at\":\"2025-11-11 04:41:43\"}'),
+(259, '70.094.065', '65', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_65_pegawai_70.094.065_fd521738-3f78-4bc9-bff1-d3630f7f4ae4.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Manajemen BPR Angkatan ke 45 .pdf\",\"uploaded_at\":\"2025-11-12 01:26:57\"}'),
+(260, '70.094.065', '70', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_70_pegawai_70.094.065_364c8cc3-3284-4e4e-a423-c89e38ebb0a3.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Akuntansi BPR .pdf\",\"uploaded_at\":\"2025-11-12 01:28:09\"}'),
+(261, '70.094.065', '64', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_64_pegawai_70.094.065_b53ba5cf-b4f9-417d-b734-14cf5599fbad.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Soft Skill.pdf\",\"uploaded_at\":\"2025-11-12 01:28:37\"}'),
+(262, '70.094.065', '37', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_37_pegawai_70.094.065_8bd8e166-8634-4bd0-9b1a-ba899af050a5.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Kepemimpinana & Manajemen Kinerja .pdf\",\"uploaded_at\":\"2025-11-12 01:29:16\"}'),
+(263, '70.094.065', '51', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_51_pegawai_70.094.065_1bb5f0ee-be63-48ef-9559-b8cfedb295b2.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Layanan Prima .pdf\",\"uploaded_at\":\"2025-11-12 01:30:00\"}'),
+(264, '70.094.065', '13', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_13_pegawai_70.094.065_bfdbe4a7-1fc1-4b42-9598-c7ee398f290c.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Penyelesaian Kredit HB, AYDA, Tunggakan & NPL .pdf\",\"uploaded_at\":\"2025-11-12 01:30:34\"}'),
+(266, '70.094.065', '19', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_19_pegawai_70.094.065_0aabd95f-80b3-4858-a78b-d9ae2acef267.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Kepeimpinan & Motivasi menuju Stabilitas Perusahaan .pdf\",\"uploaded_at\":\"2025-11-12 01:32:20\"}'),
+(267, '70.094.065', '33', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_33_pegawai_70.094.065_e807bac7-aa81-4eae-831a-3303e0d13101.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Kepemimpinan & Motivasi menuju Stabilitas Perusahaan 2022.pdf\",\"uploaded_at\":\"2025-11-12 01:47:56\"}'),
+(268, '70.094.065', '24', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_24_pegawai_70.094.065_207080b3-5c13-4fad-9982-4d465d1e39d3.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Penajaman Analisisi Kredit & Pengendalian Resiko Kredit .pdf\",\"uploaded_at\":\"2025-11-12 02:07:14\"}'),
+(269, '70.094.065', '53', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_53_pegawai_70.094.065_60b48169-a832-4fc0-80f1-50d307bc2773.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_PPOB,APU PPT & SLIK.pdf\",\"uploaded_at\":\"2025-11-12 02:07:42\"}'),
+(270, '70.094.065', '23', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_23_pegawai_70.094.065_8b73712b-c6ac-4ebc-a6a9-b5b613b8d0cd.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_TIPIBANK & TIPIKOR.pdf\",\"uploaded_at\":\"2025-11-12 02:12:43\"}'),
+(271, '70.098.127', '41', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_41_pegawai_70.098.127_182f58e4-0db8-4b4b-a4e5-9d16f3504376.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Peneyelsaian Kredit Bermasalah .pdf\",\"uploaded_at\":\"2025-11-13 05:23:53\"}'),
+(272, '70.098.127', '43', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_43_pegawai_70.098.127_7dcab304-a6f4-45f0-acad-2d6826df760d.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Pengembangan Sikap mental Pegawai dalam Rangka Pengembangan Budaya Kerja .pdf\",\"uploaded_at\":\"2025-11-13 05:25:33\"}'),
+(273, '70.098.127', '22', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_22_pegawai_70.098.127_e695ad1d-e239-47b5-b0b4-4783147c0fa9.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Aplikasi Manajemen Risiko Operasional Risiko Hukum & Risiko Kepatuhan .pdf\",\"uploaded_at\":\"2025-11-13 05:26:02\"}'),
+(274, '70.098.127', '23', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_23_pegawai_70.098.127_2183c8ab-fcef-4488-a928-da8c99c2862a.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_TIPIBANK & TIPIKOR .pdf\",\"uploaded_at\":\"2025-11-13 05:26:23\"}'),
+(275, '73.004.156', '30', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_30_pegawai_73.004.156_626794d5-17ac-46c6-8544-d4b3e4a88180.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Praktik Analisis Kredit berbasis Kinerja & Risiko Bisnis dengan Metode Skoring .pdf\",\"uploaded_at\":\"2025-11-14 07:52:08\"}'),
+(276, '73.004.156', '19', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_19_pegawai_73.004.156_1f62e964-e8fd-4f03-90ab-704649a6f7a1.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Kepemimpinan & Motivasi Menuju Stabilitas Perusahaan 2023.pdf\",\"uploaded_at\":\"2025-11-14 07:53:10\"}'),
+(277, '73.004.156', '20', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_20_pegawai_73.004.156_6689807b-cd5b-40e3-ad99-588f39c425ca.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Effective Leadership untuk Karyawan BPR.pdf\",\"uploaded_at\":\"2025-11-14 07:53:36\"}'),
+(278, '73.004.156', '22', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_22_pegawai_73.004.156_74e10c44-302c-4d56-8a4d-425a89dd55db.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Aplikasi Manajemen Risiko Operasional, Hukum & Kepatuhan .pdf\",\"uploaded_at\":\"2025-11-14 07:54:02\"}'),
+(279, '73.004.156', '37', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_37_pegawai_73.004.156_44086449-4a6b-47d7-a95b-61e1e9829cc2.pdf\",\"original_name\":\"SERTFIKAT PELATIHAN_Kepemimpinan & Manajemen Kinerja .pdf\",\"uploaded_at\":\"2025-11-14 07:54:32\"}'),
+(280, '73.004.156', '23', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_23_pegawai_73.004.156_02d1525a-67ea-41b1-b447-a0be25e72f0b.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_TIPIBANK & TIPIKOR.pdf\",\"uploaded_at\":\"2025-11-14 07:54:56\"}'),
+(281, '73.004.156', '33', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_33_pegawai_73.004.156_535940a1-5f96-4b7c-a951-47fe7648d653.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Kepemimpinan & Motivasi Menuju Stabilitas Perusahaan 2022.pdf\",\"uploaded_at\":\"2025-11-14 07:55:21\"}'),
+(282, '73.004.156', '13', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_13_pegawai_73.004.156_c51b69c2-fdd0-4bf8-a794-e4c9a1597849.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Penyelesaian Kredit HB, AYDA, & Tunggakan NPL BPR .pdf\",\"uploaded_at\":\"2025-11-14 07:55:45\"}'),
+(283, '70.092.043', '20', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_20_pegawai_70.092.043_17e27317-797f-46e3-b0b5-2062e5b6e04b.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Effective Leadership untuk Karyawan BPR .pdf\",\"uploaded_at\":\"2025-11-18 06:08:50\"}'),
+(284, '70.092.043', '30', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_30_pegawai_70.092.043_b19dc51d-1a2d-43f0-af4d-064fb006dadf.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Praktik Analisis Kredit Berbasis Kinerja & Risiko Bisnis UMKM & Pegawai .pdf\",\"uploaded_at\":\"2025-11-18 06:09:50\"}'),
+(285, '70.092.043', '13', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_13_pegawai_70.092.043_f1dc8cc8-cc1e-4719-8ee7-c525d0952852.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Penyelesaian Kredit Hapus Buku & AYDA, Tunggaan & NPL .pdf\",\"uploaded_at\":\"2025-11-18 06:10:25\"}'),
+(286, '70.092.043', '65', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_65_pegawai_70.092.043_340d5764-2b32-4203-9a1d-188df83159f4.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Manajemen Bank BPR Angkatan Ke- 45.pdf\",\"uploaded_at\":\"2025-11-18 06:11:17\"}'),
+(287, '70.092.043', '23', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_23_pegawai_70.092.043_4f566f75-b99d-4427-b9b1-aad0e4075743.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_TIPIKOR & TIPIBANK .pdf\",\"uploaded_at\":\"2025-11-18 06:11:42\"}'),
+(288, '70.092.043', '22', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_22_pegawai_70.092.043_6c4eb723-f150-4d7a-81e9-7cce8c7c5c16.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Aplikasi Manajemen Risiko Operasional, Risiko Hukum & Risiko Kepatuhan.pdf\",\"uploaded_at\":\"2025-11-18 06:12:09\"}'),
+(289, '70.092.043', '49', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_49_pegawai_70.092.043_74a93816-47dc-4314-ba46-91464b2efb75.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Penerapan Sistem Informasi Akuntansi & Penajaman Anlisa Kredit .pdf\",\"uploaded_at\":\"2025-11-18 06:12:40\"}'),
+(290, '70.092.043', '43', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_43_pegawai_70.092.043_f9cba444-139a-4aff-8df1-8e65a0013962.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Pengembangan Sikap Mental Pegawai dalam Pengembangan Budaya Kerja .pdf\",\"uploaded_at\":\"2025-11-18 06:13:10\"}'),
+(291, '71.092.042', '43', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_43_pegawai_71.092.042_fc752999-f9e7-4f1f-93fd-19127efc24a9.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Pengembangan Sikap Mental Pegawai Dalam Rangka Pengembangan Budaya Kerja .pdf\",\"uploaded_at\":\"2025-11-19 08:23:47\"}'),
+(292, '71.092.042', '70', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_70_pegawai_71.092.042_081d07c3-85d5-47bd-9d17-8936876f6d17.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Pelatihan Akuntansi .pdf\",\"uploaded_at\":\"2025-11-19 08:24:23\"}'),
+(293, '71.092.042', '63', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_63_pegawai_71.092.042_ce4f5b8a-022d-47d3-8a09-107d45e9522d.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Manajemen Dana .pdf\",\"uploaded_at\":\"2025-11-19 08:24:58\"}'),
+(294, '71.092.042', '23', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_23_pegawai_71.092.042_6053f829-fafd-45fb-bd32-be2f0c77c4c4.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_TIIBANK & TIPIKOR.pdf\",\"uploaded_at\":\"2025-11-19 08:25:26\"}'),
+(295, '71.095.110', '20', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_20_pegawai_71.095.110_2fb85ff9-7118-493d-9339-9de8bf73d0a2.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Effective Leadershi untuk Karyawan BPR .pdf\",\"uploaded_at\":\"2025-11-20 06:56:32\"}'),
+(296, '71.095.110', '24', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_24_pegawai_71.095.110_381ad3b7-7ef1-4feb-a611-c19b371d8cc7.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Penajaman Analisis Kredit & Pengendalian Risiko Kredit .pdf\",\"uploaded_at\":\"2025-11-20 06:57:04\"}'),
+(297, '71.095.110', '44', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_44_pegawai_71.095.110_51b7dab1-00b7-4034-af76-c825a8261c00.pdf\",\"original_name\":\"SERTFIKAT PELATIHAN_Perlindungan Konsumen, Revisi Perjanjian Kredit & Penyusunan SOP .pdf\",\"uploaded_at\":\"2025-11-20 07:09:56\"}'),
+(298, '71.095.110', '55', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_55_pegawai_71.095.110_f6b3c67e-e564-451f-b09a-67f505b65026.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Penerapan Budaya Antri Fraud dalan Perbankan .pdf\",\"uploaded_at\":\"2025-11-20 07:10:27\"}'),
+(299, '71.095.110', '56', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_56_pegawai_71.095.110_2dd394ae-1807-4546-b1c1-23a2045e6332.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Strategi Penyusunan Rencana Kerja Anggaran Tahun 2014.pdf\",\"uploaded_at\":\"2025-11-20 07:10:55\"}'),
+(300, '71.095.110', '65', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_65_pegawai_71.095.110_5437b273-079c-4a91-b547-56a3a3a4ddb1.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Manajemen BPR Angkatan ke-45.pdf\",\"uploaded_at\":\"2025-11-20 07:12:03\"}'),
+(301, '71.095.110', '23', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_23_pegawai_71.095.110_df8b87c2-5e66-45f3-8423-a736869d326d.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_TIPIBANK & TIPIKOR .pdf\",\"uploaded_at\":\"2025-11-20 07:13:14\"}'),
+(302, '71.095.110', '36', '{\"file_path\":\"upload\\/sertifikat_pelatihan\\/pelatihan_36_pegawai_71.095.110_8b6f8f5f-68f4-4cb4-b3ba-ef2026d10756.pdf\",\"original_name\":\"SERTIFIKAT PELATIHAN_Manajemen Kredit Bagi BPR .pdf\",\"uploaded_at\":\"2025-11-20 07:16:07\"}');
 
 -- --------------------------------------------------------
 
@@ -2647,16 +2834,13 @@ INSERT INTO `pendidikan_relasi` (`id_pendRelasi`, `id_pegawai`, `id_pendidikan`,
 (126, '97.018.329', 'Tingkat Pendidikan', 'MADRASAH TSANAWIYAH NEGERI PASIRIPIS', '', '8.0', 'Jl Pasir Ipis Surade', '2012', NULL, NULL),
 (127, '97.018.329', '2', 'MADRASAH TSANAWIYAH NEGERI PASIRIPIS', '', '8.0', 'Jl Raya Pasiripis Surade', '2012', NULL, NULL),
 (128, '97.018.329', '1', 'SD Negeri 4 Surade', '', '', 'Jl Sindang Palay, Surade', '2009', NULL, NULL),
-(129, '70.098.127', 'Tingkat Pendidikan', 'SD NEGERI JAMPANGKULON 2', '', '', 'SUKABUMI', '1984', NULL, NULL),
-(130, '70.098.127', 'Tingkat Pendidikan', 'SD NEGERI JAMPANGKULON 2', '', '', 'SUKABUMI', '1984', NULL, NULL),
-(131, '70.098.127', 'Tingkat Pendidikan', 'SD NEGERI JAMPANGKULON 2', '-', '-', 'JAMPANGKULON', '1984', NULL, NULL),
-(132, '70.098.127', '1', 'SD NEGERI JAMPANGKULON 2', '-', '-', 'JAMPANGKULON', '1984', NULL, NULL),
-(133, '70.098.127', '2', 'SMP NEGERI JAMPANGKULON', '-', '-', 'JAMPANGKULON', '1987', NULL, NULL),
-(134, '70.098.127', '3', 'SMA NEGERI JAMPANGKULON', '-', '-', 'JAMPANGKULON', '1990', NULL, NULL),
+(132, '70.098.127', '1', 'SDN 2 Jampangkulon', '-', '70,5', 'Jampangkulon', '1984', '-', '691560f10e990.pdf'),
+(133, '70.098.127', '2', 'SMPN Jampangkulon', '-', '81', 'Jampangkulon', '1987', '-', '6915614b5a69d.pdf'),
+(134, '70.098.127', '3', 'SMAN Jampangkulon', 'Ilmu-Ilmu Sosial', '73', 'Jampangkulon', '1990', '-', '691561ada6da7.pdf'),
 (143, '.php', '3', 'SMKN 1 KAB SUKABUMI', 'AKOMODASI PERHOTELAN', '82', 'SUKABUMI', '2017', NULL, NULL),
-(145, '70.094.065', '8', 'STIE DHARMA AGUNG BANDUNG', 'MANAJEMEN', '', 'bandung', '2006', NULL, NULL),
-(146, '70.094.065', '3', 'SMAN JAMPANGKULON', '', '', 'JL WARUNG TAGOG', '1991', NULL, NULL),
-(147, '70.094.065', '2', 'SMPN JAMPANGKULON', '', '', 'JL CIBARUSAH', '1988', NULL, NULL),
+(145, '70.094.065', '8', 'STIE Dharma Agung Bandung', 'Manajemen', '3,18', 'Bandung', '2006', '-', '6912f432a5c1c.pdf'),
+(146, '70.094.065', '3', 'SMAN Jampangkulon', 'Ilmu-Ilmu Sosial', '74', 'Jampangkulon', '1991', '-', '6912ecdb2cea7.pdf'),
+(147, '70.094.065', '2', 'SMPN Jampangkulon', '-', '90', 'Jampangkulon', '1988', '-', '6912ec81bf830.pdf'),
 (149, '91.022.353', '8', 'STIE PASIM', 'EKONOMI MANAJEMEN', '3.17', 'SUKABUMI', '2014', NULL, NULL),
 (151, '75.005.175', '2', 'SMP NEGERI JAMPANGKULON', '-', '-', 'JAMPANGKULON', '1991', NULL, NULL),
 (152, '75.005.175', '3', 'SMA NEGERI JAMPANGKULON', '-', '-', 'JAMPANGKULON', '1994', NULL, NULL),
@@ -2758,14 +2942,14 @@ INSERT INTO `pendidikan_relasi` (`id_pendRelasi`, `id_pegawai`, `id_pendidikan`,
 (263, '76.006.193', '8', 'STIE YPKP', 'Akuntansi', '2,97', 'Bandung', '1995 - 2001', NULL, NULL),
 (264, '74.097.104', '8', 'STIE PGRI SUKABUMI', 'MANAJEMEN', '3.18', 'Jl.Pamuka II No.10 Cikondang Sukabumi', '2004', NULL, NULL),
 (265, '81.013.266', '8', 'Unpas ', 'Kesejahteraan sosial', '2.98', 'Bandung', '2004', NULL, NULL),
-(266, '71.095.110', '8', 'STISIP WIDYAPURI', 'ADM NEGARA', '', 'SUKABUMI', '2004', NULL, NULL),
+(266, '71.095.110', '8', 'STISIP Widyapuri Mandiri', 'Ilmu Administrasi Negara', '2,86', 'Sukabumi', '2004', '-', '691e7d636a5a7.pdf'),
 (267, '89.013.257', '6', 'Bina Sarana Informatika', 'Komputerisasi Akuntansi', '3,34', 'Sukabumi', '2010', '-', '68f9d75e4d254.pdf'),
 (268, '89.013.257', '8', 'STMIK PASIM Sukabumi', 'Teknik Informatika', '-', 'Sukabumi', '2017', '-', '68f9d981b1521.pdf'),
 (270, '73.004.156', '10', 'KEHIDUPAN BARU', '', '', 'SUKABUMI', '1979', NULL, NULL),
-(271, '73.004.156', '1', 'NEGERI CIKOLE 2', 'UMUM', '76', 'SUKABUMI', '1985', NULL, NULL),
-(272, '73.004.156', '2', 'NEGERI 1 SUKABUMI', 'UMUM', '94', 'SUKABUMI', '1988', NULL, NULL),
-(273, '73.004.156', '3', 'MUHAMADYAH SUKABUMI', 'IPA', '77', 'SUKABUMI', '1991', NULL, NULL),
-(274, '73.004.156', '8', 'UNINUS', 'KOMUNIKASI', '', 'BANDUNG', '1996', NULL, NULL),
+(271, '73.004.156', '1', 'SDN Cikole II Kota Sukabumi', '-', '76', 'Sukabumi', '1985', '-', '6916d4158c88d.pdf'),
+(272, '73.004.156', '2', 'SMPN 1 Sukabumi', '-', '94', 'Sukabumi', '1988', '-', '6916d48fb352c.pdf'),
+(273, '73.004.156', '3', 'SMU Swasta Muhammadiyah Sukabumi', 'Ilmu-Ilmu Biologi', '77', 'Sukabumi', '1991', '-', '6916d4f44b21a.pdf'),
+(274, '73.004.156', '8', 'Universitas Islam Nusantara (UNINUS)', 'Ilmu Komunikasi', '3,30', 'Bandung', '1996', '-', '6916d5764a359.pdf'),
 (275, '89.013.265', '1', 'MI MWB PUI', '', '32.75', 'JL.CAGAK CISAAT KAB SUKABUMI', '2001', NULL, NULL),
 (276, '89.013.265', '2', 'MTs.MIFTAHUL HUDA', '', '     ', 'JL.CIBATU CARINGIN CISAAT SUKABUMI', '2004', NULL, NULL),
 (277, '89.013.265', '3', 'SMK SYAMSUL ULUM', 'BISNIS & MANAGEMEN ', '29.10', 'JL.BHAYANGKARA NO.33 GUNUNGPUYUH SUKABUMI', '2007', NULL, NULL),
@@ -2888,7 +3072,7 @@ INSERT INTO `pendidikan_relasi` (`id_pendRelasi`, `id_pegawai`, `id_pendidikan`,
 (435, '93.019.333', '1', 'SDN Cisaat Gadis', '', '', 'Cisaat Sukabumi', '2006', NULL, NULL),
 (436, '93.019.333', '2', 'SMPN 1 KADUDAMPIT', '', '', 'Kadudampit Sukabumi', '2009', NULL, NULL),
 (437, '93.019.333', '3', 'SMA NEGERI 1 CISAAT', '', '', 'Mangkalaya Sukabumi', '2012', NULL, NULL),
-(439, '93.019.333', '8', 'STMIK NUSA MANDIRI', 'SISTEM INFORMASI', '3,17', 'Sukabumi', '2017', NULL, NULL),
+(439, '93.019.333', '8', 'STIMIK NUSA MANDIRI', 'SISTEM INFORMASI', '3,17', 'Sukabumi', '2017', NULL, NULL),
 (442, '76.005.163', '2', 'SEKOLAH MENENGAH PERTAMA  MARDI YUANA 1', '', '78', 'SUKABUMI', '1992/1993', NULL, NULL),
 (443, '76.005.163', '1', 'SEKOLAH DASAR NEGERI SRIWIDARI', '', '', 'SUKABUMI', '1989/1990', NULL, NULL),
 (444, '77.006.201', '1', 'SDN CIBADAK 1', 'SEKOLAH DASAR', '69', 'CIBADAK', '1990', NULL, NULL),
@@ -2993,10 +3177,10 @@ INSERT INTO `pendidikan_relasi` (`id_pendRelasi`, `id_pegawai`, `id_pendidikan`,
 (563, '89.013.271', '8', 'STIE PASIM SUKABUMI', 'AKUNTANSI', '3,4', 'SUKABUMI', '2019', NULL, NULL),
 (564, '83.015.308', '2', 'SLTP NEGERI 1 CIKEMBAR', '', '', 'SUKABUMI', '1999', NULL, NULL),
 (565, '83.015.308', '1', 'SD NEGERI BOJONG I', '', '', 'SUKABUMI', '1996', NULL, NULL),
-(566, '70.093.051', '1', 'SDN Sagaranten II', '', '', 'Sagaranten Sukabumi', '1983', NULL, NULL),
-(567, '70.093.051', '2', 'SMPN Sagaranten', '', '', 'Sagaranten Sukabumi', '1986', NULL, NULL),
-(568, '70.093.051', '3', 'SPGN Sukabumi', '', '', 'Sukabumi', '1989', NULL, NULL),
-(569, '70.093.051', '8', 'STIE PGRI Sukabumi', 'Manajemen', '3,51', 'Sukabumi', '2007', NULL, NULL),
+(566, '70.093.051', '1', 'SDN Sagaranten II', '-', '70', 'Sukabumi', '1983', '-', '6912a363ac696.pdf'),
+(567, '70.093.051', '2', 'SMPN Sagaranten', '-', '90', 'Sukabumi', '1986', '-', '6912a9116ca8b.pdf'),
+(568, '70.093.051', '3', 'SPGN Sukabumi', 'Guru Taman Kanak-Kanak', '7,05', 'Sukabumi', '1989', '--', '6912a427978eb.pdf'),
+(569, '70.093.051', '8', 'STIE PGRI Sukabumi', 'Manajemen', '3,51', 'Sukabumi', '2007', '-', '6912a940d1b83.pdf'),
 (570, '77.006.187', '3', 'SMAN 1 Cilawu', 'Sosial', '6,72', 'Garut', '1992/1995', NULL, NULL),
 (571, '77.006.187', '2', 'SMPN 2 Garut', 'Elektronik', '6,9', 'Garut', '1989/1992', NULL, NULL),
 (572, '77.006.187', '1', 'SDN Ciledug 1 Garut', 'Sosial', '8', 'Garut', '1984/1989', NULL, NULL),
@@ -3087,7 +3271,25 @@ INSERT INTO `pendidikan_relasi` (`id_pendRelasi`, `id_pegawai`, `id_pendidikan`,
 (668, '83.006.180', '1', 'SDN Cisaat II', '-', '78', 'Sukabumi', '1995', '-', '68fb037a25121.pdf'),
 (669, '83.006.180', '2', 'SMPN 1 Cisaat', '-', '82', 'Sukabumi', '1998', '-', '68fb03b5e82af.pdf'),
 (670, '83.006.180', '3', 'SMU Mardi Yuana Cikole', 'Ilmu Pengetahuan Alam', '-', 'Sukabumi', '2001', '-', '68fb043ab454b.pdf'),
-(671, '88.015.301', '8', 'SEKOLAH TINGGI HUKUM PASUNDAN SUKABUMI', 'HUKUM PIDANA', '3.08', 'SUKABUMI', '2017', NULL, '6901c531ea9ec.jpeg');
+(671, '88.015.301', '8', 'SEKOLAH TINGGI HUKUM PASUNDAN SUKABUMI', 'HUKUM PIDANA', '3.08', 'SUKABUMI', '2017', NULL, '6901c531ea9ec.jpeg'),
+(672, '70.094.065', '1', 'SDN Jampangkulon 02', '-', '71', 'Jampangkulon', '1985', '-', '6912ec0ec15ee.pdf'),
+(673, '70.098.127', '8', 'STIE Penguji Sukabumi', 'Manajemen', '2,75', 'Sukabumi', '2007', '-', '69156220be6ae.pdf'),
+(674, '70.092.043', '1', 'SDN Bojongpicung', '-', '70', 'Kab. Cianjur', '1984', '-', '691bd3e606f42.pdf'),
+(675, '70.092.043', '2', 'SMPN 1 Bojongpicung', '-', '76', 'Kab. Cianjur', '1987', '-', '691bd4c14a6b8.pdf'),
+(676, '70.092.043', '3', 'SMEA Swasta PGRI Cianjur', 'Perdagangan', '175', 'Cianjur', '1990', '-', '691bd536cca9d.pdf'),
+(677, '70.092.043', '8', 'STIE Dharma Agung', 'Manajemen', '3,15', 'Bandung', '2007', '-', '691bd796172a1.pdf'),
+(678, '71.092.042', '1', 'SDN Karamat Bojongpicung', '-', '63', 'Cianjur', '1984', '-', '691d16c5aab84.pdf'),
+(679, '71.092.042', '2', 'SMPN 1 Bojongpicung', '-', '75', 'Cianjur', '1987', '-', '691d17ff68bfa.pdf'),
+(680, '71.092.042', '3', 'SMU Swasta 10 November 1945', 'Ilmu-ilmu Sosial', '87', 'Cianjur', '1990', '-', '691d189740659.pdf'),
+(681, '71.092.042', '8', 'STIE Dharma Agung', 'Manajemen', '3,11', 'Bandung', '2006', '-', '691d18fe8f888.pdf'),
+(682, '71.095.110', '1', 'SDN Bayah 10 Lebak', '-', '67', 'Bayah', '1984', '-', '691e790e92991.pdf'),
+(683, '71.095.110', '2', 'SMPN Bayah Kabupaten Lebak', '-', '93', 'Bayah', '1987', '-', '691e7c27c4015.pdf'),
+(684, '71.095.110', '3', 'SMAN 1 Sukabumi', 'Ilmu-ilmu Biologi', '72', 'Sukabumi', '1990', '-', '691e7cceb9e63.pdf'),
+(685, '72.004.155', '1', 'SDN Jampangkulon', '-', '64', 'Jampangkulon', '1984', '-', '691ec39503f02.pdf'),
+(686, '72.004.155', '2', 'SMPN 5 Sukabumi', '-', '91', 'Sukabumi', '1987', '-', '691ec3d6b2b0d.pdf'),
+(687, '72.004.155', '3', 'SMAN 2 Bogor', 'Ilmu-Ilmu Sosial', '94', 'Bogor', '1990', '-', '691ec4e4cdc34.pdf'),
+(688, '72.004.155', '8', 'Universitas Pasundan', 'Manajemen', '3,67', 'Bandung', '1999', '-', '691ec87cd9aaf.pdf'),
+(689, 'TKK017', '6', 'Universitas Gunadarma', 'Akuntansi Komputer', '2.90', 'Depok', '2012', NULL, '692e41efe0168.jpeg');
 
 -- --------------------------------------------------------
 
@@ -3326,7 +3528,8 @@ CREATE TABLE `sessions` (
 
 INSERT INTO `sessions` (`id`, `user_id`, `ip_address`, `user_agent`, `payload`, `last_activity`) VALUES
 ('vBDfwHgnokCvj6SLPB9BjiSs4lJobxTaMUQfYcD7', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiaTJZYlBEc1dXRnRQeVRxNVVRNFV4MmE2elVXSmVWY25rWkJ2YUd0TCI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozMToiaHR0cDovLzEyNy4wLjAuMTo4MDAwL2Rhc2hib2FyZCI7fXM6OToiX3ByZXZpb3VzIjthOjE6e3M6MzoidXJsIjtzOjI3OiJodHRwOi8vMTI3LjAuMC4xOjgwMDAvbG9naW4iO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1754280780),
-('wb2EOYtFtL0ErZyBrsiNwfUvlSRyQA3bHJaNSftX', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiNENjbmxIcTRXNTZZZUdOVUMxZW9SUUlHQ0VjdUZHWE1rVDk2dm1GNiI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozMDoiaHR0cDovL2Vpcy50ZXN0OjgwODAvZGFzaGJvYXJkIjt9czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjY6Imh0dHA6Ly9laXMudGVzdDo4MDgwL2xvZ2luIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1754281300);
+('wb2EOYtFtL0ErZyBrsiNwfUvlSRyQA3bHJaNSftX', NULL, '127.0.0.1', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/138.0.0.0 Safari/537.36 Edg/138.0.0.0', 'YTo0OntzOjY6Il90b2tlbiI7czo0MDoiNENjbmxIcTRXNTZZZUdOVUMxZW9SUUlHQ0VjdUZHWE1rVDk2dm1GNiI7czozOiJ1cmwiO2E6MTp7czo4OiJpbnRlbmRlZCI7czozMDoiaHR0cDovL2Vpcy50ZXN0OjgwODAvZGFzaGJvYXJkIjt9czo5OiJfcHJldmlvdXMiO2E6MTp7czozOiJ1cmwiO3M6MjY6Imh0dHA6Ly9laXMudGVzdDo4MDgwL2xvZ2luIjt9czo2OiJfZmxhc2giO2E6Mjp7czozOiJvbGQiO2E6MDp7fXM6MzoibmV3IjthOjA6e319fQ==', 1754281300),
+('ZPlG8yaTuqlX8UZmh6RWGUAINfyNYZx8EDEPlDrt', NULL, '180.246.21.4', 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Safari/537.36', 'YTozOntzOjY6Il90b2tlbiI7czo0MDoiTFQxeWhtRlRhYU9vVDE3N0Q1djNuNnpLa21XRzlvT3RZMnJyRFhPMyI7czo5OiJfcHJldmlvdXMiO2E6Mjp7czozOiJ1cmwiO3M6NDc6Imh0dHBzOi8vc2ltcGVuYW4uYnByc3VrYWJ1bWkuY28uaWQvdXNlcnMvY3JlYXRlIjtzOjU6InJvdXRlIjtzOjEyOiJ1c2Vycy5jcmVhdGUiO31zOjY6Il9mbGFzaCI7YToyOntzOjM6Im9sZCI7YTowOnt9czozOiJuZXciO2E6MDp7fX19', 1764045388);
 
 -- --------------------------------------------------------
 
@@ -4051,7 +4254,7 @@ INSERT INTO `upload` (`id_upload`, `id_pegawai`, `jenis_dok`, `filename`, `keter
 (923, '77.006.201', 'Ijazah', 'SMK ...pdf', NULL, '2024-10-23 01:37:56'),
 (924, '77.006.201', 'Ijazah', 'SMP_1.pdf', NULL, '2024-10-23 01:38:34'),
 (925, '77.006.201', 'SK', 'SK PERTAMA.pdf', NULL, '2024-10-23 01:39:01'),
-(926, '90.018.328', 'KK', 'kartu keluarga .pdf', NULL, '2024-10-23 01:47:46'),
+(926, '90.018.328', 'KK', '6930f8ee99078.pdf', NULL, '2025-12-04 02:58:54'),
 (927, '90.018.328', 'Ijazah', 'ijazah SD .pdf', NULL, '2024-10-23 01:48:15'),
 (928, '90.018.328', 'Ijazah', 'ijazah SMP .pdf', NULL, '2024-10-23 01:48:37'),
 (929, '90.018.328', 'Ijazah', 'ijazah SMA .pdf', NULL, '2024-10-23 01:49:01'),
@@ -4585,7 +4788,9 @@ INSERT INTO `upload` (`id_upload`, `id_pegawai`, `jenis_dok`, `filename`, `keter
 (1558, '78.097.074', 'Dokumen Lainnya', '68b7979878345.pdf', 'TTD & PARAF', '2025-09-03 01:19:20'),
 (1559, '78.097.074', 'Dokumen Lainnya', '68b799123cf4d.pdf', 'RH_2024', '2025-09-03 01:25:38'),
 (1560, '78.097.074', 'Dokumen Lainnya', '68b79938bf5c3.pdf', 'RH_1997', '2025-09-03 01:26:16'),
-(1561, '1001', 'Dokumen Lainnya', '68c7c6a3c031f.jpg', 'tes upload', '2025-09-15 07:56:19');
+(1561, '1001', 'Dokumen Lainnya', '68c7c6a3c031f.jpg', 'tes upload', '2025-09-15 07:56:19'),
+(1562, '90.018.328', 'SK Pengangkatan/promosi', '691d78fcc6095.pdf', 'SK KENAIKAN GOLONGAN C-2', '2025-11-19 07:59:56'),
+(1563, 'TKK017', 'KTP', '692e411ebb60c.jpeg', 'KTP', '2025-12-02 01:30:06');
 
 -- --------------------------------------------------------
 
@@ -4632,6 +4837,12 @@ CREATE TABLE `users` (
 -- (See below for the actual view)
 --
 CREATE TABLE `vw_cuti_saldo` (
+`id_pegawai` varchar(50)
+,`jenis` enum('TAHUNAN','MELAHIRKAN','MENIKAH')
+,`sisa` decimal(29,2)
+,`tahun` smallint unsigned
+,`total_jatah` decimal(28,2)
+,`total_pakai` decimal(27,2)
 );
 
 -- --------------------------------------------------------
@@ -4889,13 +5100,13 @@ ALTER TABLE `absensi`
 -- AUTO_INCREMENT for table `cuti`
 --
 ALTER TABLE `cuti`
-  MODIFY `id_cuti` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=185;
+  MODIFY `id_cuti` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=187;
 
 --
 -- AUTO_INCREMENT for table `cuti_persetujuan`
 --
 ALTER TABLE `cuti_persetujuan`
-  MODIFY `id_cuti_persetujuan` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id_cuti_persetujuan` int UNSIGNED NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=10;
 
 --
 -- AUTO_INCREMENT for table `failed_jobs`
@@ -4925,7 +5136,7 @@ ALTER TABLE `jobs`
 -- AUTO_INCREMENT for table `keluarga`
 --
 ALTER TABLE `keluarga`
-  MODIFY `id_keluarga` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=630;
+  MODIFY `id_keluarga` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=637;
 
 --
 -- AUTO_INCREMENT for table `marital`
@@ -4943,25 +5154,25 @@ ALTER TABLE `migrations`
 -- AUTO_INCREMENT for table `panggol`
 --
 ALTER TABLE `panggol`
-  MODIFY `id_panggol` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=241;
+  MODIFY `id_panggol` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=310;
 
 --
 -- AUTO_INCREMENT for table `pekerjaan`
 --
 ALTER TABLE `pekerjaan`
-  MODIFY `id_pekerjaan` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=863;
+  MODIFY `id_pekerjaan` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=902;
 
 --
 -- AUTO_INCREMENT for table `pelatihan`
 --
 ALTER TABLE `pelatihan`
-  MODIFY `id_pelatihan` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=66;
+  MODIFY `id_pelatihan` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=72;
 
 --
 -- AUTO_INCREMENT for table `pelatihan_relasi`
 --
 ALTER TABLE `pelatihan_relasi`
-  MODIFY `id_pelRelasi` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=248;
+  MODIFY `id_pelRelasi` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=303;
 
 --
 -- AUTO_INCREMENT for table `pendidikan`
@@ -4973,7 +5184,7 @@ ALTER TABLE `pendidikan`
 -- AUTO_INCREMENT for table `pendidikan_relasi`
 --
 ALTER TABLE `pendidikan_relasi`
-  MODIFY `id_pendRelasi` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=672;
+  MODIFY `id_pendRelasi` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=690;
 
 --
 -- AUTO_INCREMENT for table `pp`
@@ -5027,7 +5238,7 @@ ALTER TABLE `status_gawai`
 -- AUTO_INCREMENT for table `upload`
 --
 ALTER TABLE `upload`
-  MODIFY `id_upload` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1562;
+  MODIFY `id_upload` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=1564;
 
 --
 -- AUTO_INCREMENT for table `users`
