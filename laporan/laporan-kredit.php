@@ -130,7 +130,14 @@ require_once "../config/database.php";
           // ambil role & cabang dari session untuk kontrol filter cabang
           $role_id = $_SESSION['role_id'];
           $cabang_id = $_SESSION['cabang_id'];
-          $filter_cabang = isset($_GET['cabang_id']) ? $_GET['cabang_id'] : ($role_id != 1 ? $cabang_id : null);
+          // Super Admin sees all or can filter; Pinca/Kasie (role 2,3) always restricted to their cabang
+          if (in_array($role_id, [2, 3])) {
+              // Pinca/Kasie always use their own cabang, ignore URL parameter
+              $filter_cabang = $cabang_id;
+          } else {
+              // Super Admin can filter or see all
+              $filter_cabang = isset($_GET['cabang_id']) && $_GET['cabang_id'] !== '' ? $_GET['cabang_id'] : null;
+          }
         ?>
         <?php if ($role_id == 1): ?>
         <div class="col-md-2">
@@ -217,8 +224,8 @@ require_once "../config/database.php";
           $bulan = isset($_GET['bulan']) ? $_GET['bulan'] : null;
           $tahun = isset($_GET['tahun']) ? $_GET['tahun'] : null;
           $query = "SELECT * FROM tbl_antrian_kredit WHERE waktu_mulai IS NOT NULL AND waktu_selesai IS NOT NULL";
-          // filter cabang (seperti CS): jika superadmin bisa pilih; jika bukan, default cabang session
-          if (!empty($filter_cabang)) {
+          // filter cabang
+          if ($filter_cabang !== null && $filter_cabang !== '') {
             $query .= " AND cabang_id = '" . $mysqli->real_escape_string($filter_cabang) . "'";
           }
           if (!empty($tanggal_awal) && !empty($tanggal_akhir)) {
