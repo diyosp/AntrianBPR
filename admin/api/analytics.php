@@ -106,65 +106,10 @@ foreach ($response['dates'] as $date) {
     $response['throughput'][] = $cs_count + $teller_count + $kredit_count;
 }
 
-// Get average wait times
-foreach ($response['dates'] as $date) {
-    $total_wait = 0;
-    $count = 0;
-    
-    // CS wait times
-    $stmt = $mysqli->prepare("SELECT AVG(durasi) as avg_dur FROM tbl_antrian WHERE DATE(tanggal) = ? AND durasi IS NOT NULL " . ($cabang_id ? "AND cabang_id = ?" : ""));
-    if ($cabang_id) {
-        $stmt->bind_param("si", $date, $cabang_id);
-    } else {
-        $stmt->bind_param("s", $date);
-    }
-    $stmt->execute();
-    $result = $stmt->get_result()->fetch_assoc();
-    if ($result['avg_dur']) {
-        $total_wait += $result['avg_dur'];
-        $count++;
-    }
-    
-    // Teller wait times
-    if ($exclude_default_teller) {
-        $tellerWaitQuery = "SELECT AVG(durasi) as avg_dur FROM tbl_antrian_teller WHERE DATE(tanggal_teller) = ? AND durasi IS NOT NULL AND bagian IN (1,2) " . ($cabang_id ? "AND cabang_id = ?" : "");
-        $stmt = $mysqli->prepare($tellerWaitQuery);
-        if ($cabang_id) {
-            $stmt->bind_param("si", $date, $cabang_id);
-        } else {
-            $stmt->bind_param("s", $date);
-        }
-    } else {
-        $stmt = $mysqli->prepare("SELECT AVG(durasi) as avg_dur FROM tbl_antrian_teller WHERE DATE(tanggal_teller) = ? AND durasi IS NOT NULL " . ($cabang_id ? "AND cabang_id = ?" : ""));
-        if ($cabang_id) {
-            $stmt->bind_param("si", $date, $cabang_id);
-        } else {
-            $stmt->bind_param("s", $date);
-        }
-    }
-    $stmt->execute();
-    $result = $stmt->get_result()->fetch_assoc();
-    if ($result['avg_dur']) {
-        $total_wait += $result['avg_dur'];
-        $count++;
-    }
-    
-    // Kredit wait times
-    $stmt = $mysqli->prepare("SELECT AVG(durasi) as avg_dur FROM tbl_antrian_kredit WHERE DATE(tanggal_kredit) = ? AND durasi IS NOT NULL " . ($cabang_id ? "AND cabang_id = ?" : ""));
-    if ($cabang_id) {
-        $stmt->bind_param("si", $date, $cabang_id);
-    } else {
-        $stmt->bind_param("s", $date);
-    }
-    $stmt->execute();
-    $result = $stmt->get_result()->fetch_assoc();
-    if ($result['avg_dur']) {
-        $total_wait += $result['avg_dur'];
-        $count++;
-    }
-    
-    $response['avg_wait'][] = $count > 0 ? round($total_wait / $count) : 0;
-}
+// Get average queue count per day (rata-rata antrian)
+$total_queue_count = array_sum($response['throughput']);
+$days_with_data = count(array_filter($response['throughput'], fn($v) => $v > 0));
+$response['avg_queue'] = $days_with_data > 0 ? round($total_queue_count / $days_with_data) : 0;
 
 // Get hourly distribution (last 7 days)
 for ($hour = 8; $hour <= 17; $hour++) {

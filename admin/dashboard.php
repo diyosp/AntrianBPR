@@ -50,12 +50,7 @@ if (!empty($cabang_id) && isset($mysqli)) {
   .chart-card:hover {
     box-shadow: 0 8px 25px rgba(0,0,0,0.25) !important;
   }
-  .performance-table tbody tr {
-    transition: background-color 0.2s ease;
-  }
-  .performance-table tbody tr:hover {
-    background-color: rgba(248, 123, 27, 0.1);
-  }
+
   /* Date range filter styling */
   #dateRangeFilter {
     background-color: #11224E !important;
@@ -118,11 +113,11 @@ if (!empty($cabang_id) && isset($mysqli)) {
                     <option value="14">14 Hari Terakhir</option>
                     <option value="30">30 Hari Terakhir</option>
                   </select>
-                  <button id="btnRefresh" class="btn btn-sm btn-light">
+                  <button id="btnRefresh" class="btn btn-sm" style="background-color: #F87B1B; color: #fff;">
                     <i class="bi-arrow-clockwise"></i> Refresh
                   </button>
-                  <a href="../index.php" class="btn btn-sm btn-outline-light">
-                    <i class="bi-arrow-left"></i> Kembali
+                  <a href="../index.php" class="btn btn-sm" style="border: 1px solid #ffffffff; color: #ffffffff;">
+                   Kembali
                   </a>
                 </div>
               </div>
@@ -134,17 +129,17 @@ if (!empty($cabang_id) && isset($mysqli)) {
       <!-- KPI Cards -->
       <div class="row g-3 mb-4">
         <div class="col-sm-6 col-lg-3">
-          <div class="card border-0 shadow-sm stat-card" style="background-color: #1e40af; border-radius: 1rem;">
+          <div class="card border-0 shadow-sm stat-card" style="background-color: #11224E; border-radius: 1rem;">
             <div class="card-body p-4">
               <div class="d-flex justify-content-between align-items-start gap-3">
                 <div class="flex-grow-1">
                   <p class="mb-2 text-white-50 small fw-semibold text-uppercase">Total Antrian</p>
-                  <h2 class="mb-1 text-white fw-bold" id="kpiTotalQueue">
-                    <span class="spinner-border spinner-border-sm text-white" role="status"></span>
+                  <h2 class="mb-1 fw-bold" style="color: #F87B1B;" id="kpiTotalQueue">
+                    <span class="spinner-border spinner-border-sm" style="color: #F87B1B;" role="status"></span>
                   </h2>
                   <small class="text-white-50">Periode terpilih</small>
                 </div>
-                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: #3b82f6;">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: #F87B1B;">
                   <i class="bi-people fs-3 text-white"></i>
                 </div>
               </div>
@@ -153,17 +148,17 @@ if (!empty($cabang_id) && isset($mysqli)) {
         </div>
 
         <div class="col-sm-6 col-lg-3">
-          <div class="card border-0 shadow-sm stat-card" style="background-color: #0f766e; border-radius: 1rem;">
+          <div class="card border-0 shadow-sm stat-card" style="background-color: #11224E; border-radius: 1rem;">
             <div class="card-body p-4">
               <div class="d-flex justify-content-between align-items-start gap-3">
                 <div class="flex-grow-1">
-                  <p class="mb-2 text-white-50 small fw-semibold text-uppercase">Rata-rata Tunggu</p>
-                  <h2 class="mb-1 text-white fw-bold" id="kpiAvgWait">
-                    <span class="spinner-border spinner-border-sm text-white" role="status"></span>
+                  <p class="mb-2 text-white-50 small fw-semibold text-uppercase">Rata-rata Antrian</p>
+                  <h2 class="mb-1 fw-bold" style="color: #F87B1B;" id="kpiAvgWait">
+                    <span class="spinner-border spinner-border-sm" style="color: #F87B1B;" role="status"></span>
                   </h2>
-                  <small class="text-white-50">Dalam menit</small>
+                  <small class="text-white-50">Per hari</small>
                 </div>
-                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: #10b981;">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: #F87B1B;">
                   <i class="bi-clock-history fs-3 text-white"></i>
                 </div>
               </div>
@@ -172,17 +167,17 @@ if (!empty($cabang_id) && isset($mysqli)) {
         </div>
 
         <div class="col-sm-6 col-lg-3">
-          <div class="card border-0 shadow-sm stat-card" style="background-color: #6b21a8; border-radius: 1rem;">
+          <div class="card border-0 shadow-sm stat-card" style="background-color: #11224E; border-radius: 1rem;">
             <div class="card-body p-4">
               <div class="d-flex justify-content-between align-items-start gap-3">
                 <div class="flex-grow-1">
                   <p class="mb-2 text-white-50 small fw-semibold text-uppercase">Bagian Aktif</p>
-                  <h2 class="mb-1 text-white fw-bold" id="kpiActiveSections">
-                    <span class="spinner-border spinner-border-sm text-white" role="status"></span>
+                  <h2 class="mb-1 fw-bold" style="color: #F87B1B;" id="kpiActiveSections">
+                    <span class="spinner-border spinner-border-sm" style="color: #F87B1B;" role="status"></span>
                   </h2>
                   <small class="text-white-50">Total layanan</small>
                 </div>
-                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: #8b5cf6;">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: #F87B1B;">
                   <i class="bi-person-badge fs-3 text-white"></i>
                 </div>
               </div>
@@ -191,17 +186,17 @@ if (!empty($cabang_id) && isset($mysqli)) {
         </div>
 
         <div class="col-sm-6 col-lg-3">
-          <div class="card border-0 shadow-sm stat-card" style="background-color: #0284c7; border-radius: 1rem;">
+          <div class="card border-0 shadow-sm stat-card" style="background-color: #11224E; border-radius: 1rem;">
             <div class="card-body p-4">
               <div class="d-flex justify-content-between align-items-start gap-3">
                 <div class="flex-grow-1">
                   <p class="mb-2 text-white-50 small fw-semibold text-uppercase">Jam Sibuk</p>
-                  <h2 class="mb-1 text-white fw-bold" id="kpiPeakHour">
-                    <span class="spinner-border spinner-border-sm text-white" role="status"></span>
+                  <h2 class="mb-1 fw-bold" style="color: #F87B1B;" id="kpiPeakHour">
+                    <span class="spinner-border spinner-border-sm" style="color: #F87B1B;" role="status"></span>
                   </h2>
                   <small class="text-white-50">Peak time</small>
                 </div>
-                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: #0ea5e9;">
+                <div class="rounded-circle d-flex align-items-center justify-content-center" style="width: 60px; height: 60px; background-color: #F87B1B;">
                   <i class="bi-graph-up fs-3 text-white"></i>
                 </div>
               </div>
@@ -216,7 +211,7 @@ if (!empty($cabang_id) && isset($mysqli)) {
           <div class="card border-0 shadow-sm chart-card" style="background-color: #11224E; border-radius: 1rem; height: 450px;">
             <div class="card-body p-4 d-flex flex-column h-100">
               <h6 class="mb-4 text-white fw-semibold d-flex align-items-center">
-              <i class="bi-graph-up text-warning" style="margin-right: 0.5rem;"></i>
+              <i class="bi-graph-up" style="margin-right: 0.5rem; color: #F87B1B;"></i>
                 Throughput - Tren Antrian
               </h6>
               <div class="flex-grow-1" style="position: relative;">
@@ -230,7 +225,7 @@ if (!empty($cabang_id) && isset($mysqli)) {
           <div class="card border-0 shadow-sm chart-card" style="background-color: #11224E; border-radius: 1rem; height: 450px;">
             <div class="card-body p-4 d-flex flex-column h-100">
               <h6 class="mb-2 text-white fw-semibold d-flex align-items-center">
-                  <i class="bi-pie-chart text-info" style="margin-right: 0.5rem;"></i>
+                  <i class="bi-pie-chart" style="margin-right: 0.5rem; color: #F87B1B;"></i>
                 Aktivitas per Bagian
               </h6>
               <?php if ($cabang_id == 312 || empty($cabang_id)): ?>
@@ -252,7 +247,7 @@ if (!empty($cabang_id) && isset($mysqli)) {
           <div class="card border-0 shadow-sm chart-card" style="background-color: #11224E; border-radius: 1rem;">
             <div class="card-body p-4">
               <h6 class="mb-4 text-white fw-semibold d-flex align-items-center">
-                  <i class="bi-hourglass-split text-danger" style="margin-right: 0.5rem;"></i>
+                  <i class="bi-hourglass-split" style="margin-right: 0.5rem; color: #F87B1B;"></i>
                 Rata-rata Waktu Tunggu
               </h6>
               <canvas id="chartAvgWait" height="100"></canvas>
@@ -264,7 +259,7 @@ if (!empty($cabang_id) && isset($mysqli)) {
           <div class="card border-0 shadow-sm chart-card" style="background-color: #11224E; border-radius: 1rem;">
             <div class="card-body p-4">
               <h6 class="mb-4 text-white fw-semibold d-flex align-items-center">
-                  <i class="bi-clock text-success" style="margin-right: 0.5rem;"></i>
+                  <i class="bi-clock" style="margin-right: 0.5rem; color: #F87B1B;"></i>
                 Distribusi Jam Sibuk
               </h6>
               <canvas id="chartHourlyDist" height="100"></canvas>
@@ -279,50 +274,10 @@ if (!empty($cabang_id) && isset($mysqli)) {
           <div class="card border-0 shadow-sm chart-card" style="background-color: #11224E; border-radius: 1rem;">
             <div class="card-body p-4">
               <h6 class="mb-4 text-white fw-semibold d-flex align-items-center">
-                  <i class="bi-bar-chart-line text-primary" style="margin-right: 0.5rem;"></i>
+                  <i class="bi-bar-chart-line" style="margin-right: 0.5rem; color: #F87B1B;"></i>
                 Perbandingan Jenis Layanan
               </h6>
               <canvas id="chartServiceComparison" height="70"></canvas>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Performance Table -->
-      <div class="row g-3 mb-4">
-        <div class="col-12">
-          <div class="card border-0 shadow-sm" style="background-color: #11224E; border-radius: 1rem;">
-            <div class="card-body p-4">
-              <h6 class="mb-4 text-white fw-semibold d-flex align-items-center">
-                  <i class="bi-trophy text-warning" style="margin-right: 0.5rem;"></i>
-                Performa per Bagian
-                <?php if ($cabang_id == 312 || empty($cabang_id)): ?>
-                <small class="ms-2 text-white-50" style="font-size: 0.75rem; font-weight: normal;">
-                  <i class="bi-info-circle"></i> Teller A & B khusus untuk Cabang Cikembar
-                </small>
-                <?php endif; ?>
-              </h6>
-              <div class="table-responsive">
-                <table class="table table-dark table-hover performance-table mb-0">
-                  <thead style="background-color: rgba(248, 123, 27, 0.1);">
-                    <tr>
-                      <th class="border-0 py-3 fw-semibold">Bagian</th>
-                      <th class="border-0 py-3 text-center fw-semibold">Total Dilayani</th>
-                      <th class="border-0 py-3 text-center fw-semibold">Rata-rata Tunggu</th>
-                      <th class="border-0 py-3 text-center fw-semibold">Waktu Layanan</th>
-                      <th class="border-0 py-3 text-center fw-semibold">Efisiensi</th>
-                    </tr>
-                  </thead>
-                  <tbody id="performanceTableBody">
-                    <tr>
-                      <td colspan="5" class="text-center py-5">
-                        <div class="spinner-border spinner-border-sm text-warning me-2" role="status"></div>
-                        <span class="text-white-50">Memuat data performa...</span>
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
             </div>
           </div>
         </div>
@@ -345,13 +300,10 @@ if (!empty($cabang_id) && isset($mysqli)) {
 
     function updateKPIs(data) {
       const total = data.throughput.reduce((a, b) => a + b, 0);
-      const avgWaitSeconds = data.avg_wait.length > 0 
-        ? Math.round(data.avg_wait.reduce((a, b) => a + b, 0) / data.avg_wait.length) 
-        : 0;
-      const avgWaitMinutes = (avgWaitSeconds / 60).toFixed(1);
+      const avgQueue = data.avg_queue || 0;
       
       document.getElementById('kpiTotalQueue').textContent = total.toLocaleString('id-ID');
-      document.getElementById('kpiAvgWait').textContent = avgWaitMinutes + ' menit';
+      document.getElementById('kpiAvgWait').textContent = avgQueue.toLocaleString('id-ID');
       document.getElementById('kpiActiveSections').textContent = data.per_staff.length;
       document.getElementById('kpiPeakHour').textContent = data.peak_hour || '-';
     }
@@ -392,8 +344,8 @@ if (!empty($cabang_id) && isset($mysqli)) {
           datasets: [{ 
             label: 'Jumlah Antrian', 
             data: data.throughput, 
-            borderColor: '#FFA500', 
-            backgroundColor: 'rgba(255,165,0,0.15)', 
+            borderColor: '#F87B1B', 
+            backgroundColor: 'rgba(248,123,27,0.15)', 
             tension: 0.4,
             fill: true,
             borderWidth: 3,
@@ -440,7 +392,7 @@ if (!empty($cabang_id) && isset($mysqli)) {
           datasets: [{ 
             label: 'Waktu Tunggu (detik)', 
             data: data.avg_wait, 
-            backgroundColor: '#4BC0C0',
+            backgroundColor: '#F87B1B',
             borderRadius: 6,
             barThickness: 20
           }] 
@@ -451,16 +403,27 @@ if (!empty($cabang_id) && isset($mysqli)) {
         }
       });
 
+      // Color mapping for services
+      const serviceColors = {
+        'Customer Service': '#F87B1B',
+        'CS': '#F87B1B',
+        'Teller': '#11224E',
+        'Teller A': '#1a3461',
+        'Teller B': '#2a5298',
+        'Kredit': '#38bdf8'
+      };
+
       // Per Staff Pie Chart
       const staffLabels = data.per_staff.map(i => i.label);
       const staffData = data.per_staff.map(i => i.value);
+      const staffColors = staffLabels.map(label => serviceColors[label] || '#888');
       createOrUpdateChart('chartPerStaff', {
         type: 'doughnut',
         data: { 
           labels: staffLabels, 
           datasets: [{ 
             data: staffData, 
-            backgroundColor: ['#FF6384','#36A2EB','#FFCE56','#7C4DFF','#4CAF50','#FF9F40'],
+            backgroundColor: staffColors,
             borderWidth: 0
           }] 
         },
@@ -484,7 +447,7 @@ if (!empty($cabang_id) && isset($mysqli)) {
           datasets: [{
             label: 'Antrian per Jam',
             data: data.hourly_dist?.counts || [],
-            backgroundColor: '#36A2EB',
+            backgroundColor: '#F87B1B',
             borderRadius: 6,
             barThickness: 18
           }]
@@ -502,7 +465,7 @@ if (!empty($cabang_id) && isset($mysqli)) {
         datasets.push({
           label: 'CS',
           data: sb.cs || [],
-          backgroundColor: '#FF6384',
+          backgroundColor: serviceColors['CS'],
           borderRadius: 4
         });
 
@@ -511,20 +474,20 @@ if (!empty($cabang_id) && isset($mysqli)) {
           datasets.push({
             label: 'Teller A',
             data: sb.teller_a,
-            backgroundColor: '#36A2EB',
+            backgroundColor: serviceColors['Teller A'],
             borderRadius: 4
           });
           datasets.push({
             label: 'Teller B',
             data: sb.teller_b,
-            backgroundColor: '#4BC0C0',
+            backgroundColor: serviceColors['Teller B'],
             borderRadius: 4
           });
         } else {
           datasets.push({
             label: 'Teller',
             data: sb.teller || [],
-            backgroundColor: '#36A2EB',
+            backgroundColor: serviceColors['Teller'],
             borderRadius: 4
           });
         }
@@ -532,7 +495,7 @@ if (!empty($cabang_id) && isset($mysqli)) {
         datasets.push({
           label: 'Kredit',
           data: sb.kredit || [],
-          backgroundColor: '#FFCE56',
+          backgroundColor: serviceColors['Kredit'],
           borderRadius: 4
         });
 
@@ -547,29 +510,6 @@ if (!empty($cabang_id) && isset($mysqli)) {
         });
       })();
 
-      // Performance Table
-      const tbody = document.getElementById('performanceTableBody');
-      if (data.staff_performance && data.staff_performance.length > 0) {
-        tbody.innerHTML = data.staff_performance.map(staff => `
-          <tr>
-            <td class="py-3">
-              <span class="fw-semibold">${staff.name}</span>
-            </td>
-            <td class="text-center py-3">
-              <span class="badge bg-primary">${staff.total_served}</span>
-            </td>
-            <td class="text-center py-3">${(staff.avg_wait / 60).toFixed(1)} menit</td>
-            <td class="text-center py-3">${(staff.avg_service_time / 60).toFixed(1)} menit</td>
-            <td class="text-center py-3">
-              <span class="badge ${staff.efficiency >= 80 ? 'bg-success' : staff.efficiency >= 60 ? 'bg-warning text-dark' : 'bg-danger'}" style="min-width: 60px;">
-                ${staff.efficiency}%
-              </span>
-            </td>
-          </tr>
-        `).join('');
-      } else {
-        tbody.innerHTML = '<tr><td colspan="5" class="text-center py-4 text-white-50">Tidak ada data performa tersedia</td></tr>';
-      }
     }
 
     async function loadDashboard(days = 7) {

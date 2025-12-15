@@ -24,6 +24,7 @@ include "header.php";
         </div>
       </div>
       <div class="row g-3 justify-content-start">
+        <?php if (!in_array($_SESSION['role_id'], [2, 3])): ?>
            <!-- Tampilan Antrian TV -->
           <div class="col-12 col-md-6 col-lg-3">
             <div class="card border-0 shadow-sm h-100" style="background-color: #11224E;">
@@ -51,8 +52,9 @@ include "header.php";
             </div>
           </div>
         </div>
-        <!-- Panggilan (role_id 1,2,3,4,5) -->
-        <?php if (in_array($_SESSION['role_id'], [1, 2, 3, 4, 5])): ?>
+        <?php endif; ?>
+        <!-- Panggilan (role_id 1,4,5 only - exclude Pinca and Kasie) -->
+        <?php if (in_array($_SESSION['role_id'], [1, 4, 5])): ?>
         <div class="col-12 col-md-6 col-lg-3">
           <div class="card border-0 shadow-sm h-100" style="background-color: #11224E;">
             <div class="card-body p-4 d-flex flex-column align-items-center">
