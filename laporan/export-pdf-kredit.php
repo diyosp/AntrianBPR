@@ -56,7 +56,7 @@ if (!empty($params)) {
 }
 $stmt->execute();
 $result = $stmt->get_result();
-$html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Laporan Kredit</title><style>body{font-family:Arial,sans-serif;}table{border-collapse:collapse;width:100%;}th,td{border:1px solid #000;padding:6px;text-align:center;}th{background:#eee;}</style></head><body><h2>Laporan Kredit</h2><table><thead><tr><th>No</th><th>Cabang ID</th><th>Tanggal</th><th>No Antrian</th><th>Waktu Mulai</th><th>Waktu Selesai</th><th>Status</th><th>Durasi</th></tr></thead><tbody>';
+$html = '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Laporan Kredit</title><style>body{font-family:Arial,sans-serif;}table{border-collapse:collapse;width:100%;}th,td{border:1px solid #000;padding:6px;text-align:center;}th{background:#eee;}</style></head><body><h2>Laporan Kredit</h2><table><thead><tr><th>No</th><th>Cabang ID</th><th>Tanggal</th><th>No Antrian</th><th>Waktu Mulai</th><th>Waktu Selesai</th><th>Status</th><th>Durasi</th><th>Jumlah Transaksi</th></tr></thead><tbody>';
 $nomor = 1;
 while ($row = $result->fetch_assoc()) {
     $html .= '<tr>';
@@ -85,6 +85,7 @@ while ($row = $result->fetch_assoc()) {
         $formatted_duration = '-';
     }
     $html .= '<td>' . $formatted_duration . '</td>';
+    $html .= '<td>' . ($row['jumlah_transaksi'] ?: '-') . '</td>';
     $html .= '</tr>';
 }
 $html .= '</tbody></table></body></html>';

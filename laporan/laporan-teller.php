@@ -332,6 +332,7 @@ $result = $stmt->get_result();
                     <th>Waktu Selesai</th>
                     <th>Status</th>
                     <th>Durasi</th>
+                    <th>Jumlah Transaksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -368,11 +369,12 @@ $result = $stmt->get_result();
                             $formatted_duration = "-";
                         }
                         echo "<td>{$formatted_duration}</td>";
+                        echo "<td>" . ($row['jumlah_transaksi'] ?: '-') . "</td>";
                         $nomor++;
                     }
                 } else {
                     // Jumlah kolom tergantung cabang_id
-                    $colspan = ($cabang_id == 312) ? 9 : 8;
+                    $colspan = ($cabang_id == 312) ? 10 : 9;
                     echo "<tr><td colspan='{$colspan}' class='text-center'>Tidak ada data tersedia</td></tr>";
                 }
                 ?>

@@ -71,6 +71,7 @@ $sheet->setCellValue('E1', 'Waktu Mulai');
 $sheet->setCellValue('F1', 'Waktu Selesai');
 $sheet->setCellValue('G1', 'Status');
 $sheet->setCellValue('H1', 'Durasi');
+$sheet->setCellValue('I1', 'Jumlah Transaksi');
 $rowNum = 2;
 $nomor = 1;
 while ($row = $result->fetch_assoc()) {
@@ -95,6 +96,7 @@ while ($row = $result->fetch_assoc()) {
         $formatted_duration = "-";
     }
     $sheet->setCellValue('H' . $rowNum, $formatted_duration);
+    $sheet->setCellValue('I' . $rowNum, $row['jumlah_transaksi'] ?: '-');
     $rowNum++;
 }
 $writer = new Xlsx($spreadsheet);

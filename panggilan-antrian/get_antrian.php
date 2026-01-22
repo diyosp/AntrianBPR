@@ -19,7 +19,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
   $tanggal = gmdate("Y-m-d", time() + 60 * 60 * 7);
 
   // sql statement untuk menampilkan data dari tabel "tbl_antrian" berdasarkan "tanggal" dan "cabang_id"
-  $query = mysqli_query($mysqli, "SELECT id, no_antrian, status FROM tbl_antrian 
+  $query = mysqli_query($mysqli, "SELECT id, no_antrian, status, jumlah_transaksi FROM tbl_antrian 
                                     WHERE tanggal='$tanggal' AND cabang_id='$cabang_id'")
     or die('Ada kesalahan pada query tampil data : ' . mysqli_error($mysqli));
 
@@ -33,9 +33,10 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
 
     // ambil data hasil query
     while ($row = mysqli_fetch_assoc($query)) {
-      $data['id']         = $row["id"];
-      $data['no_antrian'] = $row["no_antrian"];
-      $data['status']     = $row["status"];
+      $data['id']                = $row["id"];
+      $data['no_antrian']        = $row["no_antrian"];
+      $data['status']            = $row["status"];
+      $data['jumlah_transaksi']  = $row["jumlah_transaksi"];
 
       array_push($response["data"], $data);
     }
@@ -47,9 +48,10 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
     $response["data"] = array();
 
     // buat data kosong untuk ditampilkan
-    $data['id']         = "";
-    $data['no_antrian'] = "-";
-    $data['status']     = "";
+    $data['id']                = "";
+    $data['no_antrian']        = "-";
+    $data['status']            = "";
+    $data['jumlah_transaksi']  = "";
 
     array_push($response["data"], $data);
 

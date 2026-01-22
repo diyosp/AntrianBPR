@@ -102,11 +102,13 @@ if ($cabang_id == 312) {
     $sheet->setCellValue('G1', 'Waktu Selesai');
     $sheet->setCellValue('H1', 'Status');
     $sheet->setCellValue('I1', 'Durasi');
+    $sheet->setCellValue('J1', 'Jumlah Transaksi');
 } else {
     $sheet->setCellValue('E1', 'Waktu Mulai');
     $sheet->setCellValue('F1', 'Waktu Selesai');
     $sheet->setCellValue('G1', 'Status');
     $sheet->setCellValue('H1', 'Durasi');
+    $sheet->setCellValue('I1', 'Jumlah Transaksi');
 }
 
 // Isi data ke dalam spreadsheet
@@ -145,8 +147,10 @@ while ($row = $result->fetch_assoc()) {
     }
     if ($cabang_id == 312) {
         $sheet->setCellValue("I{$rowIndex}", $formatted_duration);
+        $sheet->setCellValue("J{$rowIndex}", $row['jumlah_transaksi'] ?: '-');
     } else {
         $sheet->setCellValue("H{$rowIndex}", $formatted_duration);
+        $sheet->setCellValue("I{$rowIndex}", $row['jumlah_transaksi'] ?: '-');
     }
     $rowIndex++;
     $nomor++;

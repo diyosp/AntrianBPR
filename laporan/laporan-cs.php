@@ -307,6 +307,7 @@ $result = $stmt->get_result();
                                 <th>Cabang ID</th>
                                 <th>Tanggal</th>
                                 <th>No Antrian</th>
+                                <th>Jumlah Transaksi</th>
                                 <th>Waktu Mulai</th>
                                 <th>Waktu Selesai</th>
                                 <th>Status</th>
@@ -324,6 +325,7 @@ $result = $stmt->get_result();
                                     echo "<td>{$row['cabang_id']}</td>";
                                     echo "<td>" . date('d/m/Y', strtotime($row['tanggal'])) . "</td>";
                                     echo "<td>{$row['no_antrian']}</td>";
+                                    echo "<td>" . (!empty($row['jumlah_transaksi']) ? $row['jumlah_transaksi'] : '-') . "</td>";
                                     // Waktu Mulai
                                     echo "<td>" . (!empty($row['waktu_mulai']) ? date('H:i:s', strtotime($row['waktu_mulai'])) : '-') . "</td>";
                                     // Waktu Selesai
@@ -343,7 +345,7 @@ $result = $stmt->get_result();
                                     $nomor++;
                                 }
                             } else {
-                                echo "<tr><td colspan='8' class='text-center'>Tidak ada data tersedia</td></tr>";
+                                echo "<tr><td colspan='9' class='text-center'>Tidak ada data tersedia</td></tr>";
                             }
                             ?>
                         </tbody>

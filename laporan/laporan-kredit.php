@@ -214,6 +214,7 @@ require_once "../config/database.php";
             <th>Waktu Selesai</th>
             <th>Status</th>
             <th>Durasi</th>
+            <th>Jumlah Transaksi</th>
           </tr>
         </thead>
         <tbody>
@@ -260,9 +261,10 @@ require_once "../config/database.php";
                 printf('%02d:%02d:%02d', $hh, $mm, $ss);
               ?>
             </td>
+            <td><?= $row['jumlah_transaksi'] ?: '-' ?></td>
           </tr>
           <?php endwhile; else: ?>
-          <tr><td colspan="8" class="text-center">Tidak ada data tersedia</td></tr>
+          <tr><td colspan="9" class="text-center">Tidak ada data tersedia</td></tr>
           <?php endif; ?>
         </tbody>
       </table>

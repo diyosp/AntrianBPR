@@ -96,6 +96,7 @@ include "../header.php";
               <thead>
                 <tr>
                   <th style="color: #fff;">Nomor Antrian</th>
+                  <th style="color: #fff;">Jumlah Transaksi</th>
                   <th style="color: #fff;">Status</th>
                   <th style="color: #fff;">Panggil</th>
                 </tr>
@@ -106,6 +107,27 @@ include "../header.php";
       </div>
     </div>
   </main>
+
+  <!-- Modal Jumlah Transaksi -->
+  <div class="modal fade" id="modalJumlahTransaksi" tabindex="-1" aria-labelledby="modalJumlahTransaksiLabel" aria-hidden="true" data-bs-backdrop="static" data-bs-keyboard="false">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content" style="background-color: #11224E; color: #fff;">
+        <div class="modal-header border-0">
+          <h5 class="modal-title" id="modalJumlahTransaksiLabel"><i class="bi-clipboard-data me-2"></i>Jumlah Transaksi</h5>
+        </div>
+        <div class="modal-body">
+          <p class="mb-3">Masukkan jumlah transaksi untuk antrian <strong id="modal-no-antrian"></strong>:</p>
+          <input type="text" class="form-control" id="input-jumlah-transaksi" placeholder="Jumlah transaksi" style="background-color: #1a3a6e; color: #fff; border-color: #3a5a8e; text-align: center; font-size: 1.5rem;">
+          <input type="hidden" id="modal-antrian-id">
+          <small class="text-muted" style="color: #aaa !important;">*Kosongkan jika hanya 1 transaksi</small>
+        </div>
+        <div class="modal-footer border-0">
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Batal</button>
+          <button type="button" class="btn btn-success" id="btn-submit-transaksi"><i class="bi-check-lg me-1"></i>Selesai</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <!-- load file audio bell antrian -->
   <audio id="tingtung" src="../assets/audio/tingtung.mp3"></audio>
@@ -241,8 +263,16 @@ include "../header.php";
         // menampilkan data
         "columns": [{
             "data": "no_antrian_teller",
-            "width": '250px',
+            "width": '200px',
             "className": 'text-center'
+          },
+          {
+            "data": "jumlah_transaksi",
+            "width": '150px',
+            "className": 'text-center',
+            "render": function(data, type, row) {
+              return data ? data : '-';
+            }
           },
           {
             "data": "status_teller",
@@ -252,7 +282,7 @@ include "../header.php";
             "data": null,
             "orderable": false,
             "searchable": false,
-            "width": '100px',
+            "width": '150px',
             "className": 'text-center',
             "render": function(data, type, row) {
               var btn = "-";
@@ -292,28 +322,61 @@ include "../header.php";
               volume: 10
             });
           }, durasi_bell);
+
+          // proses update data untuk start
+          $.ajax({
+            type: "POST",
+            url: "update.php",
+            data: {
+              id_teller: id,
+              action: action
+            }
+          });
+        } else if (action === 'finish') {
+          // Show modal for jumlah transaksi
+          $('#modal-no-antrian').text(data["no_antrian_teller"]);
+          $('#modal-antrian-id').val(id);
+          $('#input-jumlah-transaksi').val('');
+          $('#modalJumlahTransaksi').modal('show');
+          
+          // Focus on input after modal is shown
+          $('#modalJumlahTransaksi').on('shown.bs.modal', function () {
+            $('#input-jumlah-transaksi').focus();
+          });
+        }
+      });
+
+      // Handle submit button in modal
+      $('#btn-submit-transaksi').on('click', function() {
+        var id = $('#modal-antrian-id').val();
+        var jumlahTransaksi = $('#input-jumlah-transaksi').val();
+        
+        // Default to 1 if empty
+        if (!jumlahTransaksi || jumlahTransaksi.trim() === '') {
+          jumlahTransaksi = '1';
         }
 
-        // proses update data
+        // proses update data untuk finish
         $.ajax({
           type: "POST",
           url: "update.php",
           data: {
             id_teller: id,
-            action: action
+            action: 'finish',
+            jumlah_transaksi: jumlahTransaksi
           },
-          success: function(response) {
-            // Log response for debugging
-            console.log('AJAX success:', response);
-            // Optionally show a message to the user
-            // alert('Update berhasil: ' + response);
-          },
-          error: function(xhr, status, error) {
-            console.error('AJAX error:', status, error, xhr.responseText);
-            // Optionally show a message to the user
-            // alert('Update gagal: ' + error);
+          success: function() {
+            $('#modalJumlahTransaksi').modal('hide');
+            table.ajax.reload(null, false);
           }
         });
+      });
+
+      // Allow Enter key to submit in modal
+      $('#input-jumlah-transaksi').on('keypress', function(e) {
+        if (e.which === 13) {
+          $('#btn-submit-transaksi').click();
+        }
       });
 
       // auto reload data antrian setiap 1 detik untuk menampilkan data secara realtime
@@ -322,7 +385,11 @@ include "../header.php";
         $('#antrian-sekarang-teller').load('get_antrian_sekarang_teller.php').fadeIn("slow");
         $('#antrian-selanjutnya-teller').load('get_antrian_selanjutnya_teller.php').fadeIn("slow");
         $('#sisa-antrian-teller').load('get_sisa_antrian_teller.php').fadeIn("slow");
-        table.ajax.reload(null, false);
+        
+        // Skip reload if modal is open
+        if (!$('#modalJumlahTransaksi').hasClass('show')) {
+          table.ajax.reload(null, false);
+        }
       }, 1000);
     });
   </script>
