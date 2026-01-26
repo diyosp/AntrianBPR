@@ -20,6 +20,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
     $id = mysqli_real_escape_string($mysqli, $_POST['id_teller']);
     $bagian = mysqli_real_escape_string($mysqli, $_POST['bagian']);
     $action = isset($_POST['action']) ? $_POST['action'] : '';
+    $jumlah_transaksi = isset($_POST['jumlah_transaksi']) ? mysqli_real_escape_string($mysqli, $_POST['jumlah_transaksi']) : null;
     $updated_date = gmdate("Y-m-d H:i:s", time() + 60 * 60 * 7);
 
     // Validasi: Teller B hanya bisa mengakses antrian yang belum diklaim (bagian IS NULL) atau sudah diklaim oleh Teller B (bagian = '2')
@@ -53,7 +54,13 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
           $mulai = strtotime($waktu_mulai);
           $selesai = strtotime($waktu_selesai);
           $durasi = $selesai - $mulai;
-          $update = mysqli_query($mysqli, "UPDATE tbl_antrian_teller SET status_teller='2', updated_date_teller='$updated_date', waktu_selesai='$waktu_selesai', durasi='$durasi', bagian='$bagian' WHERE id_teller='$id' AND cabang_id='$cabang_id'")
+          
+          // Set default jumlah_transaksi to 1 if empty
+          if (empty($jumlah_transaksi)) {
+            $jumlah_transaksi = 1;
+          }
+          
+          $update = mysqli_query($mysqli, "UPDATE tbl_antrian_teller SET status_teller='2', updated_date_teller='$updated_date', waktu_selesai='$waktu_selesai', durasi='$durasi', bagian='$bagian', jumlah_transaksi='$jumlah_transaksi' WHERE id_teller='$id' AND cabang_id='$cabang_id'")
             or die('Ada kesalahan pada query update : ' . mysqli_error($mysqli));
         }
       }

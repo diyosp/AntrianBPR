@@ -116,6 +116,7 @@ $html = '
                 <th>Cabang ID</th>
                 <th>Tanggal</th>
                 <th>No Antrian</th>
+                <th>Jml Transaksi</th>
                 <th>Waktu Mulai</th>
                 <th>Waktu Selesai</th>
                 <th>Status</th>
@@ -135,6 +136,7 @@ if ($result->num_rows > 0) {
         $html .= "<td>{$row['cabang_id']}</td>";
         $html .= "<td>" . date('d/m/Y', strtotime($row['tanggal'])) . "</td>";
         $html .= "<td>{$row['no_antrian']}</td>";
+        $html .= "<td>" . (!empty($row['jumlah_transaksi']) ? $row['jumlah_transaksi'] : '-') . "</td>";
         // Waktu Mulai
         $html .= "<td>" . (!empty($row['waktu_mulai']) ? date('H:i:s', strtotime($row['waktu_mulai'])) : '-') . "</td>";
         // Waktu Selesai
@@ -157,7 +159,7 @@ if ($result->num_rows > 0) {
         $nomor++;
     }
 } else {
-    $html .= '<tr><td colspan="8" style="text-align: center;">Tidak ada data tersedia</td></tr>';
+    $html .= '<tr><td colspan="9" style="text-align: center;">Tidak ada data tersedia</td></tr>';
 }
 
 $html .= '

@@ -137,6 +137,7 @@ $html .= '
                 <th>Waktu Selesai</th>
                 <th>Status</th>
                 <th>Durasi</th>
+                <th>Jumlah Transaksi</th>
             </tr>
         </thead>
         <tbody>';
@@ -173,12 +174,13 @@ if ($result->num_rows > 0) {
             $formatted_duration = "-";
         }
         $html .= "<td>{$formatted_duration}</td>";
+        $html .= "<td>" . ($row['jumlah_transaksi'] ?: '-') . "</td>";
         $html .= "</tr>";
         $nomor++;
     }
 } else {
     // Jumlah kolom tergantung cabang_id
-    $colspan = ($cabang_id == 312) ? 9 : 8;
+    $colspan = ($cabang_id == 312) ? 10 : 9;
     $html .= "<tr><td colspan=\"{$colspan}\" style=\"text-align: center;\">Tidak ada data tersedia</td></tr>";
 }
 

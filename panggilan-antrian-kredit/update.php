@@ -12,6 +12,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
     if (isset($_POST['id_kredit'])) {
         $id = mysqli_real_escape_string($mysqli, $_POST['id_kredit']);
         $action = isset($_POST['action']) ? $_POST['action'] : '';
+        $jumlah_transaksi = isset($_POST['jumlah_transaksi']) ? mysqli_real_escape_string($mysqli, $_POST['jumlah_transaksi']) : null;
         $updated_date = gmdate("Y-m-d H:i:s", time() + 60 * 60 * 7);
 
         $check_query = mysqli_query($mysqli, "SELECT id_kredit, status_kredit, waktu_mulai, waktu_selesai FROM tbl_antrian_kredit WHERE id_kredit='$id' AND cabang_id='$cabang_id'")
@@ -42,7 +43,13 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
                     $mulai_ts = strtotime($waktu_mulai);
                     $selesai_ts = strtotime($waktu_selesai);
                     $durasi = ($mulai_ts && $selesai_ts) ? max(0, $selesai_ts - $mulai_ts) : 0;
-                    $update = mysqli_query($mysqli, "UPDATE tbl_antrian_kredit SET status_kredit='2', updated_date_kredit='$updated_date', waktu_selesai='$waktu_selesai', durasi='$durasi' WHERE id_kredit='$id' AND cabang_id='$cabang_id'")
+                    
+                    // Set default jumlah_transaksi to 1 if empty
+                    if (empty($jumlah_transaksi)) {
+                        $jumlah_transaksi = 1;
+                    }
+                    
+                    $update = mysqli_query($mysqli, "UPDATE tbl_antrian_kredit SET status_kredit='2', updated_date_kredit='$updated_date', waktu_selesai='$waktu_selesai', durasi='$durasi', jumlah_transaksi='$jumlah_transaksi' WHERE id_kredit='$id' AND cabang_id='$cabang_id'")
                         or die('Ada kesalahan pada query update : ' . mysqli_error($mysqli));
                 }
             }

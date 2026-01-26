@@ -17,13 +17,20 @@ $tanggal_akhir = isset($_GET['tanggal_akhir']) ? $_GET['tanggal_akhir'] : null;
 $bulan = isset($_GET['bulan']) ? $_GET['bulan'] : null;
 $tahun = isset($_GET['tahun']) ? $_GET['tahun'] : null;
 $filter_bagian = isset($_GET['bagian']) ? $_GET['bagian'] : null;
-$filter_cabang = isset($_GET['cabang_id']) ? $_GET['cabang_id'] : ($role_id != 1 ? $cabang_id : null);
+// Super Admin sees all or can filter; Pinca/Kasie (role 2,3) always restricted to their cabang
+if (in_array($role_id, [2, 3])) {
+    // Pinca/Kasie always use their own cabang, ignore URL parameter
+    $filter_cabang = $cabang_id;
+} else {
+    // Super Admin can filter or see all
+    $filter_cabang = isset($_GET['cabang_id']) && $_GET['cabang_id'] !== '' ? $_GET['cabang_id'] : null;
+}
 
 // Query dasar untuk mendapatkan data antrian teller
 $query = "SELECT * FROM tbl_antrian_teller WHERE waktu_mulai IS NOT NULL AND waktu_selesai IS NOT NULL";
 
-// Tambahkan filter cabang jika role_id bukan 1 atau jika superadmin menggunakan filter cabang
-if (!empty($filter_cabang)) {
+// Tambahkan filter cabang
+if ($filter_cabang !== null && $filter_cabang !== '') {
     $query .= " AND cabang_id = ?";
 }
 
@@ -54,7 +61,7 @@ $stmt = $mysqli->prepare($query);
 // Bind parameter ke query
 $bind_types = '';
 $params = [];
-if (!empty($filter_cabang)) {
+if ($filter_cabang !== null && $filter_cabang !== '') {
     $bind_types .= 'i';
     $params[] = $filter_cabang;
 }
@@ -325,6 +332,7 @@ $result = $stmt->get_result();
                     <th>Waktu Selesai</th>
                     <th>Status</th>
                     <th>Durasi</th>
+                    <th>Jumlah Transaksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -361,11 +369,12 @@ $result = $stmt->get_result();
                             $formatted_duration = "-";
                         }
                         echo "<td>{$formatted_duration}</td>";
+                        echo "<td>" . ($row['jumlah_transaksi'] ?: '-') . "</td>";
                         $nomor++;
                     }
                 } else {
                     // Jumlah kolom tergantung cabang_id
-                    $colspan = ($cabang_id == 312) ? 9 : 8;
+                    $colspan = ($cabang_id == 312) ? 10 : 9;
                     echo "<tr><td colspan='{$colspan}' class='text-center'>Tidak ada data tersedia</td></tr>";
                 }
                 ?>

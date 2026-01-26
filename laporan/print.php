@@ -216,12 +216,13 @@ $result = $stmt->get_result();
         <thead>
             <tr>
                 <th style="width: 5%;">No</th>
-                <th style="width: 10%;">Cabang</th>
-                <th style="width: 12%;">Tanggal</th>
-                <th style="width: 12%;">No Antrian</th>
+                <th style="width: 8%;">Cabang</th>
+                <th style="width: 10%;">Tanggal</th>
+                <th style="width: 10%;">No Antrian</th>
+                <th style="width: 10%;">Jml Transaksi</th>
                 <th style="width: 12%;">Waktu Mulai</th>
                 <th style="width: 12%;">Waktu Selesai</th>
-                <th style="width: 10%;">Status</th>
+                <th style="width: 8%;">Status</th>
                 <th style="width: 10%;">Durasi</th>
             </tr>
         </thead>
@@ -237,6 +238,7 @@ $result = $stmt->get_result();
                     echo "<td>{$row['cabang_id']}</td>";
                     echo "<td>" . date('d/m/Y', strtotime($row['tanggal'])) . "</td>";
                     echo "<td>{$row['no_antrian']}</td>";
+                    echo "<td>" . (!empty($row['jumlah_transaksi']) ? $row['jumlah_transaksi'] : '-') . "</td>";
                     // Waktu Mulai
                     echo "<td>" . (!empty($row['waktu_mulai']) ? date('H:i:s', strtotime($row['waktu_mulai'])) : '-') . "</td>";
                     // Waktu Selesai
@@ -258,7 +260,7 @@ $result = $stmt->get_result();
                     $nomor++;
                 }
             } else {
-                echo "<tr><td colspan='8' class='text-center'>Tidak ada data tersedia</td></tr>";
+                echo "<tr><td colspan='9' class='text-center'>Tidak ada data tersedia</td></tr>";
             }
             ?>
         </tbody>

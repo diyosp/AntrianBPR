@@ -19,6 +19,7 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
   if (isset($_POST['id'])) {
     $id = mysqli_real_escape_string($mysqli, $_POST['id']);
     $action = isset($_POST['action']) ? $_POST['action'] : '';
+    $jumlah_transaksi = isset($_POST['jumlah_transaksi']) ? mysqli_real_escape_string($mysqli, $_POST['jumlah_transaksi']) : null;
     $updated_date = gmdate("Y-m-d H:i:s", time() + 60 * 60 * 7);
 
     $check_query = mysqli_query($mysqli, "SELECT id, status, waktu_mulai, waktu_selesai FROM tbl_antrian WHERE id='$id' AND cabang_id='$cabang_id'")
@@ -30,7 +31,15 @@ if (isset($_SERVER['HTTP_X_REQUESTED_WITH']) && ($_SERVER['HTTP_X_REQUESTED_WITH
       $waktu_mulai = $row['waktu_mulai'];
       $waktu_selesai = $row['waktu_selesai'];
 
-      if ($action === 'start') {
+      // Update jumlah transaksi jika ada
+      if ($jumlah_transaksi !== null && $jumlah_transaksi !== '') {
+        mysqli_query($mysqli, "UPDATE tbl_antrian SET jumlah_transaksi='$jumlah_transaksi', updated_date='$updated_date' WHERE id='$id' AND cabang_id='$cabang_id'")
+          or die('Ada kesalahan pada query update jumlah transaksi : ' . mysqli_error($mysqli));
+      }
+
+      if ($action === 'update_transaksi') {
+        // Hanya update jumlah transaksi, sudah dilakukan di atas
+      } else if ($action === 'start') {
         if ($status == '0') {
           if (empty($waktu_mulai)) {
             $update = mysqli_query($mysqli, "UPDATE tbl_antrian SET status='1', updated_date='$updated_date', waktu_mulai='$updated_date' WHERE id='$id' AND cabang_id='$cabang_id'")

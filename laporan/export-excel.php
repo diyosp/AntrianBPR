@@ -87,10 +87,11 @@ $sheet->setCellValue('A1', 'No');
 $sheet->setCellValue('B1', 'Cabang ID');
 $sheet->setCellValue('C1', 'Tanggal');
 $sheet->setCellValue('D1', 'No Antrian');
-$sheet->setCellValue('E1', 'Waktu Mulai');
-$sheet->setCellValue('F1', 'Waktu Selesai');
-$sheet->setCellValue('G1', 'Status');
-$sheet->setCellValue('H1', 'Durasi');
+$sheet->setCellValue('E1', 'Jumlah Transaksi');
+$sheet->setCellValue('F1', 'Waktu Mulai');
+$sheet->setCellValue('G1', 'Waktu Selesai');
+$sheet->setCellValue('H1', 'Status');
+$sheet->setCellValue('I1', 'Durasi');
 
 // Isi data ke dalam spreadsheet
 $rowIndex = 2;
@@ -102,9 +103,10 @@ while ($row = $result->fetch_assoc()) {
     $sheet->setCellValue("B{$rowIndex}", $row['cabang_id']);
     $sheet->setCellValue("C{$rowIndex}", date('d/m/Y', strtotime($row['tanggal'])));
     $sheet->setCellValue("D{$rowIndex}", $row['no_antrian']);
-    $sheet->setCellValue("E{$rowIndex}", !empty($row['waktu_mulai']) ? date('H:i:s', strtotime($row['waktu_mulai'])) : '-');
-    $sheet->setCellValue("F{$rowIndex}", !empty($row['waktu_selesai']) ? date('H:i:s', strtotime($row['waktu_selesai'])) : '-');
-    $sheet->setCellValue("G{$rowIndex}", ($row['status'] == '2' ? 'Selesai' : 'Menunggu'));
+    $sheet->setCellValue("E{$rowIndex}", !empty($row['jumlah_transaksi']) ? $row['jumlah_transaksi'] : '-');
+    $sheet->setCellValue("F{$rowIndex}", !empty($row['waktu_mulai']) ? date('H:i:s', strtotime($row['waktu_mulai'])) : '-');
+    $sheet->setCellValue("G{$rowIndex}", !empty($row['waktu_selesai']) ? date('H:i:s', strtotime($row['waktu_selesai'])) : '-');
+    $sheet->setCellValue("H{$rowIndex}", ($row['status'] == '2' ? 'Selesai' : 'Menunggu'));
 
     // Hitung durasi
     if (!empty($row['durasi'])) {
@@ -118,7 +120,7 @@ while ($row = $result->fetch_assoc()) {
     } else {
         $formatted_duration = "-";
     }
-    $sheet->setCellValue("H{$rowIndex}", $formatted_duration);
+    $sheet->setCellValue("I{$rowIndex}", $formatted_duration);
     $rowIndex++;
     $nomor++;
 }
