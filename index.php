@@ -53,6 +53,23 @@ include "header.php";
           </div>
         </div>
         <?php endif; ?>
+        
+        <!-- Panggilan Admin Kredit (role_id 6 only) -->
+        <?php if ($_SESSION['role_id'] == 6): ?>
+        <div class="col-12 col-md-6 col-lg-3">
+          <div class="card border-0 shadow-sm h-100" style="background-color: #11224E;">
+            <div class="card-body p-4 d-flex flex-column align-items-center">
+              <i class="bi-credit-card-2-back mb-3" style="color: #fff; font-size: 2rem;"></i>
+              <h5 class="mb-2" style="color: #fff;">Panggilan Admin Kredit</h5>
+              <p class="mb-3 text-center small" style="color: #fff;">Panggil Nasabah Loket Admin Kredit.</p>
+              <a href="panggilan-antrian-kredit/" class="btn btn-success rounded-pill px-4 py-2 mt-auto">
+                Masuk <i class="bi-chevron-right ms-2"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+        <?php endif; ?>
+        
         <!-- Panggilan (role_id 1,4,5 only - exclude Pinca and Kasie) -->
         <?php if (in_array($_SESSION['role_id'], [1, 4, 5])): ?>
         <div class="col-12 col-md-6 col-lg-3">

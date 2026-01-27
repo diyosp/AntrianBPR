@@ -75,7 +75,8 @@ INSERT INTO `role` (`role_id`, `nama`, `keterangan`) VALUES
 (2, 'pinca', 'untuk pimpinan cabang'),
 (3, 'kasie', 'untuk kasie operasional'),
 (4, 'teller', 'untuk teller'),
-(5, 'customer_service', 'untuk cs');
+(5, 'customer_service', 'untuk cs'),
+(6, 'admin_kredit', 'untuk admin kredit');
 
 -- --------------------------------------------------------
 

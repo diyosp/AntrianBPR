@@ -60,13 +60,12 @@ if ($cabangResult && $cabangResult->num_rows > 0) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $id_pegawai = $_POST['id_pegawai'] ?? '';
     $username = $_POST['username'] ?? '';
-    $password = $_POST['password'] ?? '';
     $role_id = $_POST['role_id'] ?? '';
     $cabang_id = $_POST['cabang_id'] ?? '';
     $status = $_POST['status'] ?? 'active';
 
     // Validasi input
-    if (empty($id_pegawai) || empty($username) || empty($password) || empty($role_id) || empty($cabang_id)) {
+    if (empty($id_pegawai) || empty($username) || empty($role_id) || empty($cabang_id)) {
         http_response_code(400);
         echo json_encode(['error' => 'Semua field harus diisi']);
         exit;
@@ -98,14 +97,30 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         exit;
     }
 
-    // Hash password
-    $hashedPassword = password_hash($password, PASSWORD_BCRYPT);
+    // Fetch password dari EIS database pegawai table
+    $passwordQuery = "SELECT password FROM bprsukab_eis_update.pegawai WHERE id_pegawai = ?";
+    $passwordStmt = $mysqli_eis->prepare($passwordQuery);
+    $passwordStmt->bind_param("s", $id_pegawai);
+    $passwordStmt->execute();
+    $passwordResult = $passwordStmt->get_result();
+
+    if ($passwordResult->num_rows === 0) {
+        http_response_code(400);
+        echo json_encode(['error' => 'ID Pegawai tidak ditemukan di database EIS']);
+        exit;
+    }
+
+    $passwordRow = $passwordResult->fetch_assoc();
+    $passwordFromEIS = $passwordRow['password'];
+
+    // Password dari EIS sudah dalam format hash bcrypt, gunakan langsung
+    // Tidak perlu di-hash lagi
 
     // Tambahkan user baru dengan id_pegawai
     $insertQuery = "INSERT INTO users (id_pegawai, username, password, role_id, cabang_id, status, created_at) 
                     VALUES (?, ?, ?, ?, ?, ?, NOW())";
     $insertStmt = $mysqli->prepare($insertQuery);
-    $insertStmt->bind_param("sssiss", $id_pegawai, $username, $hashedPassword, $role_id, $cabang_id, $status);
+    $insertStmt->bind_param("sssiss", $id_pegawai, $username, $passwordFromEIS, $role_id, $cabang_id, $status);
 
     if ($insertStmt->execute()) {
         echo json_encode(['success' => true, 'message' => 'User berhasil ditambahkan']);
@@ -202,21 +217,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                             </div>
 
                             <div class="row">
-                                <!-- Password -->
-                                <div class="col-md-6 mb-3">
-                                    <label for="password" class="form-label">
-                                        Password <span class="required">*</span>
-                                    </label>
-                                    <div class="input-group">
-                                        <input type="password" name="password" id="password" class="form-control" 
-                                               placeholder="Masukkan password" required minlength="6">
-                                        <button class="btn btn-outline-secondary" type="button" id="togglePassword">
-                                            <i class="fas fa-eye" id="eyeIcon"></i>
-                                        </button>
-                                    </div>
-                                    <small class="text-muted">Minimal 6 karakter</small>
-                                </div>
-
                                 <!-- Role -->
                                 <div class="col-md-6 mb-3">
                                     <label for="role_id" class="form-label">
@@ -300,20 +300,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
                     $('#username').val(idPegawai);
                 } else {
                     $('#username').val('');
-                }
-            });
-
-            // Toggle password visibility
-            $('#togglePassword').on('click', function() {
-                const passwordInput = $('#password');
-                const eyeIcon = $('#eyeIcon');
-                
-                if (passwordInput.attr('type') === 'password') {
-                    passwordInput.attr('type', 'text');
-                    eyeIcon.removeClass('fa-eye').addClass('fa-eye-slash');
-                } else {
-                    passwordInput.attr('type', 'password');
-                    eyeIcon.removeClass('fa-eye-slash').addClass('fa-eye');
                 }
             });
 

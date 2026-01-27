@@ -22,12 +22,12 @@ if ($cabangResult && $cabangResult->num_rows > 0) {
     }
 }
 
-// Ambil data jabatan yang difilter (CS, Teller, Pimpinan Cabang, Kepala Seksi, Kepala Satuan TI, Staff TI)
+// Ambil data jabatan yang difilter (CS, Teller, Pimpinan Cabang, Kepala Seksi, Kepala Satuan TI, Staff TI, Admin Kredit)
 $jabatan_list = [];
 try {
     $jabatanQuery = "SELECT id_jabatan, jabatan 
                      FROM bprsukab_eis_update.jabatan 
-                     WHERE id_jabatan IN (27, 28, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 41, 44, 56, 59, 63, 1002)
+                     WHERE id_jabatan IN (27, 28, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 38, 41, 44, 56, 59, 63, 1002)
                      ORDER BY jabatan";
     $jabatanResult = $mysqli_eis->query($jabatanQuery);
     
@@ -66,7 +66,7 @@ try {
     $pegawaiQuery = "SELECT p.id_pegawai, p.$nameColumn as nama_pegawai, p.kode_cabang, p.id_jabatan, j.jabatan 
                      FROM bprsukab_eis_update.pegawai p
                      LEFT JOIN bprsukab_eis_update.jabatan j ON p.id_jabatan = j.id_jabatan
-                     WHERE p.id_jabatan IN (27, 28, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 41, 44, 56, 59, 63, 1002)
+                     WHERE p.id_jabatan IN (27, 28, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 38, 41, 44, 56, 59, 63, 1002)
                      ORDER BY j.jabatan, p.$nameColumn";
     $pegawaiResult = $mysqli_eis->query($pegawaiQuery);
     
@@ -561,10 +561,6 @@ $has_filters = !empty($filter_cabang) || !empty($filter_role) || !empty($filter_
                             <label for="username" class="form-label">Username <span style="color: #F87B1B;">*</span></label>
                             <input type="text" name="username" id="username" class="form-control" required>
                             <small style="color: #F87B1B;">Bisa sama dengan ID Pegawai atau berbeda</small>
-                        </div>
-                        <div class="mb-3">
-                            <label for="password" class="form-label">Password <span style="color: #F87B1B;">*</span></label>
-                            <input type="password" name="password" id="password" class="form-control" required>
                         </div>
                         <div class="mb-3">
                             <label for="role_id" class="form-label">Role <span style="color: #F87B1B;">*</span></label>
