@@ -325,6 +325,7 @@ $result = $stmt->get_result();
                     <th>Cabang ID</th>
                     <th>Tanggal</th>
                     <th>No Antrian</th>
+                    <th>Jumlah Transaksi</th>
                     <?php if ($cabang_id == 312): ?>
                         <th>Bagian</th>
                     <?php endif; ?>
@@ -332,7 +333,6 @@ $result = $stmt->get_result();
                     <th>Waktu Selesai</th>
                     <th>Status</th>
                     <th>Durasi</th>
-                    <th>Jumlah Transaksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -347,6 +347,7 @@ $result = $stmt->get_result();
                         echo "<td>{$row['cabang_id']}</td>";
                         echo "<td>" . date('d/m/Y', strtotime($row['tanggal_teller'])) . "</td>";
                         echo "<td>{$row['no_antrian_teller']}</td>";
+                        echo "<td>" . ($row['jumlah_transaksi'] ?: '-') . "</td>";
 
                         if ($cabang_id == 312) {
                             echo "<td>" . ($row['bagian'] ?: '-') . "</td>";
@@ -369,7 +370,6 @@ $result = $stmt->get_result();
                             $formatted_duration = "-";
                         }
                         echo "<td>{$formatted_duration}</td>";
-                        echo "<td>" . ($row['jumlah_transaksi'] ?: '-') . "</td>";
                         $nomor++;
                     }
                 } else {
