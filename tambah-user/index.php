@@ -27,7 +27,7 @@ $jabatan_list = [];
 try {
     $jabatanQuery = "SELECT id_jabatan, jabatan 
                      FROM bprsukab_eis_update.jabatan 
-                     WHERE id_jabatan IN (2, 3, 27, 28, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 38, 41, 44, 56, 57, 59, 63, 1002)
+                     WHERE id_jabatan IN (1, 52, 2, 3, 27, 28, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 38, 41, 44, 56, 57, 59, 63, 1002)
                      ORDER BY jabatan";
     $jabatanResult = $mysqli_eis->query($jabatanQuery);
     
@@ -66,7 +66,7 @@ try {
     $pegawaiQuery = "SELECT p.id_pegawai, p.$nameColumn as nama_pegawai, p.kode_cabang, p.id_jabatan, j.jabatan 
                      FROM bprsukab_eis_update.pegawai p
                      LEFT JOIN bprsukab_eis_update.jabatan j ON p.id_jabatan = j.id_jabatan
-                     WHERE p.id_jabatan IN (2, 3, 27, 28, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 38, 41, 44, 56, 57, 59, 63, 1002)
+                     WHERE p.id_jabatan IN (1, 52, 2, 3, 27, 28, 9, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 38, 41, 44, 56, 57, 59, 63, 1002)
                      ORDER BY j.jabatan, p.$nameColumn";
     $pegawaiResult = $mysqli_eis->query($pegawaiQuery);
     
