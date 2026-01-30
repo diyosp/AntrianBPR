@@ -210,11 +210,11 @@ require_once "../config/database.php";
             <th>Cabang ID</th>
             <th>Tanggal</th>
             <th>No Antrian</th>
+            <th>Jumlah Transaksi</th>
             <th>Waktu Mulai</th>
             <th>Waktu Selesai</th>
             <th>Status</th>
             <th>Durasi</th>
-            <th>Jumlah Transaksi</th>
           </tr>
         </thead>
         <tbody>
@@ -249,6 +249,7 @@ require_once "../config/database.php";
             <td><?= htmlspecialchars($row['cabang_id']) ?></td>
             <td><?= !empty($row['tanggal_kredit']) ? date('d/m/y', strtotime($row['tanggal_kredit'])) : '-' ?></td>
             <td><?= htmlspecialchars($row['no_antrian_kredit']) ?></td>
+            <td><?= $row['jumlah_transaksi'] ?: '-' ?></td>
             <td><?= !empty($row['waktu_mulai']) ? date('H:i:s', strtotime($row['waktu_mulai'])) : '-' ?></td>
             <td><?= !empty($row['waktu_selesai']) ? date('H:i:s', strtotime($row['waktu_selesai'])) : '-' ?></td>
             <td><?= $row['status_kredit'] == '2' ? 'Selesai' : 'Menunggu' ?></td>
@@ -261,7 +262,6 @@ require_once "../config/database.php";
                 printf('%02d:%02d:%02d', $hh, $mm, $ss);
               ?>
             </td>
-            <td><?= $row['jumlah_transaksi'] ?: '-' ?></td>
           </tr>
           <?php endwhile; else: ?>
           <tr><td colspan="9" class="text-center">Tidak ada data tersedia</td></tr>
