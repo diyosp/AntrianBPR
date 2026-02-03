@@ -390,7 +390,7 @@ if (!empty($cabang_id) && isset($mysqli)) {
         data: { 
           labels: data.dates, 
           datasets: [{ 
-            label: 'Waktu Tunggu (detik)', 
+            label: 'Waktu Tunggu (menit)', 
             data: data.avg_wait, 
             backgroundColor: '#F87B1B',
             borderRadius: 6,
