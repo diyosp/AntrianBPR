@@ -42,6 +42,7 @@ foreach ($response['dates'] as $date) {
     $kredit_count = 0;
     $teller_a_count = 0;
     $teller_b_count = 0;
+    $avg_wait_time = 0;
     
     // CS
     $stmt = $mysqli->prepare("SELECT COUNT(*) as cnt FROM tbl_antrian WHERE DATE(tanggal) = ? " . ($cabang_id ? "AND cabang_id = ?" : ""));
@@ -93,6 +94,55 @@ foreach ($response['dates'] as $date) {
     $result = $stmt->get_result()->fetch_assoc();
     $kredit_count = $result['cnt'] ?? 0;
     
+    // Calculate average wait time (durasi) for this date across all services
+    $total_durasi = 0;
+    $total_count = 0;
+    
+    // CS durasi
+    $stmt = $mysqli->prepare("SELECT AVG(durasi) as avg_durasi, COUNT(*) as cnt FROM tbl_antrian WHERE DATE(tanggal) = ? AND durasi IS NOT NULL " . ($cabang_id ? "AND cabang_id = ?" : ""));
+    if ($cabang_id) {
+        $stmt->bind_param("si", $date, $cabang_id);
+    } else {
+        $stmt->bind_param("s", $date);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+    if ($result['cnt'] > 0) {
+        $total_durasi += ($result['avg_durasi'] ?? 0) * $result['cnt'];
+        $total_count += $result['cnt'];
+    }
+    
+    // Teller durasi
+    $stmt = $mysqli->prepare("SELECT AVG(durasi) as avg_durasi, COUNT(*) as cnt FROM tbl_antrian_teller WHERE DATE(tanggal_teller) = ? AND durasi IS NOT NULL " . ($cabang_id ? "AND cabang_id = ?" : ""));
+    if ($cabang_id) {
+        $stmt->bind_param("si", $date, $cabang_id);
+    } else {
+        $stmt->bind_param("s", $date);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+    if ($result['cnt'] > 0) {
+        $total_durasi += ($result['avg_durasi'] ?? 0) * $result['cnt'];
+        $total_count += $result['cnt'];
+    }
+    
+    // Kredit durasi
+    $stmt = $mysqli->prepare("SELECT AVG(durasi) as avg_durasi, COUNT(*) as cnt FROM tbl_antrian_kredit WHERE DATE(tanggal_kredit) = ? AND durasi IS NOT NULL " . ($cabang_id ? "AND cabang_id = ?" : ""));
+    if ($cabang_id) {
+        $stmt->bind_param("si", $date, $cabang_id);
+    } else {
+        $stmt->bind_param("s", $date);
+    }
+    $stmt->execute();
+    $result = $stmt->get_result()->fetch_assoc();
+    if ($result['cnt'] > 0) {
+        $total_durasi += ($result['avg_durasi'] ?? 0) * $result['cnt'];
+        $total_count += $result['cnt'];
+    }
+    
+    // Calculate weighted average in minutes
+    $avg_wait_time = $total_count > 0 ? round(($total_durasi / $total_count) / 60, 1) : 0;
+    
     $response['service_breakdown']['cs'][] = $cs_count;
     if ($exclude_default_teller) {
         $response['service_breakdown']['teller_a'][] = $teller_a_count;
@@ -104,6 +154,7 @@ foreach ($response['dates'] as $date) {
     }
     $response['service_breakdown']['kredit'][] = $kredit_count;
     $response['throughput'][] = $cs_count + $teller_count + $kredit_count;
+    $response['avg_wait'][] = $avg_wait_time;
 }
 
 // Get average queue count per day (rata-rata antrian)
@@ -111,7 +162,7 @@ $total_queue_count = array_sum($response['throughput']);
 $days_with_data = count(array_filter($response['throughput'], fn($v) => $v > 0));
 $response['avg_queue'] = $days_with_data > 0 ? round($total_queue_count / $days_with_data) : 0;
 
-// Get hourly distribution (last 7 days)
+// Get hourly distribution (aggregate all services)
 for ($hour = 8; $hour <= 17; $hour++) {
     $response['hourly_dist']['hours'][] = sprintf('%02d:00', $hour);
     $count = 0;
@@ -119,7 +170,28 @@ for ($hour = 8; $hour <= 17; $hour++) {
     $start_date = date('Y-m-d', strtotime("-$days days"));
     $end_date = date('Y-m-d');
     
-    $stmt = $mysqli->prepare("SELECT COUNT(*) as cnt FROM tbl_antrian WHERE DATE(tanggal) BETWEEN ? AND ? AND HOUR(tanggal) = ? " . ($cabang_id ? "AND cabang_id = ?" : ""));
+    // Count CS - use waktu_mulai for hour extraction
+    $stmt = $mysqli->prepare("SELECT COUNT(*) as cnt FROM tbl_antrian WHERE DATE(tanggal) BETWEEN ? AND ? AND HOUR(waktu_mulai) = ? AND waktu_mulai IS NOT NULL " . ($cabang_id ? "AND cabang_id = ?" : ""));
+    if ($cabang_id) {
+        $stmt->bind_param("ssii", $start_date, $end_date, $hour, $cabang_id);
+    } else {
+        $stmt->bind_param("ssi", $start_date, $end_date, $hour);
+    }
+    $stmt->execute();
+    $count += $stmt->get_result()->fetch_assoc()['cnt'] ?? 0;
+    
+    // Count Teller - use waktu_mulai for hour extraction
+    $stmt = $mysqli->prepare("SELECT COUNT(*) as cnt FROM tbl_antrian_teller WHERE DATE(tanggal_teller) BETWEEN ? AND ? AND HOUR(waktu_mulai) = ? AND waktu_mulai IS NOT NULL " . ($cabang_id ? "AND cabang_id = ?" : ""));
+    if ($cabang_id) {
+        $stmt->bind_param("ssii", $start_date, $end_date, $hour, $cabang_id);
+    } else {
+        $stmt->bind_param("ssi", $start_date, $end_date, $hour);
+    }
+    $stmt->execute();
+    $count += $stmt->get_result()->fetch_assoc()['cnt'] ?? 0;
+    
+    // Count Kredit - use waktu_mulai for hour extraction
+    $stmt = $mysqli->prepare("SELECT COUNT(*) as cnt FROM tbl_antrian_kredit WHERE DATE(tanggal_kredit) BETWEEN ? AND ? AND HOUR(waktu_mulai) = ? AND waktu_mulai IS NOT NULL " . ($cabang_id ? "AND cabang_id = ?" : ""));
     if ($cabang_id) {
         $stmt->bind_param("ssii", $start_date, $end_date, $hour, $cabang_id);
     } else {
