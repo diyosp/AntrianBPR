@@ -953,7 +953,11 @@ $has_filters = !empty($filter_cabang) || !empty($filter_role) || !empty($filter_
                                 },
                                 success: function(response) {
                                     alert('User berhasil dihapus!');
-                                    table.ajax.reload();
+                                    if (table.ajax && table.ajax.url()) {
+                                        table.ajax.reload();
+                                    } else {
+                                        location.reload();
+                                    }
                                 },
                                 error: function(xhr, status, error) {
                                     alert('Gagal menghapus user: ' + error);
@@ -988,11 +992,21 @@ $has_filters = !empty($filter_cabang) || !empty($filter_role) || !empty($filter_
                             // Jika berhasil, tampilkan notifikasi dan reload tabel
                             alert('User berhasil diperbarui!');
                             $('#editUserModal').modal('hide'); // Tutup modal Edit User
-                            $('#userTable').DataTable().ajax.reload(); // Reload data di tabel tanpa reload halaman
+                            var dt = $('#userTable').DataTable();
+                            if (dt.ajax && dt.ajax.url()) {
+                                dt.ajax.reload();
+                            } else {
+                                location.reload();
+                            }
                         },
                         error: function(xhr, status, error) {
                             // Jika ada error, tampilkan notifikasi
-                            alert('Gagal memperbarui user: ' + error);
+                            var errMsg = 'Gagal memperbarui user';
+                            try {
+                                var resp = JSON.parse(xhr.responseText);
+                                if (resp.error) errMsg = resp.error;
+                            } catch(e) {}
+                            alert(errMsg);
                         }
                     });
                 });
@@ -1013,7 +1027,6 @@ $has_filters = !empty($filter_cabang) || !empty($filter_role) || !empty($filter_
                 const formData = {
                     id_pegawai: $('#id_pegawai').val(),
                     username: $('#username').val(),
-                    password: $('#password').val(),
                     role_id: $('#role_id').val(),
                     cabang_id: $('#cabang_id').val()
                 };
@@ -1029,11 +1042,21 @@ $has_filters = !empty($filter_cabang) || !empty($filter_role) || !empty($filter_
                         $('#addUserModal').modal('hide'); // Tutup modal Tambah User
                         $('#addUserForm')[0].reset(); // Reset form
                         $('#id_pegawai').val(null).trigger('change'); // Reset Select2
-                        $('#userTable').DataTable().ajax.reload(); // Reload data di tabel
+                        var dt = $('#userTable').DataTable();
+                        if (dt.ajax && dt.ajax.url()) {
+                            dt.ajax.reload();
+                        } else {
+                            location.reload();
+                        }
                     },
                     error: function(xhr, status, error) {
                         // Jika ada error, tampilkan notifikasi
-                        alert('Gagal menambahkan user: ' + error);
+                        var errMsg = 'Gagal menambahkan user';
+                        try {
+                            var resp = JSON.parse(xhr.responseText);
+                            if (resp.error) errMsg = resp.error;
+                        } catch(e) {}
+                        alert(errMsg);
                     }
                 });
             });
