@@ -2,6 +2,17 @@
 session_start();
 require_once "../config/database.php";
 
+if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST' || isset($_SERVER['HTTP_X_REQUESTED_WITH'])) {
+        http_response_code(403);
+        echo json_encode(['error' => 'Akses ditolak. Anda tidak memiliki izin.']);
+        exit;
+    } else {
+        header("Location: ../login.php");
+        exit;
+    }
+}
+
 // Ambil data pegawai dari EIS database
 $pegawai_list = [];
 try {

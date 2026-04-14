@@ -1,6 +1,10 @@
 <?php
-include "../header.php";
 session_start();
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../login.php");
+    exit;
+}
+include "../header.php";
 
 // Ensure DB available
 if (!isset($mysqli) && file_exists(__DIR__ . '/../config/database.php')) {

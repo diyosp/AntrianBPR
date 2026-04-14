@@ -2,6 +2,11 @@
 // Mulai sesi DULU sebelum output apapun
 session_start();
 
+if (!isset($_SESSION['user_id'])) {
+    header("Location: ../login.php");
+    exit;
+}
+
 // Ensure database connection is available
 if (file_exists(__DIR__ . '/../config/database.php')) {
   include_once __DIR__ . '/../config/database.php';

@@ -2,6 +2,11 @@
 session_start();
 require_once "../config/database.php";
 
+if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
+    header("Location: ../login.php");
+    exit;
+}
+
 // Ambil data role dari tabel role
 $roles = [];
 $roleQuery = "SELECT role_id, nama FROM role";
