@@ -2,6 +2,12 @@
 session_start();
 require_once "../config/database.php";
 
+if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
+    header("Location: ../login.php");
+    exit;
+}
+
+
 // Get filter values
 $filter_cabang = isset($_GET['cabang_id']) ? $_GET['cabang_id'] : null;
 $filter_role = isset($_GET['role_id']) ? $_GET['role_id'] : null;

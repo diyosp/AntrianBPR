@@ -1,5 +1,12 @@
 <?php
+session_start();
 require_once "../config/database.php";
+
+if (!isset($_SESSION['user_id']) || $_SESSION['role_id'] != 1) {
+    http_response_code(403);
+    echo json_encode(['error' => 'Akses ditolak. Anda tidak memiliki izin.']);
+    exit;
+}
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $user_id = $_POST['id'];
