@@ -1,0 +1,40 @@
+# Block all search engine crawlers
+User-agent: *
+Disallow: /
+
+# Block Google Search specifically
+User-agent: Googlebot
+Disallow: /
+
+# Block Google AI (Gemini) - Google-Extended controls AI training/features
+User-agent: Google-Extended
+Disallow: /
+
+# Block Google AI bot used for Gemini apps
+User-agent: GoogleOther
+Disallow: /
+
+# Block Google AI Studio / Gemini API
+User-agent: GoogleOther-Image
+Disallow: /
+
+User-agent: GoogleOther-Video
+Disallow: /
+
+# Block Bing
+User-agent: Bingbot
+Disallow: /
+
+# Block other AI crawlers for good measure
+User-agent: GPTBot
+Disallow: /
+
+User-agent: ChatGPT-User
+Disallow: /
+
+User-agent: CCBot
+Disallow: /
+
+User-agent: anthropic-ai
+Disallow: /
+

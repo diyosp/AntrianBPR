@@ -7,6 +7,11 @@
   <meta name="description" content="Aplikasi Antrian Berbasis Web">
   <meta name="author" content="Indra Styawantoro">
 
+  <!-- Prevent search engine indexing and AI crawling -->
+  <meta name="robots" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="googlebot" content="noindex, nofollow, noarchive, nosnippet, noimageindex">
+  <meta name="Google-Extended" content="noindex, nofollow">
+
   <!-- Title -->
   <title><?php echo isset($pageTitle) && $pageTitle
     ? htmlspecialchars($pageTitle) . ' - BPR Sukabumi'

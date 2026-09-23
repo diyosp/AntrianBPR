@@ -12,3 +12,5 @@ tampilan-tv/video/
 .DS_Store
 .vscode/
 thumbs.db
+
+*.md
